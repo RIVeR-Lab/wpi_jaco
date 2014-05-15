@@ -89,54 +89,65 @@ namespace jaco_arm{
     joint_state_pub_.publish(state);
   }
 
-  void JacoArmTrajectoryController::send_trajectory_point(const std::vector<std::string>& trajectory_joint_names, trajectory_msgs::JointTrajectoryPoint point, bool clear_trajectory){
-    boost::recursive_mutex::scoped_lock lock(api_mutex);
-    if(clear_trajectory){
+  static inline double nearest_equivelent(double desired, double current){
+    double previous_rev = floor(current / (2*M_PI));
+    double next_rev = ceil(current / (2*M_PI));
+    double lower_desired = previous_rev*(2*M_PI) + desired;
+    double upper_desired = next_rev*(2*M_PI) + desired;
+    if(abs(current - lower_desired) < abs(current - upper_desired))
+      return lower_desired;
+    return upper_desired;
+  }
+
+  void JacoArmTrajectoryController::execute_trajectory(const control_msgs::FollowJointTrajectoryGoalConstPtr &goal){
+    {
+      boost::recursive_mutex::scoped_lock lock(api_mutex);
       EraseAllTrajectories();
       StopControlAPI();
       StartControlAPI();
       SetAngularControl();
-    }
 
-    ROS_INFO("Trajectory Point");
-    double joint_cmd[NUM_JACO_JOINTS];
-    for(int trajectory_index = 0; trajectory_index<trajectory_joint_names.size(); ++trajectory_index){
-      std::string joint_name = trajectory_joint_names[trajectory_index];
-      int joint_index = std::distance(joint_names.begin(), std::find(joint_names.begin(), joint_names.end(), joint_name));
-      if(joint_index >=0 && joint_index < NUM_JACO_JOINTS){
-        ROS_INFO("%s: (%d -> %d) = %f", joint_name.c_str(), trajectory_index, joint_index, point.positions[trajectory_index]);
-	joint_cmd[joint_index] = point.positions[trajectory_index];
-      }
-    }
+      update_joint_states();
+      double previous_cmd[NUM_JACO_JOINTS];
+      for(int i = 0; i<NUM_JACO_JOINTS; ++i)
+        previous_cmd[i] = joint_pos[i];
+
+      BOOST_FOREACH(trajectory_msgs::JointTrajectoryPoint point, goal->trajectory.points){
+	ROS_INFO("Trajectory Point");
+	double joint_cmd[NUM_JACO_JOINTS];
+	for(int trajectory_index = 0; trajectory_index<goal->trajectory.joint_names.size(); ++trajectory_index){
+	  std::string joint_name = goal->trajectory.joint_names[trajectory_index];
+	  int joint_index = std::distance(joint_names.begin(), std::find(joint_names.begin(), joint_names.end(), joint_name));
+	  if(joint_index >=0 && joint_index < NUM_JACO_JOINTS){
+	    ROS_INFO("%s: (%d -> %d) = %f", joint_name.c_str(), trajectory_index, joint_index, point.positions[trajectory_index]);
+	    joint_cmd[joint_index] = nearest_equivelent(point.positions[trajectory_index], previous_cmd[joint_index]);
+	  }
+	}
+        for(int i = 0; i<NUM_JACO_JOINTS; ++i)
+          previous_cmd[i] = joint_pos[i];
 
 
-    AngularInfo angles;
-    FingersPosition fingers;
-    angles.Actuator1 = joint_cmd[0]*RAD_TO_DEG;
-    angles.Actuator2 = joint_cmd[1]*RAD_TO_DEG;
-    angles.Actuator3 = joint_cmd[2]*RAD_TO_DEG;
-    angles.Actuator4 = joint_cmd[3]*RAD_TO_DEG;
-    angles.Actuator5 = joint_cmd[4]*RAD_TO_DEG;
-    angles.Actuator6 = joint_cmd[5]*RAD_TO_DEG;
+	AngularInfo angles;
+	FingersPosition fingers;
+	angles.Actuator1 = joint_cmd[0]*RAD_TO_DEG;
+	angles.Actuator2 = joint_cmd[1]*RAD_TO_DEG;
+	angles.Actuator3 = joint_cmd[2]*RAD_TO_DEG;
+	angles.Actuator4 = joint_cmd[3]*RAD_TO_DEG;
+	angles.Actuator5 = joint_cmd[4]*RAD_TO_DEG;
+	angles.Actuator6 = joint_cmd[5]*RAD_TO_DEG;
+  
 
-    TrajectoryPoint jaco_point;
-    memset(&jaco_point, 0, sizeof(jaco_point));
+	TrajectoryPoint jaco_point;
+	memset(&jaco_point, 0, sizeof(jaco_point));
     
-    jaco_point.LimitationsActive = false;
-    jaco_point.Position.Delay = 0.0;
-    jaco_point.Position.Type = ANGULAR_POSITION;
-    jaco_point.Position.Actuators = angles; 
-    jaco_point.Position.HandMode = HAND_NOMOVEMENT;
+	jaco_point.LimitationsActive = false;
+	jaco_point.Position.Delay = 0.0;
+	jaco_point.Position.Type = ANGULAR_POSITION;
+	jaco_point.Position.Actuators = angles; 
+	jaco_point.Position.HandMode = HAND_NOMOVEMENT;
 
-    //SendBasicTrajectory(jaco_point);
-  }
-
-
-  void JacoArmTrajectoryController::execute_trajectory(const control_msgs::FollowJointTrajectoryGoalConstPtr &goal){
-    bool first = true;
-    BOOST_FOREACH(trajectory_msgs::JointTrajectoryPoint point, goal->trajectory.points){
-      send_trajectory_point(goal->trajectory.joint_names, point, first);
-      first = false;
+	SendBasicTrajectory(jaco_point);
+      }
     }
 
     ros::Rate rate(10);

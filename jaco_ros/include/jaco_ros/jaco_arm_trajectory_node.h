@@ -28,7 +28,6 @@ public:
   JacoArmTrajectoryController(ros::NodeHandle nh, ros::NodeHandle pnh);
   virtual ~JacoArmTrajectoryController();
   void update_joint_states();
-  void send_trajectory_point(const std::vector<std::string>& joint_names, trajectory_msgs::JointTrajectoryPoint point, bool clear_trajectory = false);
   void execute_trajectory(const control_msgs::FollowJointTrajectoryGoalConstPtr &goal);
   void execute_gripper(const control_msgs::GripperCommandGoalConstPtr &goal);
 
