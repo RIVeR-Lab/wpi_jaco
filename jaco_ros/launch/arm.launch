@@ -2,6 +2,8 @@
   
   <node name="jaco_hw" pkg="jaco_ros" type="jaco_arm_trajectory_node" output="screen">
     <remap from="joint_states" to="/aero/joint_states"/>
+    <remap from="fingers_controller" to="/fingers_controller/gripper"/>
+    <remap from="arm_controller" to="/arm_controller/trajectory"/>
   </node>
 
 </launch>

@@ -6,7 +6,7 @@
 
 namespace jaco_arm{
 
-  JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros::NodeHandle pnh) : trajectory_server_(nh, "arm_trajectory", boost::bind(&JacoArmTrajectoryController::execute_trajectory, this, _1), false), gripper_server_(nh, "arm_gripper", boost::bind(&JacoArmTrajectoryController::execute_gripper, this, _1), false)
+  JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros::NodeHandle pnh) : trajectory_server_(nh, "arm_controller", boost::bind(&JacoArmTrajectoryController::execute_trajectory, this, _1), false), gripper_server_(nh, "fingers_controller", boost::bind(&JacoArmTrajectoryController::execute_gripper, this, _1), false)
   {
     InitAPI();
     ros::Duration(1.0).sleep();
@@ -32,6 +32,8 @@ namespace jaco_arm{
 
     joint_state_pub_ = nh.advertise<sensor_msgs::JointState>("joint_states", 1);
     update_joint_states();
+    trajectory_server_.start();
+    gripper_server_.start();
     joint_state_timer_ = nh.createTimer(ros::Duration(0.05), boost::bind(&JacoArmTrajectoryController::update_joint_states, this));
   }
   JacoArmTrajectoryController::~JacoArmTrajectoryController() 
@@ -81,11 +83,9 @@ namespace jaco_arm{
     sensor_msgs::JointState state;
     state.header.stamp = ros::Time::now();
     state.name = joint_names;
-    for(int i = 0; i<NUM_JOINTS; ++i){
-      state.position[i] = joint_pos[i];
-      state.velocity[i] = joint_vel[i];
-      state.effort[i] = joint_eff[i];
-    }
+    state.position.assign(joint_pos, joint_pos+NUM_JOINTS);
+    state.velocity.assign(joint_pos, joint_vel+NUM_JOINTS);
+    state.effort.assign(joint_pos, joint_eff+NUM_JOINTS);
     joint_state_pub_.publish(state);
   }
 
