@@ -98,11 +98,13 @@ namespace jaco_arm{
       SetAngularControl();
     }
 
+    ROS_INFO("Trajectory Point");
     double joint_cmd[NUM_JACO_JOINTS];
     for(int trajectory_index = 0; trajectory_index<trajectory_joint_names.size(); ++trajectory_index){
       std::string joint_name = trajectory_joint_names[trajectory_index];
       int joint_index = std::distance(joint_names.begin(), std::find(joint_names.begin(), joint_names.end(), joint_name));
-      if(joint_index >=0 && joint_index < joint_names.size()){
+      if(joint_index >=0 && joint_index < NUM_JACO_JOINTS){
+        ROS_INFO("%s: (%d -> %d) = %f", joint_name.c_str(), trajectory_index, joint_index, point.positions[trajectory_index]);
 	joint_cmd[joint_index] = point.positions[trajectory_index];
       }
     }
@@ -126,7 +128,7 @@ namespace jaco_arm{
     jaco_point.Position.Actuators = angles; 
     jaco_point.Position.HandMode = HAND_NOMOVEMENT;
 
-    SendBasicTrajectory(jaco_point);
+    //SendBasicTrajectory(jaco_point);
   }
 
 
@@ -148,6 +150,7 @@ namespace jaco_arm{
 	GetGlobalTrajectoryInfo(Trajectory_Info);
 	trajectory_size = Trajectory_Info.TrajectoryCount;
       }
+      ROS_INFO("%f, %f, %f, %f, %f, %f", joint_pos[0], joint_pos[1], joint_pos[2], joint_pos[3], joint_pos[4], joint_pos[5]);
       rate.sleep();
     }
     ROS_INFO("Trajectory Control Complete.");
