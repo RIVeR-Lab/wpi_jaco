@@ -20,3 +20,4 @@ fingers_controller:
 #    - jaco_joint_finger_2
 #    - jaco_joint_finger_3
   joint: jaco_joint_finger_1
+  stall_velocity_threshold: 0.0

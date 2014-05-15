@@ -11,7 +11,7 @@ int main( int argc, char** argv ){
   ros::NodeHandle pnh("~");
 
   double rate;
-  pnh.param<double>("controller_rate", rate, 20);
+  pnh.param<double>("controller_rate", rate, 10);
 
   jaco_arm::JacoArm robot;
   controller_manager::ControllerManager cm(&robot, nh);

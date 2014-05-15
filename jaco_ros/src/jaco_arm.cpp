@@ -102,6 +102,7 @@ namespace jaco_arm{
     angles.Actuator5 = joint_cmd[4]*RAD_TO_DEG;
     angles.Actuator6 = joint_cmd[5]*RAD_TO_DEG;
     //TODO Gripper controller only supports one joint
+    ROS_INFO("%f", finger_cmd[0]);
     fingers.Finger1 = finger_cmd[0]*RAD_TO_DEG;
     fingers.Finger2 = finger_cmd[0]*RAD_TO_DEG;
     fingers.Finger3 = finger_cmd[0]*RAD_TO_DEG;
@@ -120,7 +121,7 @@ namespace jaco_arm{
     point.Position.HandMode = POSITION_MODE;
     point.Position.Fingers = fingers;
 
-    SendAdvanceTrajectory(point);
+    SendBasicTrajectory(point);
   }
 
 }

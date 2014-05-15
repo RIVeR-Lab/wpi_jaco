@@ -1,13 +1,7 @@
 <launch>
-  <node name="jaco_hw" pkg="jaco_ros" type="jaco_arm_node" output="screen">
-    <param name="controller_rate" value="20.0" />
+  
+  <node name="jaco_hw" pkg="jaco_ros" type="jaco_arm_trajectory_node" output="screen">
+    <remap from="joint_states" to="/aero/joint_states"/>
   </node>
-
-  <rosparam file="$(find jaco_ros)/config/jaco_control.yaml" command="load"/>
-  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen" args="joint_state_controller fingers_controller arm_controller">
-  </node>
-  <!--<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />-->
-
 
 </launch>

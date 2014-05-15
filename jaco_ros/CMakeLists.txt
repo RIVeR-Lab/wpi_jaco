@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   hardware_interface
   jaco_sdk
   roscpp
+  actionlib
 )
 
 ## System dependencies are found with CMake's conventions
@@ -83,7 +84,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
  INCLUDE_DIRS include
  LIBRARIES jaco_arm_hw
- CATKIN_DEPENDS controller_manager hardware_interface jaco_sdk roscpp
+ CATKIN_DEPENDS controller_manager hardware_interface jaco_sdk roscpp actionlib
 #  DEPENDS system_lib
 )
 
@@ -111,6 +112,11 @@ target_link_libraries(jaco_arm_hw
 add_executable(jaco_arm_node src/jaco_arm_node.cpp)
 target_link_libraries(jaco_arm_node
   jaco_arm_hw
+  ${catkin_LIBRARIES}
+)
+
+add_executable(jaco_arm_trajectory_node src/jaco_arm_trajectory_node.cpp)
+target_link_libraries(jaco_arm_trajectory_node
   ${catkin_LIBRARIES}
 )
 
