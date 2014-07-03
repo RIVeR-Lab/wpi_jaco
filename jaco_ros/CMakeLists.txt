@@ -5,11 +5,16 @@ project(jaco_ros)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+  actionlib
+  actionlib_msgs
   controller_manager
+  genmsg
+  geometry_msgs
   hardware_interface
   jaco_sdk
+  message_generation
   roscpp
-  actionlib
+  sensor_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -51,6 +56,10 @@ find_package(catkin REQUIRED COMPONENTS
 #   Message1.msg
 #   Message2.msg
 # )
+add_message_files(
+  FILES
+  JacoFingerVel.msg
+)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -58,6 +67,12 @@ find_package(catkin REQUIRED COMPONENTS
 #   Service1.srv
 #   Service2.srv
 # )
+add_service_files(
+  FILES
+  EulerToQuaternion.srv
+  JacoFK.srv
+  QuaternionToEuler.srv
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -65,12 +80,17 @@ find_package(catkin REQUIRED COMPONENTS
 #   Action1.action
 #   Action2.action
 # )
+add_action_files(
+  FILES
+  ExecuteGrasp.action
+)
 
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
 #   std_msgs  # Or other packages containing msgs
 # )
+generate_messages(DEPENDENCIES actionlib_msgs geometry_msgs)
 
 ###################################
 ## catkin specific configuration ##
@@ -84,7 +104,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
  INCLUDE_DIRS include
  LIBRARIES jaco_arm_hw
- CATKIN_DEPENDS controller_manager hardware_interface jaco_sdk roscpp actionlib
+ CATKIN_DEPENDS actionlib controller_manager geometry_msgs hardware_interface jaco_sdk message_runtime roscpp sensor_msgs
 #  DEPENDS system_lib
 )
 
@@ -100,10 +120,8 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-## Declare a cpp library
-add_library(jaco_arm_hw
-  src/jaco_arm.cpp
-)
+## libraries
+add_library(jaco_arm_hw src/jaco_arm.cpp)
 target_link_libraries(jaco_arm_hw
   ${catkin_LIBRARIES}
 )
@@ -116,7 +134,20 @@ target_link_libraries(jaco_arm_node
 )
 
 add_executable(jaco_arm_trajectory_node src/jaco_arm_trajectory_node.cpp)
+add_dependencies(jaco_arm_trajectory_node ${PROJECT_NAME}_generate_messages_cpp)
 target_link_libraries(jaco_arm_trajectory_node
+  ${catkin_LIBRARIES}
+)
+
+add_executable(jaco_kinematics src/jaco_kinematics.cpp)
+add_dependencies(jaco_kinematics ${PROJECT_NAME}_generate_messages_cpp)
+target_link_libraries(jaco_kinematics
+  ${catkin_LIBRARIES}
+)
+
+add_executable(jaco_conversions src/jaco_conversions.cpp)
+add_dependencies(jaco_conversions ${PROJECT_NAME}_generate_messages_cpp)
+target_link_libraries(jaco_conversions
   ${catkin_LIBRARIES}
 )
 
