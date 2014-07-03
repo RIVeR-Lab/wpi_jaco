@@ -28,20 +28,20 @@ namespace jaco_arm{
 class JacoArmTrajectoryController
 {
 private:
-	// Messages
+  // Messages
   ros::Publisher joint_state_pub_;
   ros::Subscriber cartesianCmdVelSubscriber; //subscriber to cartesian velocity commands
   ros::Subscriber fingerCmdVelSubscriber; //subscriber for finger velocity commands
   ros::Subscriber positionCmdSubscriber; //subscriber for single cartesian position commands
 
-	// Services
+  // Services
   ros::ServiceClient jaco_fk_client;
   ros::ServiceClient qe_client;
   ros::ServiceClient eq_client;
   
   ros::Timer joint_state_timer_;
 
-	// Actionlib
+  // Actionlib
   actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> trajectory_server_;
   actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> smooth_trajectory_server_;
   actionlib::SimpleActionServer<control_msgs::GripperCommandAction> gripper_server_;
@@ -50,11 +50,11 @@ private:
   boost::recursive_mutex api_mutex;
 
 public:
-	/**
-	 * Constructor
-	 * @param nh ROS node handle
-	 * @param pnh ROS private node handle
-	 */
+  /**
+   * Constructor
+   * @param nh ROS node handle
+   * @param pnh ROS private node handle
+   */
   JacoArmTrajectoryController(ros::NodeHandle nh, ros::NodeHandle pnh);
   
   /**
@@ -121,10 +121,10 @@ private:
   void moveFingers(jaco_ros::JacoFingerVel msg);
   
   /**
-	 * Callback for single cartesian position commands
-	 * \param msg cartesian position command for the end effector
-	 */
-	void positionCmdCallback(const geometry_msgs::Pose::ConstPtr& msg);
+   * Callback for single cartesian position commands
+   * \param msg cartesian position command for the end effector
+   */
+  void positionCmdCallback(const geometry_msgs::Pose::ConstPtr& msg);
 };
 
 }

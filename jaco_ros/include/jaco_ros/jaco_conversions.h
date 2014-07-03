@@ -26,7 +26,7 @@ public:
 	 * @return true on success
 	 */
 	bool callEQ(jaco_ros::EulerToQuaternion::Request &req, jaco_ros::EulerToQuaternion::Response &res);
-	
+
 	/**
 	 * Callback for the Quaternion to Euler service
 	 * @param req service request

@@ -28,14 +28,14 @@ JacoKinematics::JacoKinematics(void)
 	ds[3] = -D4B;
 	ds[4] = -D5B;
 	ds[5] = -D6B;
-	
+
 	as.resize(6);
 	for (unsigned int i = 0; i < 6; i ++)
 	{
 		as[i] = 0;
 	}
 	as[1] = D2;
-	
+
 	alphas.resize(6);
 	alphas[0] = PI/2.0;
 	alphas[1] = PI;
@@ -46,7 +46,7 @@ JacoKinematics::JacoKinematics(void)
 
 	//advertise service
 	fkServer = n.advertiseService("jaco_fk", &JacoKinematics::callFK, this);
-	
+
 	//initialize publisher for debugging
 	visPublisher = n.advertise<geometry_msgs::PoseStamped>("fk_pose_debug", 1, this);
 }
@@ -58,19 +58,13 @@ bool JacoKinematics::callFK(jaco_ros::JacoFK::Request &req, jaco_ros::JacoFK::Re
 		ROS_INFO("Not enough joints specified, could not calculate forward kinematics");
 		return false;
 	}
-	
+
 	res.handPose = calculateFK(req.joints);
-	
+
 	//debugging:
 	visPublisher.publish(res.handPose);
 	double roll, pitch, yaw;
-	
-	/* //Conversion through ROS:
-	tf::Quaternion tempQuat;
-	tf::quaternionMsgToTF(res.handPose.pose.orientation, tempQuat);
-	//tf::Matrix3x3(tempQuat).getEulerYPR(yaw, pitch, roll);
-	tf::Matrix3x3(tempQuat).getRPY(roll, pitch, yaw);
-	*/
+
 	//Manual conversion:
 	float q1 = res.handPose.pose.orientation.w;
 	float q2 = res.handPose.pose.orientation.x;
@@ -84,9 +78,9 @@ bool JacoKinematics::callFK(jaco_ros::JacoFK::Request &req, jaco_ros::JacoFK::Re
 	roll = atan2(-m23, m33);
 	pitch = atan2(m13, sqrt(1 - pow(m13, 2)));
 	yaw = atan2(-m12, m11);
-	
+
 	ROS_INFO("rpy: %f, %f, %f", roll, pitch, yaw);
-	
+
 	return true;
 }
 
@@ -97,7 +91,7 @@ geometry_msgs::PoseStamped JacoKinematics::calculateFK(vector<float> joints)
 	tf::Quaternion rotQuat(0, 0, 0, 0);
 	tf::Matrix3x3 rotMat(1, 0, 0, 0, 1, 0, 0, 0, 1);
 	tf::Vector3 trans(0, 0, 0);
-	
+
 	//initialize empty transformation
 	rotMat.getRotation(rotQuat);	
 	transform.setRotation(rotQuat);
@@ -129,7 +123,7 @@ geometry_msgs::PoseStamped JacoKinematics::calculateFK(vector<float> joints)
 	handPose.pose.orientation.y = transform.getRotation().y();
 	handPose.pose.orientation.z = transform.getRotation().z();
 	handPose.pose.orientation.w = transform.getRotation().w();
-	
+
 	return handPose;
 }
 
@@ -139,33 +133,33 @@ tf::Transform JacoKinematics::generateTransform(float theta, float d, float a, f
 	tf::Quaternion rotQuat(0, 0, 0, 0);	//Rotation quaternion
 	tf::Matrix3x3 rotMat(0, 0, 0, 0, 0, 0, 0, 0, 0);	//Rotation matrix
 	tf::Vector3 trans(0, 0, 0);	//Translation vector
-	
+
 	//calculate rotation matrix
 	rotMat.setValue(cos(theta),	-sin(theta)*cos(alpha),	sin(theta)*sin(alpha), 
 					sin(theta),	cos(theta)*cos(alpha),	-cos(theta)*sin(alpha), 
-					0, 			sin(alpha), 			cos(alpha)				);
+					0,			sin(alpha),				cos(alpha)				);
 
 	//calculate translation vector
 	trans.setValue(	a*cos(theta),
 					a*sin(theta),
 					d			);
-	
+
 	//get rotation as a quaternion
 	rotMat.getRotation(rotQuat);
-	
+
 	//fill transformation
 	transform.setRotation(rotQuat);
 	transform.setOrigin(trans);
-	
+
 	return transform;
 }
 
 int main (int argc, char **argv)
 {
-  ros::init(argc, argv, "jaco_kinematics");
-  
-  JacoKinematics jk;
-  
-  ros::spin();
+	ros::init(argc, argv, "jaco_kinematics");
+
+	JacoKinematics jk;
+
+	ros::spin();
 }
 

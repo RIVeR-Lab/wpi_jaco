@@ -35,7 +35,7 @@ public:
 	 * @return true on success
 	 */
 	bool callFK(jaco_ros::JacoFK::Request &req, jaco_ros::JacoFK::Response &res);
-	
+
 	/**
 	 * Calculates the forward kinematics for the JACO arm
 	 * @param joints vector of joint angles from the arm
@@ -57,7 +57,7 @@ private:
 	ros::NodeHandle n;
 	ros::ServiceServer fkServer;
 	ros::Publisher visPublisher;	//pose publisher for debugging and visualization
-	
+
 	//robot parameters
 	std::vector<float> ds;
 	std::vector<float> as;
