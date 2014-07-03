@@ -1,0 +1,10 @@
+# Define the goal
+bool closeGripper			# true to close gripper, false to open
+bool limitFingerVelocity	# true if specific finger velocities are specified
+jaco_ros/JacoFingerVel fingerVelocities	# defined finger velocities to use only if limitFingerVelocity is true
+---
+# Define the result
+float32[] fingerJoints		# positions of finger joints when the action is completed
+---
+# Define feedback message
+

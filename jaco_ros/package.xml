@@ -40,16 +40,28 @@
   <!-- Use test_depend for packages you need only for testing: -->
   <!--   <test_depend>gtest</test_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
+  
   <build_depend>controller_manager</build_depend>
   <build_depend>hardware_interface</build_depend>
   <build_depend>jaco_sdk</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>actionlib</build_depend>
+  <build_depend>actionlib_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>message_generation</build_depend>
+  
   <run_depend>controller_manager</run_depend>
   <run_depend>hardware_interface</run_depend>
   <run_depend>jaco_sdk</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>actionlib</run_depend>
+  <run_depend>actionlib_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>message_runtime</run_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
