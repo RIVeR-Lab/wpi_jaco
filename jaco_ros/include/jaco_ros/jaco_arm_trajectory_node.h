@@ -7,6 +7,7 @@
 #include <boost/thread/recursive_mutex.hpp>
 #include <control_msgs/FollowJointTrajectoryAction.h>
 #include <control_msgs/GripperCommandAction.h>
+#include <ecl/geometry.hpp>
 #include <geometry_msgs/Twist.h>
 #include <jaco_ros/ExecuteGraspAction.h>
 #include <jaco_ros/EulerToQuaternion.h>
@@ -18,10 +19,19 @@
 #define NUM_JACO_FINGER_JOINTS 3
 #define NUM_JOINTS (NUM_JACO_JOINTS+NUM_JACO_FINGER_JOINTS)
 
+#define LARGE_ACTUATOR_VELOCITY 0.8378 //maximum velocity of large actuator (joints 1-3)
+#define SMALL_ACTUATOR_VELOCITY 1.0472 //maximum velocity of small actuator (joints 4-6)
+#define TIME_SCALING_FACTOR 1.5 //keep the trajectory at a followable speed
+
 #define DEG_TO_RAD (M_PI/180)
 #define RAD_TO_DEG (180/M_PI)
 
-#define MAX_FINGER_VEL 30
+#define MAX_FINGER_VEL 30 //maximum finger actuator velocity
+
+//gains for trajectory follower
+#define KP 300.0
+#define KV 20.0
+#define ERROR_THRESHOLD .03 //threshold in radians for combined joint error to consider motion a success
 
 namespace jaco_arm{
 
@@ -44,6 +54,7 @@ private:
   // Actionlib
   actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> trajectory_server_;
   actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> smooth_trajectory_server_;
+  actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> smooth_joint_trajectory_server;
   actionlib::SimpleActionServer<control_msgs::GripperCommandAction> gripper_server_;
   actionlib::SimpleActionServer<jaco_ros::ExecuteGraspAction> executeGraspServer;
 
@@ -81,6 +92,14 @@ public:
    * @param goal action goal
    */
   void execute_smooth_trajectory(const control_msgs::FollowJointTrajectoryGoalConstPtr &goal);
+  
+  /**
+   * Callback for the smooth_joint_trajectory_server, executes a smoothed trajectory
+   * by interpolating a set of joint trajectory points, smoothing the corners, and
+   * and following the trajectory with a velocity controller
+   * @param goal action goal
+   */
+  void execute_joint_trajectory(const control_msgs::FollowJointTrajectoryGoalConstPtr &goal);
   
   /**
    * Callback for the gripper_server_, executes a gripper command

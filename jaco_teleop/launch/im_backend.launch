@@ -1,0 +1,5 @@
+<launch>
+  
+  <node pkg="jaco_teleop" type="jaco_interactive_manipulation" name="jaco_interactive_manipulation" output="screen" />
+
+</launch>

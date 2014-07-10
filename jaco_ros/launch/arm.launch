@@ -5,6 +5,7 @@
     <remap from="fingers_controller" to="/fingers_controller/gripper"/>
     <remap from="arm_controller" to="/arm_controller/trajectory"/>
     <remap from="smooth_arm_controller" to="/smooth_arm_controller/trajectory"/>
+    <remap from="joint_velocity_controller" to="/joint_velocity_controller/trajectory"/>
   </node>
   
   <!-- Supporting nodes -->

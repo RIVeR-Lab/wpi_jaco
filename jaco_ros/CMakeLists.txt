@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib
   actionlib_msgs
   controller_manager
+  ecl_geometry
   genmsg
   geometry_msgs
   hardware_interface
@@ -104,7 +105,7 @@ generate_messages(DEPENDENCIES actionlib_msgs geometry_msgs)
 catkin_package(
  INCLUDE_DIRS include
  LIBRARIES jaco_arm_hw
- CATKIN_DEPENDS actionlib controller_manager geometry_msgs hardware_interface jaco_sdk message_runtime roscpp sensor_msgs
+ CATKIN_DEPENDS actionlib controller_manager ecl_geometry geometry_msgs hardware_interface jaco_sdk message_runtime roscpp sensor_msgs
 #  DEPENDS system_lib
 )
 

@@ -1,0 +1,9 @@
+<launch>
+  
+  <node name="jaco_key_teleop" pkg="jaco_teleop" type="jaco_key_teleop" output="screen">
+    <param name="linear_throttle_factor" type="double" value="1.0" />
+    <param name="angular_throttle_factor" type="double" value="1.0" />
+    <param name="finger_throttle_factor" type="double" value="1.0" />
+  </node>
+
+</launch>
