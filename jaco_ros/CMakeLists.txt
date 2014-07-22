@@ -84,6 +84,7 @@ add_service_files(
 add_action_files(
   FILES
   ExecuteGrasp.action
+  ExecutePickup.action
 )
 
 ## Generate added messages and services with any dependencies listed here

@@ -10,6 +10,7 @@
 #include <ecl/geometry.hpp>
 #include <geometry_msgs/Twist.h>
 #include <jaco_ros/ExecuteGraspAction.h>
+#include <jaco_ros/ExecutePickupAction.h>
 #include <jaco_ros/EulerToQuaternion.h>
 #include <jaco_ros/JacoFingerVel.h>
 #include <jaco_ros/JacoFK.h>
@@ -19,14 +20,17 @@
 #define NUM_JACO_FINGER_JOINTS 3
 #define NUM_JOINTS (NUM_JACO_JOINTS+NUM_JACO_FINGER_JOINTS)
 
-#define LARGE_ACTUATOR_VELOCITY 0.8378 //maximum velocity of large actuator (joints 1-3)
-#define SMALL_ACTUATOR_VELOCITY 1.0472 //maximum velocity of small actuator (joints 4-6)
+#define LARGE_ACTUATOR_VELOCITY 0.8378 //maximum velocity of large actuator (joints 1-3) (rad/s)
+#define SMALL_ACTUATOR_VELOCITY 1.0472 //maximum velocity of small actuator (joints 4-6) (rad/s)
 #define TIME_SCALING_FACTOR 1.5 //keep the trajectory at a followable speed
 
 #define DEG_TO_RAD (M_PI/180)
 #define RAD_TO_DEG (180/M_PI)
 
 #define MAX_FINGER_VEL 30 //maximum finger actuator velocity
+#define DEFAULT_LIFT_VEL .1 //the default velocity for lifting objects during pickup (m/s)
+#define LIFT_HEIGHT .15 //height for object pickup (m)
+#define LIFT_TIMEOUT 5 //timeout for pickup action (s)
 
 //gains for trajectory follower
 #define KP 300.0
@@ -57,6 +61,7 @@ private:
   actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> smooth_joint_trajectory_server;
   actionlib::SimpleActionServer<control_msgs::GripperCommandAction> gripper_server_;
   actionlib::SimpleActionServer<jaco_ros::ExecuteGraspAction> executeGraspServer;
+  actionlib::SimpleActionServer<jaco_ros::ExecutePickupAction> executePickupServer;
 
   boost::recursive_mutex api_mutex;
 
@@ -113,6 +118,13 @@ public:
   * @param goal action goal
   */
   void execute_grasp(const jaco_ros::ExecuteGraspGoalConstPtr &goal);
+  
+  /**
+  * Callback for the executePickupServer, lifts the arm while applying input to
+  * keep the gripper closed
+  * @param goal action goal
+  */
+  void execute_pickup(const jaco_ros::ExecutePickupGoalConstPtr &goal);
   
 private:
   std::vector<std::string> joint_names;

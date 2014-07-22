@@ -13,7 +13,8 @@ namespace jaco_arm{
     smooth_trajectory_server_(nh, "smooth_arm_controller", boost::bind(&JacoArmTrajectoryController::execute_smooth_trajectory, this, _1), false),
     smooth_joint_trajectory_server(nh, "joint_velocity_controller", boost::bind(&JacoArmTrajectoryController::execute_joint_trajectory, this, _1), false),
     gripper_server_(nh, "fingers_controller", boost::bind(&JacoArmTrajectoryController::execute_gripper, this, _1), false),
-    executeGraspServer(nh, "jaco_arm/execute_grasp", boost::bind(&JacoArmTrajectoryController::execute_grasp, this, _1), false)
+    executeGraspServer(nh, "jaco_arm/execute_grasp", boost::bind(&JacoArmTrajectoryController::execute_grasp, this, _1), false),
+    executePickupServer(nh, "jaco_arm/execute_pickup", boost::bind(&JacoArmTrajectoryController::execute_pickup, this, _1), false)
   {
     InitAPI();
     ros::Duration(1.0).sleep();
@@ -58,6 +59,7 @@ namespace jaco_arm{
     smooth_joint_trajectory_server.start();
     gripper_server_.start();
     executeGraspServer.start();
+    executePickupServer.start();
     
     joint_state_timer_ = nh.createTimer(ros::Duration(0.0333), boost::bind(&JacoArmTrajectoryController::update_joint_states, this));
   }
@@ -817,6 +819,115 @@ namespace jaco_arm{
     result.fingerJoints.at(2) = joint_pos[8];
     executeGraspServer.setSucceeded(result);
     ROS_INFO("Grasp execution complete");
+  }
+  
+  void JacoArmTrajectoryController::execute_pickup(const jaco_ros::ExecutePickupGoalConstPtr &goal)
+  {
+  	{
+      boost::recursive_mutex::scoped_lock lock(api_mutex);
+      EraseAllTrajectories();
+      StopControlAPI();
+      StartControlAPI();
+      SetCartesianControl();
+    }
+    
+    //get initial end effector height
+    CartesianPosition pos;
+    {
+    	boost::recursive_mutex::scoped_lock lock(api_mutex);
+    	GetCartesianPosition(pos);
+  	}
+  	float initialZ = pos.Coordinates.Z;
+    
+    //populate the velocity command
+    TrajectoryPoint vel;
+    vel.InitStruct();
+    vel.Position.Type = CARTESIAN_VELOCITY;
+    vel.Position.CartesianPosition.X = 0.0;
+    vel.Position.CartesianPosition.Y = 0.0;
+    if (goal->setLiftVelocity)
+	    vel.Position.CartesianPosition.Z = goal->liftVelocity;
+	  else
+	  	vel.Position.CartesianPosition.Z = DEFAULT_LIFT_VEL;
+    vel.Position.CartesianPosition.ThetaX = 0.0;
+    vel.Position.CartesianPosition.ThetaY = 0.0;
+    vel.Position.CartesianPosition.ThetaZ = 0.0;
+    vel.Position.HandMode = VELOCITY_MODE;
+    if (goal->limitFingerVelocity)
+    {
+    	vel.Position.Fingers.Finger1 = fabs(goal->fingerVelocities.finger1Vel);
+    	vel.Position.Fingers.Finger2 = fabs(goal->fingerVelocities.finger2Vel);
+    	vel.Position.Fingers.Finger3 = fabs(goal->fingerVelocities.finger3Vel);
+  	}
+  	else
+  	{
+  		vel.Position.Fingers.Finger1 = MAX_FINGER_VEL;
+  		vel.Position.Fingers.Finger2 = MAX_FINGER_VEL;
+  		vel.Position.Fingers.Finger3 = MAX_FINGER_VEL;
+		}
+    
+    bool finished = false;
+    double startTime = ros::Time::now().toSec();
+		jaco_ros::ExecutePickupResult result;
+		
+		//send the lift and close command until a certain height has been reached, or the
+		//action times out
+    while (!finished)
+    {
+    	update_joint_states();
+    
+    	//check for preempt requests from clients
+      if (executePickupServer.isPreemptRequested() || !ros::ok())
+      {
+        //stop pickup action
+        {
+          boost::recursive_mutex::scoped_lock lock(api_mutex);
+          EraseAllTrajectories();
+          StopControlAPI();
+        }
+        
+        //preempt action server
+        executePickupServer.setPreempted();
+        ROS_INFO("Pickup action server preempted by client");
+        
+        return;
+      }
+    
+    	{
+		  	boost::recursive_mutex::scoped_lock lock(api_mutex);
+				//send the velocity command repeatedly for ~1/60th of a second (teleop publishes
+				//at 60 Hz)
+				EraseAllTrajectories();
+				for (int i = 0; i < 10; i ++)
+				{
+				  SendBasicTrajectory(vel);
+				  usleep(1666);
+				}
+		  
+			  //check position
+		  	GetCartesianPosition(pos);
+			}
+			if (pos.Coordinates.Z - initialZ >= LIFT_HEIGHT)
+			{
+				finished = true;
+				result.success = true;
+			}
+			else if (ros::Time::now().toSec() - startTime >= LIFT_TIMEOUT)
+			{
+				finished = true;
+				result.success = false;
+			}
+	  }
+    
+    //stop arm
+    {
+      boost::recursive_mutex::scoped_lock lock(api_mutex);
+      EraseAllTrajectories();
+      StopControlAPI();
+    }
+    
+    executePickupServer.setSucceeded(result);
+    ROS_INFO("Pickup execution complete");
   }
   
   

@@ -9,7 +9,8 @@
 using namespace std;
 
 JacoInteractiveManipulation::JacoInteractiveManipulation() :
-	acGrasp("jaco_arm/execute_grasp", true)
+	acGrasp("jaco_arm/execute_grasp", true),
+	acPickup("jaco_arm/execute_pickup", true)
 {
 	joints.resize(6);
 
@@ -22,9 +23,10 @@ JacoInteractiveManipulation::JacoInteractiveManipulation() :
 	jacoFkClient = n.serviceClient<jaco_ros::JacoFK>("jaco_fk");
 
 	//actionlib
-	ROS_INFO("Waiting for grasp action server...");
+	ROS_INFO("Waiting for grasp and pickup action servers...");
 	acGrasp.waitForServer();
-	ROS_INFO("Finsihed waiting for grasp action server");
+	acPickup.waitForServer();
+	ROS_INFO("Finsihed waiting for grasp and pickup action servers");
 	
 	lockPose = false;
 
@@ -131,6 +133,7 @@ void JacoInteractiveManipulation::makeHandMarker()
 	interactive_markers::MenuHandler::EntryHandle fingersSubMenuHandle = menuHandler.insert("Fingers");
 	menuHandler.insert(fingersSubMenuHandle, "Grasp", boost::bind(&JacoInteractiveManipulation::processHandMarkerFeedback, this, _1));
 	menuHandler.insert(fingersSubMenuHandle, "Release", boost::bind(&JacoInteractiveManipulation::processHandMarkerFeedback, this, _1));
+	menuHandler.insert("Pickup", boost::bind(&JacoInteractiveManipulation::processHandMarkerFeedback, this, _1));
 	
 	visualization_msgs::InteractiveMarkerControl menuControl;
 	menuControl.interaction_mode = visualization_msgs::InteractiveMarkerControl::MENU;
@@ -174,6 +177,13 @@ void JacoInteractiveManipulation::processHandMarkerFeedback(const visualization_
 				graspGoal.limitFingerVelocity = false;
 				acGrasp.sendGoal(graspGoal);
 			}
+			else if (feedback->menu_entry_id == 4)	//pickup requested
+			{
+				jaco_ros::ExecutePickupGoal pickupGoal;
+				pickupGoal.limitFingerVelocity = false;
+				pickupGoal.setLiftVelocity = false;
+				acPickup.sendGoal(pickupGoal);
+			}
 		}
 	break;
 	
@@ -185,6 +195,7 @@ void JacoInteractiveManipulation::processHandMarkerFeedback(const visualization_
 			if (!lockPose)
 			{
 				acGrasp.cancelAllGoals();
+				acPickup.cancelAllGoals();
 				armPoseCommand.publish(feedback->pose);
 			}
 		}
