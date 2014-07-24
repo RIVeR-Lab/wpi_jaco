@@ -16,8 +16,8 @@ using namespace std;
 jaco_joy_teleop::jaco_joy_teleop()
 {
   // create the ROS topics
-  cmd_vel = node.advertise<geometry_msgs::Twist>("jaco_arm/cmd_vel", 10);
-  finger_vel = node.advertise<jaco_ros::JacoFingerVel>("jaco_arm/finger_cmd_vel", 10);
+  angular_cmd = node.advertise<jaco_msgs::AngularCommand>("jaco_arm/angular_cmd", 10);
+  cartesian_cmd = node.advertise<jaco_msgs::CartesianCommand>("jaco_arm/cartesian_cmd", 10);
   joy_sub = node.subscribe<sensor_msgs::Joy>("joy", 10, &jaco_joy_teleop::joy_cback, this);
 
   // read in throttle values
@@ -49,12 +49,21 @@ jaco_joy_teleop::jaco_joy_teleop()
   	controllerType = ANALOG;
 	}
 
+	//initialize everything
 	stopMessageSentArm = true;
 	stopMessageSentFinger = true;
 	EStopEnabled = false;
 	helpDisplayed = false;
-	
 	mode = ARM_CONTROL;
+	angularCmd.position = false;
+	angularCmd.armCommand = false;
+	angularCmd.fingerCommand = true;
+	angularCmd.repeat = true;
+	angularCmd.fingers.resize(3);
+	cartesianCmd.position = false;
+	cartesianCmd.armCommand = true;
+	cartesianCmd.fingerCommand = false;
+	cartesianCmd.repeat = true;
 	
 	ROS_INFO("JACO joystick teleop started");
 	
@@ -208,45 +217,45 @@ void jaco_joy_teleop::joy_cback(const sensor_msgs::Joy::ConstPtr& joy)
 	{
 	case ARM_CONTROL:
 		// left joystick controls the linear x and y movement
-		twist.linear.x = joy->axes.at(0) * MAX_TRANS_VEL * linear_throttle_factor;
-		twist.linear.y = -joy->axes.at(1) * MAX_TRANS_VEL * linear_throttle_factor;
+		cartesianCmd.arm.linear.x = joy->axes.at(0) * MAX_TRANS_VEL * linear_throttle_factor;
+		cartesianCmd.arm.linear.y = -joy->axes.at(1) * MAX_TRANS_VEL * linear_throttle_factor;
 
 		//triggers control the linear z movement
 		if (controllerType == DIGITAL)
 		{
 			if (joy->buttons.at(7) == 1)
-				twist.linear.z = MAX_TRANS_VEL * linear_throttle_factor;
+				cartesianCmd.arm.linear.z = MAX_TRANS_VEL * linear_throttle_factor;
 			else if (joy->buttons.at(6) == 1)
-				twist.linear.z = -MAX_TRANS_VEL * linear_throttle_factor;
+				cartesianCmd.arm.linear.z = -MAX_TRANS_VEL * linear_throttle_factor;
 			else
-				twist.linear.z = 0.0;
+				cartesianCmd.arm.linear.z = 0.0;
 		}
 		else
 		{
 			if (joy->axes.at(5) < 1.0)
-				twist.linear.z = (0.5 - joy->axes.at(5)/2.0) * MAX_ANG_VEL * angular_throttle_factor;
+				cartesianCmd.arm.linear.z = (0.5 - joy->axes.at(5)/2.0) * MAX_ANG_VEL * angular_throttle_factor;
 			else
-				twist.linear.z = -(0.5 - joy->axes.at(2)/2.0) * MAX_ANG_VEL * angular_throttle_factor;
+				cartesianCmd.arm.linear.z = -(0.5 - joy->axes.at(2)/2.0) * MAX_ANG_VEL * angular_throttle_factor;
 		}
 		
 		//bumpers control roll
 		if (joy->buttons.at(5) == 1)
-			twist.angular.z = MAX_ANG_VEL * angular_throttle_factor;
+			cartesianCmd.arm.angular.z = MAX_ANG_VEL * angular_throttle_factor;
 		else if (joy->buttons.at(4) == 1)
-		  twist.angular.z = -MAX_ANG_VEL * angular_throttle_factor;
+		  cartesianCmd.arm.angular.z = -MAX_ANG_VEL * angular_throttle_factor;
 		else
-			twist.angular.z = 0.0;
+			cartesianCmd.arm.angular.z = 0.0;
 		
 		//right joystick controls pitch and yaw
 		if (controllerType == DIGITAL)
 		{
-			twist.angular.x = -joy->axes.at(3) * MAX_ANG_VEL * angular_throttle_factor;
-			twist.angular.y = joy->axes.at(2) * MAX_ANG_VEL * angular_throttle_factor;
+			cartesianCmd.arm.angular.x = -joy->axes.at(3) * MAX_ANG_VEL * angular_throttle_factor;
+			cartesianCmd.arm.angular.y = joy->axes.at(2) * MAX_ANG_VEL * angular_throttle_factor;
 		}
 		else
 		{
-			twist.angular.x = -joy->axes.at(4) * MAX_ANG_VEL * angular_throttle_factor;
-			twist.angular.y = joy->axes.at(3) * MAX_ANG_VEL * angular_throttle_factor;
+			cartesianCmd.arm.angular.x = -joy->axes.at(4) * MAX_ANG_VEL * angular_throttle_factor;
+			cartesianCmd.arm.angular.y = joy->axes.at(3) * MAX_ANG_VEL * angular_throttle_factor;
 		}
 		
 		//mode switching
@@ -258,13 +267,13 @@ void jaco_joy_teleop::joy_cback(const sensor_msgs::Joy::ConstPtr& joy)
 		if (joy->buttons.at(buttonIndex) == 1)
 		{
 			//cancel trajectory and switch to finger control mode
-			twist.linear.x = 0.0;
-			twist.linear.y = 0.0;
-			twist.linear.z = 0.0;
-			twist.angular.x = 0.0;
-			twist.angular.y = 0.0;
-			twist.angular.z = 0.0;
-			cmd_vel.publish(twist);
+			cartesianCmd.arm.linear.x = 0.0;
+			cartesianCmd.arm.linear.y = 0.0;
+			cartesianCmd.arm.linear.z = 0.0;
+			cartesianCmd.arm.angular.x = 0.0;
+			cartesianCmd.arm.angular.y = 0.0;
+			cartesianCmd.arm.angular.z = 0.0;
+			cartesian_cmd.publish(cartesianCmd);
 			mode = FINGER_CONTROL;
 			
 			ROS_INFO("Activated finger control mode");
@@ -276,52 +285,52 @@ void jaco_joy_teleop::joy_cback(const sensor_msgs::Joy::ConstPtr& joy)
 			//individual finger control
 			//thumb controlled by right thumbstick
 			if (controllerType == DIGITAL)
-				fingerVel.finger1Vel = -joy->axes.at(3) * MAX_FINGER_VEL * finger_throttle_factor;
+				angularCmd.fingers[0] = -joy->axes.at(3) * MAX_FINGER_VEL * finger_throttle_factor;
 			else
-				fingerVel.finger1Vel = -joy->axes.at(4) * MAX_FINGER_VEL * finger_throttle_factor;
+				angularCmd.fingers[0] = -joy->axes.at(4) * MAX_FINGER_VEL * finger_throttle_factor;
 		
 			//top finger controlled by left triggers
 			if (controllerType == DIGITAL)
 			{
 				if (joy->buttons.at(4) == 1)
-					fingerVel.finger2Vel = -MAX_FINGER_VEL * finger_throttle_factor;
+					angularCmd.fingers[1] = -MAX_FINGER_VEL * finger_throttle_factor;
 				else if (joy->buttons.at(6) == 1)
-					fingerVel.finger2Vel = MAX_FINGER_VEL * finger_throttle_factor;
+					angularCmd.fingers[1] = MAX_FINGER_VEL * finger_throttle_factor;
 				else
-					fingerVel.finger2Vel = 0.0;
+					angularCmd.fingers[1] = 0.0;
 			}
 			else
 			{
 				if (joy->buttons.at(4) == 1)
-					fingerVel.finger2Vel = -MAX_FINGER_VEL * finger_throttle_factor;
+					angularCmd.fingers[1] = -MAX_FINGER_VEL * finger_throttle_factor;
 				else
-					fingerVel.finger2Vel = (0.5 - joy->axes.at(2)/2.0) * MAX_FINGER_VEL * finger_throttle_factor;
+					angularCmd.fingers[1] = (0.5 - joy->axes.at(2)/2.0) * MAX_FINGER_VEL * finger_throttle_factor;
 			}
 		
 			//bottom finger controlled by right bumpers
 			if (controllerType == DIGITAL)
 			{
 				if (joy->buttons.at(5) == 1)
-					fingerVel.finger3Vel = -MAX_FINGER_VEL * finger_throttle_factor;
+					angularCmd.fingers[2] = -MAX_FINGER_VEL * finger_throttle_factor;
 				else if (joy->buttons.at(7) == 1)
-					fingerVel.finger3Vel = MAX_FINGER_VEL * finger_throttle_factor;
+					angularCmd.fingers[2] = MAX_FINGER_VEL * finger_throttle_factor;
 				else
-					fingerVel.finger3Vel = 0.0;
+					angularCmd.fingers[2] = 0.0;
 			}
 			else
 			{
 				if (joy->buttons.at(5) == 1)
-					fingerVel.finger3Vel = -MAX_FINGER_VEL * finger_throttle_factor;
+					angularCmd.fingers[2] = -MAX_FINGER_VEL * finger_throttle_factor;
 				else
-					fingerVel.finger3Vel = (0.5 - joy->axes.at(5)/2.0) * MAX_FINGER_VEL * finger_throttle_factor;
+					angularCmd.fingers[2] = (0.5 - joy->axes.at(5)/2.0) * MAX_FINGER_VEL * finger_throttle_factor;
 			}
 		}
 		else
 		{
 			//control full gripper (outprioritizes individual finger control)
-			fingerVel.finger1Vel = -joy->axes.at(1) * MAX_FINGER_VEL * finger_throttle_factor;
-			fingerVel.finger2Vel = fingerVel.finger1Vel;
-			fingerVel.finger3Vel = fingerVel.finger1Vel;
+			angularCmd.fingers[0] = -joy->axes.at(1) * MAX_FINGER_VEL * finger_throttle_factor;
+			angularCmd.fingers[1] = angularCmd.fingers[0];
+			angularCmd.fingers[2] = angularCmd.fingers[0];
 		}
 	
 		//mode switching
@@ -333,10 +342,10 @@ void jaco_joy_teleop::joy_cback(const sensor_msgs::Joy::ConstPtr& joy)
 		if (joy->buttons.at(buttonIndex) == 1)
 		{
 			//cancel trajectory and switch to arm control mode
-			fingerVel.finger1Vel = 0.0;
-			fingerVel.finger2Vel = 0.0;
-			fingerVel.finger3Vel = 0.0;
-			finger_vel.publish(fingerVel);
+			angularCmd.fingers[0] = 0.0;
+			angularCmd.fingers[1] = 0.0;
+			angularCmd.fingers[2] = 0.0;
+			angular_cmd.publish(angularCmd);
 			mode = ARM_CONTROL;
 		
 			ROS_INFO("Activated arm control mode");
@@ -350,18 +359,18 @@ void jaco_joy_teleop::publish_velocity()
 	//publish stop commands if EStop is enabled
 	if (EStopEnabled)
 	{
-		twist.linear.x = 0.0;
-		twist.linear.y = 0.0;
-		twist.linear.z = 0.0;
-		twist.angular.x = 0.0;
-		twist.angular.y = 0.0;
-		twist.angular.z = 0.0;
-		fingerVel.finger1Vel = 0.0;
-		fingerVel.finger2Vel = 0.0;
-		fingerVel.finger3Vel = 0.0;
+		cartesianCmd.arm.linear.x = 0.0;
+		cartesianCmd.arm.linear.y = 0.0;
+		cartesianCmd.arm.linear.z = 0.0;
+		cartesianCmd.arm.angular.x = 0.0;
+		cartesianCmd.arm.angular.y = 0.0;
+		cartesianCmd.arm.angular.z = 0.0;
+		angularCmd.fingers[0] = 0.0;
+		angularCmd.fingers[1] = 0.0;
+		angularCmd.fingers[2] = 0.0;
 		
-		cmd_vel.publish(twist);
-		finger_vel.publish(fingerVel);
+		cartesian_cmd.publish(cartesianCmd);
+		angular_cmd.publish(angularCmd);
 		
 		return;
 	}
@@ -371,37 +380,37 @@ void jaco_joy_teleop::publish_velocity()
 	case ARM_CONTROL:
 		//only publish stop message once; this allows other nodes to publish velocities
 		//while the controller is not being used
-		if (twist.linear.x == 0.0 && twist.linear.y == 0.0 && twist.linear.z == 0.0
-			&& twist.angular.x == 0.0	&& twist.angular.y == 0.0 && twist.angular.z == 0.0)
+		if (cartesianCmd.arm.linear.x == 0.0 && cartesianCmd.arm.linear.y == 0.0 && cartesianCmd.arm.linear.z == 0.0
+			&& cartesianCmd.arm.angular.x == 0.0	&& cartesianCmd.arm.angular.y == 0.0 && cartesianCmd.arm.angular.z == 0.0)
 		{
 			if (!stopMessageSentArm)
 			{
-				cmd_vel.publish(twist);
+				cartesian_cmd.publish(cartesianCmd);
 				stopMessageSentArm = true;
 			}
 		}
 		else
 		{
 			// send the twist command
-			cmd_vel.publish(twist);
+			cartesian_cmd.publish(cartesianCmd);
 			stopMessageSentArm = false;
 		}
 	break;
 	case FINGER_CONTROL:
 		//only publish stop message once; this allows other nodes to publish velocities
 		//while the controller is not being used
-		if (fingerVel.finger1Vel == 0.0 && fingerVel.finger2Vel == 0.0 && fingerVel.finger3Vel == 0.0)
+		if (angularCmd.fingers[0] == 0.0 && angularCmd.fingers[1] == 0.0 && angularCmd.fingers[2] == 0.0)
 		{
 			if (!stopMessageSentFinger)
 			{
-				finger_vel.publish(fingerVel);
+				angular_cmd.publish(angularCmd);
 				stopMessageSentFinger = true;
 			}
 		}
 		else
 		{
 			//send the finger velocity command
-			finger_vel.publish(fingerVel);
+			angular_cmd.publish(angularCmd);
 			stopMessageSentFinger = false;
 		}
 	break;

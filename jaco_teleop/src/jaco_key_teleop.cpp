@@ -47,8 +47,8 @@ struct termios cooked, raw;
 jaco_key_teleop::jaco_key_teleop()
 {
 	// create the ROS topics
-  cmd_vel = nh_.advertise<geometry_msgs::Twist>("jaco_arm/cmd_vel", 10);
-  finger_vel = nh_.advertise<jaco_ros::JacoFingerVel>("jaco_arm/finger_cmd_vel", 10);
+	angular_cmd = nh_.advertise<jaco_msgs::AngularCommand>("jaco_arm/angular_cmd", 10);
+	cartesian_cmd = nh_.advertise<jaco_msgs::CartesianCommand>("jaco_arm/cartesian_cmd", 10);
 
   // read in throttle values
   double temp;
@@ -80,14 +80,18 @@ void jaco_key_teleop::watchdog()
   	if ((ros::Time::now() > last_publish_ + ros::Duration(0.15))
       && (ros::Time::now() > first_publish_ + ros::Duration(0.50)))
     {
-    	geometry_msgs::Twist twist;
-    	twist.linear.x = 0.0;
-			twist.linear.y = 0.0;
-			twist.linear.z = 0.0;
-			twist.angular.x = 0.0;
-			twist.angular.y = 0.0;
-			twist.angular.z = 0.0;
-			cmd_vel.publish(twist);
+    	jaco_msgs::CartesianCommand cmd;
+    	cmd.position = false;
+    	cmd.armCommand = true;
+    	cmd.fingerCommand = false;
+    	cmd.repeat = true;
+    	cmd.arm.linear.x = 0.0;
+			cmd.arm.linear.y = 0.0;
+			cmd.arm.linear.z = 0.0;
+			cmd.arm.angular.x = 0.0;
+			cmd.arm.angular.y = 0.0;
+			cmd.arm.angular.z = 0.0;
+			cartesian_cmd.publish(cmd);
   	}
 	}
 	break;
@@ -97,11 +101,16 @@ void jaco_key_teleop::watchdog()
   	if ((ros::Time::now() > last_publish_ + ros::Duration(0.15))
       && (ros::Time::now() > first_publish_ + ros::Duration(0.50)))
     {
-			jaco_ros::JacoFingerVel fingerVel;
-			fingerVel.finger1Vel = 0.0;
-			fingerVel.finger2Vel = 0.0;
-			fingerVel.finger3Vel = 0.0;
-			finger_vel.publish(fingerVel);
+			jaco_msgs::AngularCommand cmd;
+			cmd.position = false;
+			cmd.armCommand = false;
+			cmd.fingerCommand = true;
+			cmd.repeat = true;
+			cmd.fingers.resize(3);
+			cmd.fingers[0] = 0.0;
+			cmd.fingers[1] = 0.0;
+			cmd.fingers[2] = 0.0;
+			angular_cmd.publish(cmd);
 		}
 	}
 	break;
@@ -144,13 +153,17 @@ void jaco_key_teleop::loop()
 		case ARM_CONTROL:
 		{
 			//initialize twist command
-			geometry_msgs::Twist twist;
-			twist.linear.x = 0.0;
-			twist.linear.y = 0.0;
-			twist.linear.z = 0.0;
-			twist.angular.x = 0.0;
-			twist.angular.y = 0.0;
-			twist.angular.z = 0.0;
+			jaco_msgs::CartesianCommand cmd;
+    	cmd.position = false;
+    	cmd.armCommand = true;
+    	cmd.fingerCommand = false;
+    	cmd.repeat = true;
+			cmd.arm.linear.x = 0.0;
+			cmd.arm.linear.y = 0.0;
+			cmd.arm.linear.z = 0.0;
+			cmd.arm.angular.x = 0.0;
+			cmd.arm.angular.y = 0.0;
+			cmd.arm.angular.z = 0.0;
 		
 		  // w/s control forward/backward translation
 		  // a/d control left/right translation
@@ -160,18 +173,18 @@ void jaco_key_teleop::loop()
 		  // left/right controls yaw
 		  switch(c)
 		  {
-		  case KEYCODE_W:	twist.linear.y = -MAX_TRANS_VEL * linear_throttle_factor;	break;
-  		case KEYCODE_S:	twist.linear.y = MAX_TRANS_VEL * linear_throttle_factor;	break;
-  		case KEYCODE_A:	twist.linear.x = MAX_TRANS_VEL * linear_throttle_factor;	break;
-			case KEYCODE_D:	twist.linear.x = -MAX_TRANS_VEL * linear_throttle_factor;	break;
-			case KEYCODE_R:	twist.linear.z = MAX_TRANS_VEL * linear_throttle_factor;	break;
-			case KEYCODE_F: twist.linear.z = -MAX_TRANS_VEL * linear_throttle_factor;	break;
-			case KEYCODE_Q:	twist.angular.z = -MAX_ANG_VEL * angular_throttle_factor;	break;
-			case KEYCODE_E:	twist.angular.z = MAX_ANG_VEL * angular_throttle_factor;	break;
-			case KEYCODE_UP:	twist.angular.x = -MAX_ANG_VEL * angular_throttle_factor;	break;
-			case KEYCODE_DOWN:	twist.angular.x = MAX_ANG_VEL * angular_throttle_factor;	break;
-			case KEYCODE_LEFT:	twist.angular.y = MAX_ANG_VEL * angular_throttle_factor;	break;
-			case KEYCODE_RIGHT:	twist.angular.y = -MAX_ANG_VEL * angular_throttle_factor;	break;
+		  case KEYCODE_W:	cmd.arm.linear.y = -MAX_TRANS_VEL * linear_throttle_factor;	break;
+  		case KEYCODE_S:	cmd.arm.linear.y = MAX_TRANS_VEL * linear_throttle_factor;	break;
+  		case KEYCODE_A:	cmd.arm.linear.x = MAX_TRANS_VEL * linear_throttle_factor;	break;
+			case KEYCODE_D:	cmd.arm.linear.x = -MAX_TRANS_VEL * linear_throttle_factor;	break;
+			case KEYCODE_R:	cmd.arm.linear.z = MAX_TRANS_VEL * linear_throttle_factor;	break;
+			case KEYCODE_F: cmd.arm.linear.z = -MAX_TRANS_VEL * linear_throttle_factor;	break;
+			case KEYCODE_Q:	cmd.arm.angular.z = -MAX_ANG_VEL * angular_throttle_factor;	break;
+			case KEYCODE_E:	cmd.arm.angular.z = MAX_ANG_VEL * angular_throttle_factor;	break;
+			case KEYCODE_UP:	cmd.arm.angular.x = -MAX_ANG_VEL * angular_throttle_factor;	break;
+			case KEYCODE_DOWN:	cmd.arm.angular.x = MAX_ANG_VEL * angular_throttle_factor;	break;
+			case KEYCODE_LEFT:	cmd.arm.angular.y = MAX_ANG_VEL * angular_throttle_factor;	break;
+			case KEYCODE_RIGHT:	cmd.arm.angular.y = -MAX_ANG_VEL * angular_throttle_factor;	break;
 			case
 				KEYCODE_2: mode = FINGER_CONTROL;
 				ROS_INFO("Activated finger control mode");
@@ -185,16 +198,21 @@ void jaco_key_teleop::loop()
 		    first_publish_ = ros::Time::now();
 		  }
 		  last_publish_ = ros::Time::now();
-			cmd_vel.publish(twist);
+			cartesian_cmd.publish(cmd);
 		}
 		break;
 		case FINGER_CONTROL:
 		{
 			//initialize finger command
-			jaco_ros::JacoFingerVel fingerVel;
-			fingerVel.finger1Vel = 0.0;
-			fingerVel.finger2Vel = 0.0;
-			fingerVel.finger3Vel = 0.0;
+			jaco_msgs::AngularCommand cmd;
+			cmd.position = false;
+			cmd.armCommand = false;
+			cmd.fingerCommand = true;
+			cmd.repeat = true;
+			cmd.fingers.resize(3);
+			cmd.fingers[0] = 0.0;
+			cmd.fingers[1] = 0.0;
+			cmd.fingers[2] = 0.0;
 			
 			// q/a controls finger 1
 			// w/s controls finger 2
@@ -202,21 +220,21 @@ void jaco_key_teleop::loop()
 			// r/f controls entire hand
 			switch(c)
 		  {
-		  case KEYCODE_Q:	fingerVel.finger1Vel = -MAX_FINGER_VEL * finger_throttle_factor;	break;
-  		case KEYCODE_A:	fingerVel.finger1Vel = MAX_FINGER_VEL * finger_throttle_factor;	break;
-  		case KEYCODE_W:	fingerVel.finger2Vel = -MAX_FINGER_VEL * finger_throttle_factor;	break;
-			case KEYCODE_S:	fingerVel.finger2Vel = MAX_FINGER_VEL * finger_throttle_factor;	break;
-			case KEYCODE_E:	fingerVel.finger3Vel = -MAX_FINGER_VEL * finger_throttle_factor;	break;
-			case KEYCODE_D: fingerVel.finger3Vel = MAX_FINGER_VEL * finger_throttle_factor;	break;
+		  case KEYCODE_Q:	cmd.fingers[0] = -MAX_FINGER_VEL * finger_throttle_factor;	break;
+  		case KEYCODE_A:	cmd.fingers[0] = MAX_FINGER_VEL * finger_throttle_factor;	break;
+  		case KEYCODE_W:	cmd.fingers[1] = -MAX_FINGER_VEL * finger_throttle_factor;	break;
+			case KEYCODE_S:	cmd.fingers[1] = MAX_FINGER_VEL * finger_throttle_factor;	break;
+			case KEYCODE_E:	cmd.fingers[2] = -MAX_FINGER_VEL * finger_throttle_factor;	break;
+			case KEYCODE_D: cmd.fingers[2] = MAX_FINGER_VEL * finger_throttle_factor;	break;
 			case KEYCODE_R:
-				fingerVel.finger1Vel = -MAX_FINGER_VEL * finger_throttle_factor;
-				fingerVel.finger2Vel = fingerVel.finger1Vel;
-				fingerVel.finger3Vel = fingerVel.finger1Vel;
+				cmd.fingers[0] = -MAX_FINGER_VEL * finger_throttle_factor;
+				cmd.fingers[1] = cmd.fingers[0];
+				cmd.fingers[2] = cmd.fingers[0];
 			break;
 			case KEYCODE_F:
-				fingerVel.finger1Vel = MAX_FINGER_VEL * finger_throttle_factor;
-				fingerVel.finger2Vel = fingerVel.finger1Vel;
-				fingerVel.finger3Vel = fingerVel.finger1Vel;
+				cmd.fingers[0] = MAX_FINGER_VEL * finger_throttle_factor;
+				cmd.fingers[1] = cmd.fingers[0];
+				cmd.fingers[2] = cmd.fingers[0];
 			break;
 			case
 				KEYCODE_1: mode = ARM_CONTROL;
@@ -231,7 +249,7 @@ void jaco_key_teleop::loop()
 		    first_publish_ = ros::Time::now();
 		  }
 		  last_publish_ = ros::Time::now();
-			finger_vel.publish(fingerVel);
+			angular_cmd.publish(cmd);
 		}
 		break;
 		}

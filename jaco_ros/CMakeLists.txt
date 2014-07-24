@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   genmsg
   geometry_msgs
   hardware_interface
+  jaco_msgs
   jaco_sdk
   message_generation
   roscpp
@@ -57,10 +58,6 @@ find_package(catkin REQUIRED COMPONENTS
 #   Message1.msg
 #   Message2.msg
 # )
-add_message_files(
-  FILES
-  JacoFingerVel.msg
-)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -68,12 +65,6 @@ add_message_files(
 #   Service1.srv
 #   Service2.srv
 # )
-add_service_files(
-  FILES
-  EulerToQuaternion.srv
-  JacoFK.srv
-  QuaternionToEuler.srv
-)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -81,18 +72,12 @@ add_service_files(
 #   Action1.action
 #   Action2.action
 # )
-add_action_files(
-  FILES
-  ExecuteGrasp.action
-  ExecutePickup.action
-)
 
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
 #   std_msgs  # Or other packages containing msgs
 # )
-generate_messages(DEPENDENCIES actionlib_msgs geometry_msgs)
 
 ###################################
 ## catkin specific configuration ##
@@ -106,7 +91,7 @@ generate_messages(DEPENDENCIES actionlib_msgs geometry_msgs)
 catkin_package(
  INCLUDE_DIRS include
  LIBRARIES jaco_arm_hw
- CATKIN_DEPENDS actionlib controller_manager ecl_geometry geometry_msgs hardware_interface jaco_sdk message_runtime roscpp sensor_msgs
+ CATKIN_DEPENDS actionlib controller_manager ecl_geometry geometry_msgs hardware_interface jaco_msgs jaco_sdk message_runtime roscpp sensor_msgs
 #  DEPENDS system_lib
 )
 
@@ -136,19 +121,16 @@ target_link_libraries(jaco_arm_node
 )
 
 add_executable(jaco_arm_trajectory_node src/jaco_arm_trajectory_node.cpp)
-add_dependencies(jaco_arm_trajectory_node ${PROJECT_NAME}_generate_messages_cpp)
 target_link_libraries(jaco_arm_trajectory_node
   ${catkin_LIBRARIES}
 )
 
 add_executable(jaco_kinematics src/jaco_kinematics.cpp)
-add_dependencies(jaco_kinematics ${PROJECT_NAME}_generate_messages_cpp)
 target_link_libraries(jaco_kinematics
   ${catkin_LIBRARIES}
 )
 
 add_executable(jaco_conversions src/jaco_conversions.cpp)
-add_dependencies(jaco_conversions ${PROJECT_NAME}_generate_messages_cpp)
 target_link_libraries(jaco_conversions
   ${catkin_LIBRARIES}
 )

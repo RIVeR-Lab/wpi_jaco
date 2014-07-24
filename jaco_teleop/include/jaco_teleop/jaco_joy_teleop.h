@@ -13,8 +13,8 @@
 #define JACO_JOY_TELEOP_H_
 
 #include <ros/ros.h>
-#include <geometry_msgs/Twist.h>
-#include <jaco_ros/JacoFingerVel.h>
+#include <jaco_msgs/AngularCommand.h>
+#include <jaco_msgs/CartesianCommand.h>
 #include <sensor_msgs/Joy.h>
 
 //Control modes
@@ -77,12 +77,12 @@ private:
   
   ros::NodeHandle node; /*!< a handle for this ROS node */
 
-  ros::Publisher cmd_vel; /*!< the cmd_vel topic */
-  ros::Publisher finger_vel; /*!< the finger velocity topic */
+  ros::Publisher angular_cmd; /*!< angular arm command topic */
+  ros::Publisher cartesian_cmd; /*!< cartesian arm command topic */
   ros::Subscriber joy_sub; /*!< the joy topic */
 
-	geometry_msgs::Twist twist;	/*!< twist command to be published to the arm controller */
-	jaco_ros::JacoFingerVel fingerVel; /*!< finger velocity command to be published to the arm controller */
+	jaco_msgs::AngularCommand angularCmd; /*!< angular movement command */
+	jaco_msgs::CartesianCommand cartesianCmd; /*!< cartesian movement command */
 
   int mode; /*!< the control mode */
   int controllerType; /*!< the type of joystick controller */

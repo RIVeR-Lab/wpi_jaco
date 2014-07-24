@@ -17,7 +17,7 @@ JacoConversions::JacoConversions(void)
     qeServer = n.advertiseService("jaco_conversions/quaternion_to_euler", &JacoConversions::callQE, this);
 }
 
-bool JacoConversions::callEQ(jaco_ros::EulerToQuaternion::Request &req, jaco_ros::EulerToQuaternion::Response &res)
+bool JacoConversions::callEQ(jaco_msgs::EulerToQuaternion::Request &req, jaco_msgs::EulerToQuaternion::Response &res)
 {	
     float t1 = req.roll;
     float t2 = req.pitch;
@@ -32,7 +32,7 @@ bool JacoConversions::callEQ(jaco_ros::EulerToQuaternion::Request &req, jaco_ros
     return true;
 }
 
-bool JacoConversions::callQE(jaco_ros::QuaternionToEuler::Request &req, jaco_ros::QuaternionToEuler::Response &res)
+bool JacoConversions::callQE(jaco_msgs::QuaternionToEuler::Request &req, jaco_msgs::QuaternionToEuler::Response &res)
 {
     float q1 = req.orientation.w;
     float q2 = req.orientation.x;

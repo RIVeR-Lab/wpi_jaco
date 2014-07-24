@@ -51,7 +51,7 @@ JacoKinematics::JacoKinematics(void)
 	visPublisher = n.advertise<geometry_msgs::PoseStamped>("fk_pose_debug", 1, this);
 }
 
-bool JacoKinematics::callFK(jaco_ros::JacoFK::Request &req, jaco_ros::JacoFK::Response &res)
+bool JacoKinematics::callFK(jaco_msgs::JacoFK::Request &req, jaco_msgs::JacoFK::Response &res)
 {
 	if (req.joints.size() < 6)
 	{

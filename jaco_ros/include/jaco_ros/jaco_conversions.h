@@ -10,8 +10,8 @@
 #define JACO_CONVERSIONS_H_
 
 #include <ros/ros.h>
-#include <jaco_ros/EulerToQuaternion.h>
-#include <jaco_ros/QuaternionToEuler.h>
+#include <jaco_msgs/EulerToQuaternion.h>
+#include <jaco_msgs/QuaternionToEuler.h>
 
 class JacoConversions {
 
@@ -25,7 +25,7 @@ public:
 	 * @param res service response
 	 * @return true on success
 	 */
-	bool callEQ(jaco_ros::EulerToQuaternion::Request &req, jaco_ros::EulerToQuaternion::Response &res);
+	bool callEQ(jaco_msgs::EulerToQuaternion::Request &req, jaco_msgs::EulerToQuaternion::Response &res);
 
 	/**
 	 * Callback for the Quaternion to Euler service
@@ -33,7 +33,7 @@ public:
 	 * @param res service response
 	 * @return true on success
 	 */
-	bool callQE(jaco_ros::QuaternionToEuler::Request &req, jaco_ros::QuaternionToEuler::Response &res);
+	bool callQE(jaco_msgs::QuaternionToEuler::Request &req, jaco_msgs::QuaternionToEuler::Response &res);
 
 private:
 	ros::NodeHandle n;

@@ -9,12 +9,16 @@
 #include <control_msgs/GripperCommandAction.h>
 #include <ecl/geometry.hpp>
 #include <geometry_msgs/Twist.h>
-#include <jaco_ros/ExecuteGraspAction.h>
-#include <jaco_ros/ExecutePickupAction.h>
-#include <jaco_ros/EulerToQuaternion.h>
-#include <jaco_ros/JacoFingerVel.h>
-#include <jaco_ros/JacoFK.h>
-#include <jaco_ros/QuaternionToEuler.h>
+#include <jaco_msgs/AngularCommand.h>
+#include <jaco_msgs/CartesianCommand.h>
+#include <jaco_msgs/ExecuteGraspAction.h>
+#include <jaco_msgs/ExecutePickupAction.h>
+#include <jaco_msgs/EulerToQuaternion.h>
+#include <jaco_msgs/JacoFingerVel.h>
+#include <jaco_msgs/JacoFK.h>
+#include <jaco_msgs/QuaternionToEuler.h>
+
+#include <Kinova.API.UsbCommandLayerUbuntu.h>
 
 #define NUM_JACO_JOINTS 6
 #define NUM_JACO_FINGER_JOINTS 3
@@ -37,6 +41,10 @@
 #define KV 20.0
 #define ERROR_THRESHOLD .03 //threshold in radians for combined joint error to consider motion a success
 
+//control types
+#define ANGULAR_CONTROL 1
+#define CARTESIAN_CONTROL 2
+
 namespace jaco_arm{
 
 class JacoArmTrajectoryController
@@ -44,9 +52,13 @@ class JacoArmTrajectoryController
 private:
   // Messages
   ros::Publisher joint_state_pub_;
+  ros::Publisher cartesianCmdPublisher;
+  ros::Publisher angularCmdPublisher;
   ros::Subscriber cartesianCmdVelSubscriber; //subscriber to cartesian velocity commands
   ros::Subscriber fingerCmdVelSubscriber; //subscriber for finger velocity commands
   ros::Subscriber positionCmdSubscriber; //subscriber for single cartesian position commands
+  ros::Subscriber cartesianCmdSubscriber;
+  ros::Subscriber angularCmdSubscriber;
 
   // Services
   ros::ServiceClient jaco_fk_client;
@@ -60,8 +72,8 @@ private:
   actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> smooth_trajectory_server_;
   actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> smooth_joint_trajectory_server;
   actionlib::SimpleActionServer<control_msgs::GripperCommandAction> gripper_server_;
-  actionlib::SimpleActionServer<jaco_ros::ExecuteGraspAction> executeGraspServer;
-  actionlib::SimpleActionServer<jaco_ros::ExecutePickupAction> executePickupServer;
+  actionlib::SimpleActionServer<jaco_msgs::ExecuteGraspAction> executeGraspServer;
+  actionlib::SimpleActionServer<jaco_msgs::ExecutePickupAction> executePickupServer;
 
   boost::recursive_mutex api_mutex;
 
@@ -117,14 +129,14 @@ public:
   * alternatively opens the gripper fully
   * @param goal action goal
   */
-  void execute_grasp(const jaco_ros::ExecuteGraspGoalConstPtr &goal);
+  void execute_grasp(const jaco_msgs::ExecuteGraspGoalConstPtr &goal);
   
   /**
   * Callback for the executePickupServer, lifts the arm while applying input to
   * keep the gripper closed
   * @param goal action goal
   */
-  void execute_pickup(const jaco_ros::ExecutePickupGoalConstPtr &goal);
+  void execute_pickup(const jaco_msgs::ExecutePickupGoalConstPtr &goal);
   
 private:
   std::vector<std::string> joint_names;
@@ -132,30 +144,19 @@ private:
   double joint_vel[NUM_JOINTS];
   double joint_eff[NUM_JOINTS];
   
-  /**
-   * Callback for cartesian velocity commands
-   * \param msg twist message containing velocity inputs
-   */
-  void cartesianCmdVelCallback(const geometry_msgs::Twist::ConstPtr& msg);
-  
-  /**
-   * Callback for finger velocity commands
-   * \param msg finger velocity message containing gripper velocity inputs
-   */
-  void fingerCmdVelCallback(const jaco_ros::JacoFingerVel::ConstPtr& msg);
-  
-  /**
-   * Helper function for the fingerCmdVel subscriber, defined separately here so
-   * that other functions within this class can call it more easily
-   * @param msg finger velocities at which to move each of the fingers
-   */
-  void moveFingers(jaco_ros::JacoFingerVel msg);
+  unsigned int controlType;
   
   /**
    * Callback for single cartesian position commands
    * \param msg cartesian position command for the end effector
    */
   void positionCmdCallback(const geometry_msgs::Pose::ConstPtr& msg);
+  
+  void cartesianCmdCallback(const jaco_msgs::CartesianCommand& msg);
+  
+  void angularCmdCallback(const jaco_msgs::AngularCommand& msg);
+  
+  void executeTrajectoryPoint(TrajectoryPoint point, bool erase);
 };
 
 }

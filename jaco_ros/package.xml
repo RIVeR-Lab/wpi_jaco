@@ -49,6 +49,7 @@
   <build_depend>actionlib</build_depend>
   <build_depend>actionlib_msgs</build_depend>
   <build_depend>geometry_msgs</build_depend>
+  <build_depend>jaco_msgs</build_depend>
   <build_depend>sensor_msgs</build_depend>
   <build_depend>tf</build_depend>
   <build_depend>message_generation</build_depend>
@@ -56,6 +57,7 @@
   <run_depend>controller_manager</run_depend>
   <run_depend>ecl_geometry</run_depend>
   <run_depend>hardware_interface</run_depend>
+  <run_depend>jaco_msgs</run_depend>
   <run_depend>jaco_sdk</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>actionlib</run_depend>

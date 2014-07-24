@@ -15,12 +15,12 @@ JacoInteractiveManipulation::JacoInteractiveManipulation() :
 	joints.resize(6);
 
 	//messages
-	armPoseCommand = n.advertise<geometry_msgs::Pose>("jaco_arm/position_cmd", 1);
-	cartesianVelCommand = n.advertise<geometry_msgs::Twist>("jaco_arm/cmd_vel", 1);
+	cartesianCmd = n.advertise<jaco_msgs::CartesianCommand>("jaco_arm/cartesian_cmd", 1);
 	jointStateSubscriber = n.subscribe("joint_states", 1, &JacoInteractiveManipulation::updateJoints, this);
 
 	//services
-	jacoFkClient = n.serviceClient<jaco_ros::JacoFK>("jaco_fk");
+	jacoFkClient = n.serviceClient<jaco_msgs::JacoFK>("jaco_fk");
+	qeClient = n.serviceClient<jaco_msgs::QuaternionToEuler>("jaco_conversions/quaternion_to_euler");
 
 	//actionlib
 	ROS_INFO("Waiting for grasp and pickup action servers...");
@@ -53,7 +53,7 @@ void JacoInteractiveManipulation::makeHandMarker()
 	iMarker.header.frame_id = "jaco_link_base";
 
 	//initialize position to the jaco arm's current position
-    jaco_ros::JacoFK fkSrv;
+    jaco_msgs::JacoFK fkSrv;
     for (unsigned int i = 0; i < 6; i ++)
     {
     	fkSrv.request.joints.push_back(joints.at(i));
@@ -165,21 +165,21 @@ void JacoInteractiveManipulation::processHandMarkerFeedback(const visualization_
 		{
 			if (feedback->menu_entry_id == 2)	//grasp requested
 			{
-				jaco_ros::ExecuteGraspGoal graspGoal;
+				jaco_msgs::ExecuteGraspGoal graspGoal;
 				graspGoal.closeGripper = true;
 				graspGoal.limitFingerVelocity = false;
 				acGrasp.sendGoal(graspGoal);
 			}
 			else if (feedback->menu_entry_id == 3)	//release requested
 			{
-				jaco_ros::ExecuteGraspGoal graspGoal;
+				jaco_msgs::ExecuteGraspGoal graspGoal;
 				graspGoal.closeGripper = false;
 				graspGoal.limitFingerVelocity = false;
 				acGrasp.sendGoal(graspGoal);
 			}
 			else if (feedback->menu_entry_id == 4)	//pickup requested
 			{
-				jaco_ros::ExecutePickupGoal pickupGoal;
+				jaco_msgs::ExecutePickupGoal pickupGoal;
 				pickupGoal.limitFingerVelocity = false;
 				pickupGoal.setLiftVelocity = false;
 				acPickup.sendGoal(pickupGoal);
@@ -196,7 +196,28 @@ void JacoInteractiveManipulation::processHandMarkerFeedback(const visualization_
 			{
 				acGrasp.cancelAllGoals();
 				acPickup.cancelAllGoals();
-				armPoseCommand.publish(feedback->pose);
+				
+				//convert pose for compatibility with JACO API
+				jaco_msgs::QuaternionToEuler qeSrv;
+				qeSrv.request.orientation = feedback->pose.orientation;
+				if (qeClient.call(qeSrv))
+				{
+					jaco_msgs::CartesianCommand cmd;
+					cmd.position = true;
+					cmd.armCommand = true;
+					cmd.fingerCommand = false;
+					cmd.repeat = false;
+					cmd.arm.linear.x = feedback->pose.position.x;
+					cmd.arm.linear.y = feedback->pose.position.y;
+					cmd.arm.linear.z = feedback->pose.position.z;
+					cmd.arm.angular.x = qeSrv.response.roll;
+					cmd.arm.angular.y = qeSrv.response.pitch;
+					cmd.arm.angular.z = qeSrv.response.yaw;
+					
+					cartesianCmd.publish(cmd);
+				}
+				else
+					ROS_INFO("Quaternion to Euler conversion service failed, could not send pose update");
 			}
 		}
 	break;
@@ -222,19 +243,23 @@ void JacoInteractiveManipulation::processHandMarkerFeedback(const visualization_
 
 void JacoInteractiveManipulation::sendStopCommand()
 {
-	geometry_msgs::Twist stopVel;
-	stopVel.linear.x = 0.0;
-	stopVel.linear.y = 0.0;
-	stopVel.linear.z = 0.0;
-	stopVel.angular.x = 0.0;
-	stopVel.angular.y = 0.0;
-	stopVel.angular.z = 0.0;
-	cartesianVelCommand.publish(stopVel);
+	jaco_msgs::CartesianCommand cmd;
+	cmd.position = false;
+	cmd.armCommand = true;
+	cmd.fingerCommand = false;
+	cmd.repeat = true;
+	cmd.arm.linear.x = 0.0;
+	cmd.arm.linear.y = 0.0;
+	cmd.arm.linear.z = 0.0;
+	cmd.arm.angular.x = 0.0;
+	cmd.arm.angular.y = 0.0;
+	cmd.arm.angular.z = 0.0;
+	cartesianCmd.publish(cmd);
 }
 
 void JacoInteractiveManipulation::updateMarkerPosition()
 {
-    jaco_ros::JacoFK fkSrv;
+    jaco_msgs::JacoFK fkSrv;
 	for (unsigned int i = 0; i < 6; i ++)
     {
     	fkSrv.request.joints.push_back(joints.at(i));

@@ -8,7 +8,7 @@
 #define JACO_ARM_KINEMATICS_H_
 
 #include <ros/ros.h>
-#include <jaco_ros/JacoFK.h>
+#include <jaco_msgs/JacoFK.h>
 #include <tf/tf.h>
 
 //Link lengths and offsets
@@ -34,7 +34,7 @@ public:
 	 * @param res service response
 	 * @return true on success
 	 */
-	bool callFK(jaco_ros::JacoFK::Request &req, jaco_ros::JacoFK::Response &res);
+	bool callFK(jaco_msgs::JacoFK::Request &req, jaco_msgs::JacoFK::Response &res);
 
 	/**
 	 * Calculates the forward kinematics for the JACO arm

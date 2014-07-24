@@ -9,12 +9,13 @@
 
 #include <ros/ros.h>
 #include <actionlib/client/simple_action_client.h>
-#include <geometry_msgs/Twist.h>
 #include <interactive_markers/interactive_marker_server.h>
 #include <interactive_markers/menu_handler.h>
-#include <jaco_ros/ExecuteGraspAction.h>
-#include <jaco_ros/ExecutePickupAction.h>
-#include <jaco_ros/JacoFK.h>
+#include <jaco_msgs/CartesianCommand.h>
+#include <jaco_msgs/ExecuteGraspAction.h>
+#include <jaco_msgs/ExecutePickupAction.h>
+#include <jaco_msgs/JacoFK.h>
+#include <jaco_msgs/QuaternionToEuler.h>
 #include <sensor_msgs/JointState.h>
 
 class JacoInteractiveManipulation
@@ -61,16 +62,16 @@ private:
 	ros::NodeHandle n;
 	
 	//messages
-	ros::Publisher armPoseCommand;
-	ros::Publisher cartesianVelCommand;
+	ros::Publisher cartesianCmd;
 	ros::Subscriber jointStateSubscriber;
 	
 	//services
 	ros::ServiceClient jacoFkClient;	//forward kinematics
+	ros::ServiceClient qeClient;	//rotation representation conversion client
 	
 	//actionlib
-	actionlib::SimpleActionClient<jaco_ros::ExecuteGraspAction> acGrasp;
-	actionlib::SimpleActionClient<jaco_ros::ExecutePickupAction> acPickup;
+	actionlib::SimpleActionClient<jaco_msgs::ExecuteGraspAction> acGrasp;
+	actionlib::SimpleActionClient<jaco_msgs::ExecutePickupAction> acPickup;
 	
 	boost::shared_ptr<interactive_markers::InteractiveMarkerServer> imServer;	//interactive marker server
 	interactive_markers::MenuHandler menuHandler;	//interactive marker menu handler

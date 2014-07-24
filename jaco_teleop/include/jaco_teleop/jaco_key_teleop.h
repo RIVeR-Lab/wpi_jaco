@@ -44,8 +44,8 @@
 #include <ros/ros.h>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/thread.hpp>
-#include <geometry_msgs/Twist.h>
-#include <jaco_ros/JacoFingerVel.h>
+#include <jaco_msgs/AngularCommand.h>
+#include <jaco_msgs/CartesianCommand.h>
 #include <signal.h>
 #include <stdio.h>
 #include <termios.h>
@@ -126,8 +126,8 @@ private:
 
   boost::mutex publish_mutex_; /*! The mutex for the twist topic. */
   
-  ros::Publisher cmd_vel; /*!< the cmd_vel topic */
-  ros::Publisher finger_vel; /*!< the finger velocity topic */
+  ros::Publisher angular_cmd; /*!< angular commands for arm control */
+  ros::Publisher cartesian_cmd; /*!< cartesian commands for arm control */
 
   int mode; /*!< the controller mode */
   float linear_throttle_factor; /*!< factor for reducing the linear speed */
