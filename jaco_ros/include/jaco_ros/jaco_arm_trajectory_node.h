@@ -4,19 +4,17 @@
 #include <ros/ros.h>
 
 #include <actionlib/server/simple_action_server.h>
+#include <boost/foreach.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 #include <control_msgs/FollowJointTrajectoryAction.h>
 #include <control_msgs/GripperCommandAction.h>
 #include <ecl/geometry.hpp>
-#include <geometry_msgs/Twist.h>
 #include <jaco_msgs/AngularCommand.h>
 #include <jaco_msgs/CartesianCommand.h>
-#include <jaco_msgs/ExecuteGraspAction.h>
-#include <jaco_msgs/ExecutePickupAction.h>
-#include <jaco_msgs/EulerToQuaternion.h>
-#include <jaco_msgs/JacoFingerVel.h>
+#include <jaco_msgs/GetCartesianPosition.h>
 #include <jaco_msgs/JacoFK.h>
 #include <jaco_msgs/QuaternionToEuler.h>
+#include <sensor_msgs/JointState.h>
 
 #include <Kinova.API.UsbCommandLayerUbuntu.h>
 
@@ -30,11 +28,6 @@
 
 #define DEG_TO_RAD (M_PI/180)
 #define RAD_TO_DEG (180/M_PI)
-
-#define MAX_FINGER_VEL 30 //maximum finger actuator velocity
-#define DEFAULT_LIFT_VEL .1 //the default velocity for lifting objects during pickup (m/s)
-#define LIFT_HEIGHT .15 //height for object pickup (m)
-#define LIFT_TIMEOUT 5 //timeout for pickup action (s)
 
 //gains for trajectory follower
 #define KP 300.0
@@ -51,29 +44,24 @@ class JacoArmTrajectoryController
 {
 private:
   // Messages
-  ros::Publisher joint_state_pub_;
-  ros::Publisher cartesianCmdPublisher;
-  ros::Publisher angularCmdPublisher;
-  ros::Subscriber cartesianCmdVelSubscriber; //subscriber to cartesian velocity commands
-  ros::Subscriber fingerCmdVelSubscriber; //subscriber for finger velocity commands
-  ros::Subscriber positionCmdSubscriber; //subscriber for single cartesian position commands
-  ros::Subscriber cartesianCmdSubscriber;
-  ros::Subscriber angularCmdSubscriber;
+  ros::Publisher joint_state_pub_; //publisher for joint states
+  ros::Publisher cartesianCmdPublisher; //publisher for Cartesian arm commands
+  ros::Publisher angularCmdPublisher; //publisher for angular arm commands
+  ros::Subscriber cartesianCmdSubscriber; //subscriber for Cartesian arm commands
+  ros::Subscriber angularCmdSubscriber; //subscriber for angular arm commands
 
   // Services
-  ros::ServiceClient jaco_fk_client;
-  ros::ServiceClient qe_client;
-  ros::ServiceClient eq_client;
+  ros::ServiceClient jaco_fk_client; //forward kinematics client
+  ros::ServiceClient qe_client; //quaternion to euler (XYZ) conversion client
+  ros::ServiceServer cartesianPositionServer; //service server to get end effector pose
   
-  ros::Timer joint_state_timer_;
+  ros::Timer joint_state_timer_; //timer for joint state publisher
 
   // Actionlib
-  actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> trajectory_server_;
-  actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> smooth_trajectory_server_;
-  actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> smooth_joint_trajectory_server;
-  actionlib::SimpleActionServer<control_msgs::GripperCommandAction> gripper_server_;
-  actionlib::SimpleActionServer<jaco_msgs::ExecuteGraspAction> executeGraspServer;
-  actionlib::SimpleActionServer<jaco_msgs::ExecutePickupAction> executePickupServer;
+  actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> trajectory_server_; //point-to-point trajectory follower
+  actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> smooth_trajectory_server_; //smooth point-to-point trajectory follower based on Cartesian end effector positions
+  actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> smooth_joint_trajectory_server; //smooth point-to-point trajectory follower based on joint velocity control
+  actionlib::SimpleActionServer<control_msgs::GripperCommandAction> gripper_server_; //gripper command action server
 
   boost::recursive_mutex api_mutex;
 
@@ -124,39 +112,51 @@ public:
    */
   void execute_gripper(const control_msgs::GripperCommandGoalConstPtr &goal);
   
-  /**
-  * Callback for the executeGraspServer, closes the gripper until an object is grasped,
-  * alternatively opens the gripper fully
-  * @param goal action goal
-  */
-  void execute_grasp(const jaco_msgs::ExecuteGraspGoalConstPtr &goal);
-  
-  /**
-  * Callback for the executePickupServer, lifts the arm while applying input to
-  * keep the gripper closed
-  * @param goal action goal
-  */
-  void execute_pickup(const jaco_msgs::ExecutePickupGoalConstPtr &goal);
-  
 private:
   std::vector<std::string> joint_names;
   double joint_pos[NUM_JOINTS];
   double joint_vel[NUM_JOINTS];
   double joint_eff[NUM_JOINTS];
   
-  unsigned int controlType;
+  unsigned int controlType; //current state of control
   
   /**
-   * Callback for single cartesian position commands
-   * \param msg cartesian position command for the end effector
+   * Callback for sending an angular command to the arm
+   * @param msg angular command and info
    */
-  void positionCmdCallback(const geometry_msgs::Pose::ConstPtr& msg);
-  
-  void cartesianCmdCallback(const jaco_msgs::CartesianCommand& msg);
-  
   void angularCmdCallback(const jaco_msgs::AngularCommand& msg);
   
-  void executeTrajectoryPoint(TrajectoryPoint point, bool erase);
+  /**
+   * Callback for sending a Cartesian command to the arm
+   * @param msg Cartesian command and info
+   */
+  void cartesianCmdCallback(const jaco_msgs::CartesianCommand& msg);
+  
+  /**
+   * Stripped-down angular trajectory point sending to the arm, use this for
+   * trajectory followers that need very quick response
+   * @param point angular trajectory point to send to the arm
+   * @param erase if true, clear the trajectory point stack before sending point
+   */
+  void executeAngularTrajectoryPoint(TrajectoryPoint point, bool erase);
+  
+  /**
+   * Stripped-down Cartesian trajectory point sending to the arm, use this for
+   * trajectory followers that need very quick response
+   * @param point Cartesian trajectory point to send to the arm
+   * @param erase if true, clear the trajectory point stack before sending point
+   */
+  void executeCartesianTrajectoryPoint(TrajectoryPoint point, bool erase);
+  
+  /**
+   * Service callback for getting the current Cartesian pose of the end effector,
+   * this allows other nodes to get the pose which is normally only accessible
+   * through the Kinova API
+   * @param req empty service request
+   * @param res service response including the end effector pose
+   * @return true on success
+   */
+  bool getCartesianPosition(jaco_msgs::GetCartesianPosition::Request &req, jaco_msgs::GetCartesianPosition::Response &res);
 };
 
 }

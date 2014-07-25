@@ -125,6 +125,11 @@ target_link_libraries(jaco_arm_trajectory_node
   ${catkin_LIBRARIES}
 )
 
+add_executable(jaco_manipulation src/jaco_manipulation.cpp)
+target_link_libraries(jaco_manipulation
+  ${catkin_LIBRARIES}
+)
+
 add_executable(jaco_kinematics src/jaco_kinematics.cpp)
 target_link_libraries(jaco_kinematics
   ${catkin_LIBRARIES}
