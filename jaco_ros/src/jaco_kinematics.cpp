@@ -45,7 +45,7 @@ JacoKinematics::JacoKinematics(void)
 	alphas[5] = PI;
 
 	//advertise service
-	fkServer = n.advertiseService("jaco_fk", &JacoKinematics::callFK, this);
+	fkServer = n.advertiseService("jaco_arm/kinematics/fk", &JacoKinematics::callFK, this);
 
 	//initialize publisher for debugging
 	visPublisher = n.advertise<geometry_msgs::PoseStamped>("fk_pose_debug", 1, this);

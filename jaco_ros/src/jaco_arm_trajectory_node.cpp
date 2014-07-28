@@ -5,10 +5,10 @@ using namespace std;
 namespace jaco_arm
 {
   JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros::NodeHandle pnh) : 
-    trajectory_server_(nh, "arm_controller", boost::bind(&JacoArmTrajectoryController::execute_trajectory, this, _1), false), 
-    smooth_trajectory_server_(nh, "smooth_arm_controller", boost::bind(&JacoArmTrajectoryController::execute_smooth_trajectory, this, _1), false),
-    smooth_joint_trajectory_server(nh, "joint_velocity_controller", boost::bind(&JacoArmTrajectoryController::execute_joint_trajectory, this, _1), false),
-    gripper_server_(nh, "fingers_controller", boost::bind(&JacoArmTrajectoryController::execute_gripper, this, _1), false)
+    trajectory_server_(nh, "jaco_arm/arm_controller", boost::bind(&JacoArmTrajectoryController::execute_trajectory, this, _1), false), 
+    smooth_trajectory_server_(nh, "jaco_arm/smooth_arm_controller", boost::bind(&JacoArmTrajectoryController::execute_smooth_trajectory, this, _1), false),
+    smooth_joint_trajectory_server(nh, "jaco_arm/joint_velocity_controller", boost::bind(&JacoArmTrajectoryController::execute_joint_trajectory, this, _1), false),
+    gripper_server_(nh, "jaco_arm/fingers_controller", boost::bind(&JacoArmTrajectoryController::execute_gripper, this, _1), false)
   {
     boost::recursive_mutex::scoped_lock lock(api_mutex);
     
@@ -51,7 +51,7 @@ namespace jaco_arm
     angularCmdSubscriber = nh.subscribe("jaco_arm/angular_cmd", 1, &JacoArmTrajectoryController::angularCmdCallback, this);
     
     // Services
-    jaco_fk_client = nh.serviceClient<jaco_msgs::JacoFK>("jaco_fk");
+    jaco_fk_client = nh.serviceClient<jaco_msgs::JacoFK>("jaco_arm/kinematics/fk");
     qe_client = nh.serviceClient<jaco_msgs::QuaternionToEuler>("jaco_conversions/quaternion_to_euler");
     cartesianPositionServer = nh.advertiseService("jaco_arm/get_cartesian_position", &JacoArmTrajectoryController::getCartesianPosition, this);
 

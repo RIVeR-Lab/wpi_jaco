@@ -2,11 +2,13 @@
   
   <node name="jaco_hw" pkg="jaco_ros" type="jaco_arm_trajectory_node" output="screen">
     <!-- <remap from="joint_states" to="/aero/joint_states"/> -->
-    <remap from="fingers_controller" to="/fingers_controller/gripper"/>
-    <remap from="arm_controller" to="/arm_controller/trajectory"/>
-    <remap from="smooth_arm_controller" to="/smooth_arm_controller/trajectory"/>
-    <remap from="joint_velocity_controller" to="/joint_velocity_controller/trajectory"/>
+    <remap from="jaco_arm/fingers_controller" to="/jaco_arm/fingers_controller/gripper"/>
+    <remap from="jaco_arm/arm_controller" to="/jaco_arm/arm_controller/trajectory"/>
+    <remap from="jaco_arm/smooth_arm_controller" to="/jaco_arm/smooth_arm_controller/trajectory"/>
+    <remap from="jaco_arm/joint_velocity_controller" to="/jaco_arm/joint_velocity_controller/trajectory"/>
   </node>
+  
+  <node name="jaco_manipulation" pkg="jaco_ros" type="jaco_manipulation" output="screen" />
   
   <!-- Supporting nodes -->
   <node name="jaco_conversions" pkg="jaco_ros" type="jaco_conversions" />

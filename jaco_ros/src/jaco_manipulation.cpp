@@ -3,8 +3,8 @@
 using namespace std;
 
 JacoManipulation::JacoManipulation() : 
-	executeGraspServer(n, "jaco_arm/execute_grasp", boost::bind(&JacoManipulation::execute_grasp, this, _1), false),
-	executePickupServer(n, "jaco_arm/execute_pickup", boost::bind(&JacoManipulation::execute_pickup, this, _1), false)
+	executeGraspServer(n, "jaco_arm/manipulation/grasp", boost::bind(&JacoManipulation::execute_grasp, this, _1), false),
+	executePickupServer(n, "jaco_arm/manipulation/pickup", boost::bind(&JacoManipulation::execute_pickup, this, _1), false)
 {
 	// Messages
 	cartesianCmdPublisher = n.advertise<jaco_msgs::CartesianCommand>("jaco_arm/cartesian_cmd", 1);
@@ -29,7 +29,14 @@ void JacoManipulation::jointStateCallback(const sensor_msgs::JointState msg)
 }
 
 void JacoManipulation::execute_grasp(const jaco_msgs::ExecuteGraspGoalConstPtr &goal)
-{	 
+{	
+	if (executePickupServer.isActive())
+	{
+		executeGraspServer.setPreempted();
+		ROS_INFO("Pickup server already running, grasp action preempted");
+		return;
+	}
+	
 	jaco_msgs::CartesianCommand cmd;
 	cmd.position = false;
 	cmd.armCommand = false;
@@ -127,6 +134,13 @@ void JacoManipulation::execute_grasp(const jaco_msgs::ExecuteGraspGoalConstPtr &
 
 void JacoManipulation::execute_pickup(const jaco_msgs::ExecutePickupGoalConstPtr &goal)
 {	
+	if (executeGraspServer.isActive())
+	{
+		executePickupServer.setPreempted();
+		ROS_INFO("Grasp server already running, pickup action preempted");
+		return;
+	}
+	
 	//get initial end effector height
 	jaco_msgs::GetCartesianPosition srv;
 	jaco_msgs::ExecutePickupResult result;
@@ -171,8 +185,6 @@ void JacoManipulation::execute_pickup(const jaco_msgs::ExecutePickupGoalConstPtr
 		//action times out
 		while (!finished)
 		{
-			//update_joint_states();
-	
 			//check for preempt requests from clients
 			if (executePickupServer.isPreemptRequested() || !ros::ok())
 			{

@@ -9,8 +9,8 @@
 using namespace std;
 
 JacoInteractiveManipulation::JacoInteractiveManipulation() :
-	acGrasp("jaco_arm/execute_grasp", true),
-	acPickup("jaco_arm/execute_pickup", true)
+	acGrasp("jaco_arm/manipulation/grasp", true),
+	acPickup("jaco_arm/manipulation/pickup", true)
 {
 	joints.resize(6);
 
@@ -19,7 +19,7 @@ JacoInteractiveManipulation::JacoInteractiveManipulation() :
 	jointStateSubscriber = n.subscribe("joint_states", 1, &JacoInteractiveManipulation::updateJoints, this);
 
 	//services
-	jacoFkClient = n.serviceClient<jaco_msgs::JacoFK>("jaco_fk");
+	jacoFkClient = n.serviceClient<jaco_msgs::JacoFK>("jaco_arm/kinematics/fk");
 	qeClient = n.serviceClient<jaco_msgs::QuaternionToEuler>("jaco_conversions/quaternion_to_euler");
 
 	//actionlib
@@ -213,7 +213,7 @@ void JacoInteractiveManipulation::processHandMarkerFeedback(const visualization_
 					cmd.arm.angular.x = qeSrv.response.roll;
 					cmd.arm.angular.y = qeSrv.response.pitch;
 					cmd.arm.angular.z = qeSrv.response.yaw;
-					
+				
 					cartesianCmd.publish(cmd);
 				}
 				else
