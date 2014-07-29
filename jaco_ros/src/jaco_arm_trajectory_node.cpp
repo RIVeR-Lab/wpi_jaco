@@ -42,7 +42,7 @@ namespace jaco_arm
     controlType = ANGULAR_CONTROL;
 
     // Messages
-    joint_state_pub_ = nh.advertise<sensor_msgs::JointState>("joint_states", 1);
+    joint_state_pub_ = nh.advertise<sensor_msgs::JointState>("jaco_arm/joint_states", 1);
     cartesianCmdPublisher = nh.advertise<jaco_msgs::CartesianCommand>("jaco_arm/cartesian_cmd", 1);
     angularCmdPublisher = nh.advertise<jaco_msgs::AngularCommand>("jaco_arm/angular_cmd", 1);
     update_joint_states();

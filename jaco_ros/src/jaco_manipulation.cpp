@@ -10,7 +10,7 @@ JacoManipulation::JacoManipulation() :
 	cartesianCmdPublisher = n.advertise<jaco_msgs::CartesianCommand>("jaco_arm/cartesian_cmd", 1);
 	angularCmdPublisher = n.advertise<jaco_msgs::AngularCommand>("jaco_arm/angular_cmd", 1);
 	
-	jointStateSubscriber = n.subscribe("joint_states", 1, &JacoManipulation::jointStateCallback, this);
+	jointStateSubscriber = n.subscribe("jaco_arm/joint_states", 1, &JacoManipulation::jointStateCallback, this);
 	
 	// Services
 	cartesianPositionClient = n.serviceClient<jaco_msgs::GetCartesianPosition>("jaco_arm/get_cartesian_position");

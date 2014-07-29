@@ -16,7 +16,7 @@ JacoInteractiveManipulation::JacoInteractiveManipulation() :
 
 	//messages
 	cartesianCmd = n.advertise<jaco_msgs::CartesianCommand>("jaco_arm/cartesian_cmd", 1);
-	jointStateSubscriber = n.subscribe("joint_states", 1, &JacoInteractiveManipulation::updateJoints, this);
+	jointStateSubscriber = n.subscribe("jaco_arm/joint_states", 1, &JacoInteractiveManipulation::updateJoints, this);
 
 	//services
 	jacoFkClient = n.serviceClient<jaco_msgs::JacoFK>("jaco_arm/kinematics/fk");
