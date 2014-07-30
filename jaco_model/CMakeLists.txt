@@ -1,18 +1,34 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(jaco_model)
 
+## Find catkin macros and libraries
+## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
+## is used, also find other catkin packages
 find_package(catkin REQUIRED)
 
+###################################################
+## Declare things to be passed to other projects ##
+###################################################
+
+## LIBRARIES: libraries you create in this project that dependent projects also need
+## CATKIN_DEPENDS: catkin_packages dependent projects also need
+## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package()
 
-install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
-install(FILES
-   urdf/standalone_arm.xacro
-   urdf/jaco_arm.xacro
-   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf
- )
+#############
+## Install ##
+#############
+
+## Copy launch files
+install(DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+)
+
+# Install URDF files
+install(DIRECTORY urdf/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf
+)
+# Install meshes
 install(DIRECTORY meshes
-   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-   FILES_MATCHING PATTERN "*.dae"
- )
-#install(DIRECTORY config DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes
+)

@@ -1,23 +1,21 @@
 <?xml version="1.0"?>
 <package>
   <name>jaco_model</name>
-  <version>0.0.1</version>
-  <description>
-	  3D model of the Kinova JACO arm. Includes the model and URDF files for
-	  working with the arm in RViz or Gazebo.
-  </description>
-  <maintainer email="ibaranov@clearpathrobotics.com">Ilia Baranov (Clearpath)</maintainer>
-  <author>bpwiselybabu</author>
+  <version>0.0.0</version>
+  <description>3D Model and URDF of the Kinova JACO Arm</description>
+  
+  <maintainer email="davidkent@wpi.edu">David Kent</maintainer>
+  <author email="bpwiselybabu@wpi.edu">Benzun Pious Wisely Babu</author>
+
   <license>BSD</license>
-  <url>http://ros.org/wiki/jaco_model</url>
+  
+  <url type="website">http://ros.org/wiki/jaco_model</url>
+  <url type="bugtracker">https://github.com/RIVeR-Lab/jaco_model/issues</url>
+  <url type="repository">https://github.com/RIVeR-Lab/jaco_model</url>
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>urdf</build_depend>
-  <build_depend>xacro</build_depend>
-  <run_depend>urdf</run_depend>
   <run_depend>xacro</run_depend>
-
+  <run_depend>joint_state_publisher</run_depend>
+  <run_depend>robot_state_publisher</run_depend>
 </package>
-
-
