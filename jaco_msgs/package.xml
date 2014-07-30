@@ -1,6 +1,6 @@
 <package>
   <name>jaco_msgs</name>
-  <version>0.0.0</version>
+  <version>0.0.1</version>
   <description>Messages Used with the JACO Arm</description>
 
   <author email="davidkent@wpi.edu">David Kent</author>
