@@ -125,7 +125,7 @@ private:
   ros::Time first_publish_, last_publish_; /*! Publish times used by the watchdog. */
 
   boost::mutex publish_mutex_; /*! The mutex for the twist topic. */
-  
+
   ros::Publisher angular_cmd; /*!< angular commands for arm control */
   ros::Publisher cartesian_cmd; /*!< cartesian commands for arm control */
 

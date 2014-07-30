@@ -1,5 +1,4 @@
 <launch>
-  
   <node pkg="joy" type="joy_node" name="joy_node">
     <param name="deadzone" type="double" value="0.033" />
     <param name="autorepeat_rate" type="double" value="30" />
@@ -12,5 +11,4 @@
     <param name="finger_throttle_factor" type="double" value="1.0" />
     <param name="controller_type" type="string" value="digital" />
   </node>
-
 </launch>

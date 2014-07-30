@@ -1,5 +1,5 @@
 <launch>
-  <node name="jaco_hw" pkg="jaco_ros" type="jaco_arm_trajectory_node" output="screen">
+  <node name="jaco_arm_trajectory_node" pkg="jaco_ros" type="jaco_arm_trajectory_node" output="screen">
     <remap from="jaco_arm/fingers_controller" to="/jaco_arm/fingers_controller/gripper"/>
     <remap from="jaco_arm/arm_controller" to="/jaco_arm/arm_controller/trajectory"/>
     <remap from="jaco_arm/smooth_arm_controller" to="/jaco_arm/smooth_arm_controller/trajectory"/>

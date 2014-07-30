@@ -61,10 +61,10 @@ public:
    * are created and maintained within this object.
    */
   jaco_joy_teleop();
-  
+
   /*!
-	 * Periodically publish velocity message to the arm controller
-	 */
+   * Periodically publish velocity message to the arm controller
+   */
   void publish_velocity();
 
 private:
@@ -74,15 +74,15 @@ private:
    * \param joy the message for the joy topic
    */
   void joy_cback(const sensor_msgs::Joy::ConstPtr& joy);
-  
+
   ros::NodeHandle node; /*!< a handle for this ROS node */
 
   ros::Publisher angular_cmd; /*!< angular arm command topic */
   ros::Publisher cartesian_cmd; /*!< cartesian arm command topic */
   ros::Subscriber joy_sub; /*!< the joy topic */
 
-	jaco_msgs::AngularCommand angularCmd; /*!< angular movement command */
-	jaco_msgs::CartesianCommand cartesianCmd; /*!< cartesian movement command */
+  jaco_msgs::AngularCommand angularCmd; /*!< angular movement command */
+  jaco_msgs::CartesianCommand cartesianCmd; /*!< cartesian movement command */
 
   int mode; /*!< the control mode */
   int controllerType; /*!< the type of joystick controller */
@@ -92,10 +92,10 @@ private:
   bool stopMessageSentArm; /*!< flag to prevent the arm stop command from being sent repeatedly when the controller is in the neutral position */
   bool stopMessageSentFinger; /*!< flag to prevent the finger stop command from being sent repeatedly when the controller is in the neutral position */
   bool initLeftTrigger; /*!< flag for whether the left trigger is initialized */
-	bool initRightTrigger; /*!< flag for whether the right trigger is initialized */
-	bool calibrated; /*!< flag for whether the controller is calibrated, this only affects controllers with analog triggers */
-	bool EStopEnabled; /*!< software emergency stop for the arm*/
-	bool helpDisplayed; /*!< flag so help is not repeatedly displayed*/
+  bool initRightTrigger; /*!< flag for whether the right trigger is initialized */
+  bool calibrated; /*!< flag for whether the controller is calibrated, this only affects controllers with analog triggers */
+  bool EStopEnabled; /*!< software emergency stop for the arm*/
+  bool helpDisplayed; /*!< flag so help is not repeatedly displayed*/
 };
 
 /*!
