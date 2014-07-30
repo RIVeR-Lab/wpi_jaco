@@ -4,7 +4,7 @@ project(jaco_ros)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS actionlib controller_manager ecl_geometry hardware_interface jaco_msgs jaco_sdk roscpp sensor_msgs)
+find_package(catkin REQUIRED COMPONENTS actionlib controller_manager control_msgs ecl_geometry hardware_interface jaco_msgs jaco_sdk roscpp sensor_msgs)
 
 ###################################################
 ## Declare things to be passed to other projects ##
@@ -13,10 +13,7 @@ find_package(catkin REQUIRED COMPONENTS actionlib controller_manager ecl_geometr
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
- INCLUDE_DIRS include
- CATKIN_DEPENDS actionlib controller_manager ecl_geometry hardware_interface jaco_msgs jaco_sdk roscpp sensor_msgs
-)
+catkin_package()
 
 ###########
 ## Build ##
