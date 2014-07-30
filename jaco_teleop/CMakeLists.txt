@@ -47,14 +47,17 @@ add_executable(jaco_joy_teleop src/jaco_joy_teleop.cpp)
 target_link_libraries(jaco_joy_teleop
   ${catkin_LIBRARIES}
 )
+add_dependencies(jaco_joy_teleop jaco_msgs_gencpp)
 
 add_executable(jaco_key_teleop src/jaco_key_teleop.cpp)
 target_link_libraries(jaco_key_teleop
   ${catkin_LIBRARIES}
 )
+add_dependencies(jaco_key_teleop jaco_msgs_gencpp)
 
 add_executable(jaco_interactive_manipulation src/jaco_interactive_manipulation.cpp)
 target_link_libraries(jaco_interactive_manipulation
   ${catkin_LIBRARIES}
 )
+add_dependencies(jaco_interactive_manipulation jaco_msgs_gencpp)
 
