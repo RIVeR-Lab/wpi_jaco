@@ -1,9 +1,3 @@
-/*
- * jaco_kinematics.h
- *
- *      Author: David Kent
- */
-
 #ifndef JACO_ARM_KINEMATICS_H_
 #define JACO_ARM_KINEMATICS_H_
 
@@ -22,46 +16,47 @@
 
 #define PI 3.14159
 
-class JacoKinematics {
+class JacoKinematics
+{
 
 public:
-	
-	JacoKinematics(void);
 
-	/**
-	 * Callback for the forward kinematics service
-	 * @param req service request
-	 * @param res service response
-	 * @return true on success
-	 */
-	bool callFK(jaco_msgs::JacoFK::Request &req, jaco_msgs::JacoFK::Response &res);
+  JacoKinematics(void);
 
-	/**
-	 * Calculates the forward kinematics for the JACO arm
-	 * @param joints vector of joint angles from the arm
-	 * @return pose of the end effector relative to the arm's base
-	 */
-	geometry_msgs::PoseStamped calculateFK(std::vector<float> joints);
+  /**
+   * Callback for the forward kinematics service
+   * @param req service request
+   * @param res service response
+   * @return true on success
+   */
+  bool callFK(jaco_msgs::JacoFK::Request &req, jaco_msgs::JacoFK::Response &res);
 
-	/**
-	 * Generates a transform given D-H parameters
-	 * @param theta joint angle
-	 * @param d link length
-	 * @param a offset
-	 * @param alpha angle offset
-	 * @return the transform for one link
-	 */
-	tf::Transform generateTransform(float theta, float d, float a, float alpha);
+  /**
+   * Calculates the forward kinematics for the JACO arm
+   * @param joints vector of joint angles from the arm
+   * @return pose of the end effector relative to the arm's base
+   */
+  geometry_msgs::PoseStamped calculateFK(std::vector<float> joints);
+
+  /**
+   * Generates a transform given D-H parameters
+   * @param theta joint angle
+   * @param d link length
+   * @param a offset
+   * @param alpha angle offset
+   * @return the transform for one link
+   */
+  tf::Transform generateTransform(float theta, float d, float a, float alpha);
 
 private:
-	ros::NodeHandle n;
-	ros::ServiceServer fkServer;
-	ros::Publisher visPublisher;	//pose publisher for debugging and visualization
+  ros::NodeHandle n;
+  ros::ServiceServer fkServer;
+  ros::Publisher visPublisher;	//pose publisher for debugging and visualization
 
-	//robot parameters
-	std::vector<float> ds;
-	std::vector<float> as;
-	std::vector<float> alphas;
+  //robot parameters
+  std::vector<float> ds;
+  std::vector<float> as;
+  std::vector<float> alphas;
 };
 
 #endif

@@ -6,15 +6,11 @@ project(jaco_ros)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   actionlib
-  actionlib_msgs
   controller_manager
   ecl_geometry
-  genmsg
-  geometry_msgs
   hardware_interface
   jaco_msgs
   jaco_sdk
-  message_generation
   roscpp
   sensor_msgs
 )
@@ -91,7 +87,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
  INCLUDE_DIRS include
  LIBRARIES jaco_arm_hw
- CATKIN_DEPENDS actionlib controller_manager ecl_geometry geometry_msgs hardware_interface jaco_msgs jaco_sdk message_runtime roscpp sensor_msgs
+ CATKIN_DEPENDS actionlib controller_manager ecl_geometry hardware_interface jaco_msgs jaco_sdk roscpp sensor_msgs
 #  DEPENDS system_lib
 )
 

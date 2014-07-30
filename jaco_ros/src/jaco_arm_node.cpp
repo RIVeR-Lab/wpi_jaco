@@ -2,10 +2,8 @@
 #include <jaco_ros/jaco_arm.h>
 #include <controller_manager/controller_manager.h>
 
-
-
-
-int main( int argc, char** argv ){
+int main(int argc, char** argv)
+{
   ros::init(argc, argv, "jaco_arm_node");
   ros::NodeHandle nh;
   ros::NodeHandle pnh("~");
@@ -26,7 +24,7 @@ int main( int argc, char** argv ){
   {
     robot.read();
     ros::Time now = ros::Time::now();
-    cm.update(now, now-last);
+    cm.update(now, now - last);
     robot.write();
     last = now;
     ROS_DEBUG_STREAM_THROTTLE(5, "Jaco Controller Cycle Time: " << controller_rate.cycleTime().toSec());

@@ -5,6 +5,10 @@
 
   <author email="davidkent@wpi.edu">David Kent</author>
   <maintainer email="davidkent@wpi.edu">David Kent</maintainer>
+  
+  <url type="website">http://ros.org/wiki/jaco_msgs</url>
+  <url type="bugtracker">https://github.com/RIVeR-Lab/jaco_msgs/issues</url>
+  <url type="repository">https://github.com/RIVeR-Lab/jaco_msgs</url>
 
   <license>BSD</license>
 

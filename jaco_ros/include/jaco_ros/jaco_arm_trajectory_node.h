@@ -38,7 +38,8 @@
 #define ANGULAR_CONTROL 1
 #define CARTESIAN_CONTROL 2
 
-namespace jaco_arm{
+namespace jaco_arm
+{
 
 class JacoArmTrajectoryController
 {
@@ -54,7 +55,7 @@ private:
   ros::ServiceClient jaco_fk_client; //forward kinematics client
   ros::ServiceClient qe_client; //quaternion to euler (XYZ) conversion client
   ros::ServiceServer cartesianPositionServer; //service server to get end effector pose
-  
+
   ros::Timer joint_state_timer_; //timer for joint state publisher
 
   // Actionlib
@@ -72,23 +73,23 @@ public:
    * @param pnh ROS private node handle
    */
   JacoArmTrajectoryController(ros::NodeHandle nh, ros::NodeHandle pnh);
-  
+
   /**
    * Destructor
    */
   virtual ~JacoArmTrajectoryController();
-  
+
   /**
    * Reads joint states from the arm and publishes them as a JointState message
    */
   void update_joint_states();
-  
+
   /**
    * Callback for the trajectory_server_, executes a joint angle trajectory
    * @param goal action goal
    */
   void execute_trajectory(const control_msgs::FollowJointTrajectoryGoalConstPtr &goal);
-  
+
   /**
    * Callback for the smooth_trajectory_server_, executes a smoother trajectory
    * by converting joint angle trajectories to end effector cartesian trajectories
@@ -97,7 +98,7 @@ public:
    * @param goal action goal
    */
   void execute_smooth_trajectory(const control_msgs::FollowJointTrajectoryGoalConstPtr &goal);
-  
+
   /**
    * Callback for the smooth_joint_trajectory_server, executes a smoothed trajectory
    * by interpolating a set of joint trajectory points, smoothing the corners, and
@@ -105,33 +106,33 @@ public:
    * @param goal action goal
    */
   void execute_joint_trajectory(const control_msgs::FollowJointTrajectoryGoalConstPtr &goal);
-  
+
   /**
    * Callback for the gripper_server_, executes a gripper command
    * @param goal action goal
    */
   void execute_gripper(const control_msgs::GripperCommandGoalConstPtr &goal);
-  
+
 private:
   std::vector<std::string> joint_names;
   double joint_pos[NUM_JOINTS];
   double joint_vel[NUM_JOINTS];
   double joint_eff[NUM_JOINTS];
-  
+
   unsigned int controlType; //current state of control
-  
+
   /**
    * Callback for sending an angular command to the arm
    * @param msg angular command and info
    */
   void angularCmdCallback(const jaco_msgs::AngularCommand& msg);
-  
+
   /**
    * Callback for sending a Cartesian command to the arm
    * @param msg Cartesian command and info
    */
   void cartesianCmdCallback(const jaco_msgs::CartesianCommand& msg);
-  
+
   /**
    * Stripped-down angular trajectory point sending to the arm, use this for
    * trajectory followers that need very quick response
@@ -139,7 +140,7 @@ private:
    * @param erase if true, clear the trajectory point stack before sending point
    */
   void executeAngularTrajectoryPoint(TrajectoryPoint point, bool erase);
-  
+
   /**
    * Stripped-down Cartesian trajectory point sending to the arm, use this for
    * trajectory followers that need very quick response
@@ -147,7 +148,7 @@ private:
    * @param erase if true, clear the trajectory point stack before sending point
    */
   void executeCartesianTrajectoryPoint(TrajectoryPoint point, bool erase);
-  
+
   /**
    * Service callback for getting the current Cartesian pose of the end effector,
    * this allows other nodes to get the pose which is normally only accessible
@@ -156,7 +157,8 @@ private:
    * @param res service response including the end effector pose
    * @return true on success
    */
-  bool getCartesianPosition(jaco_msgs::GetCartesianPosition::Request &req, jaco_msgs::GetCartesianPosition::Response &res);
+  bool getCartesianPosition(jaco_msgs::GetCartesianPosition::Request &req,
+                            jaco_msgs::GetCartesianPosition::Response &res);
 };
 
 }

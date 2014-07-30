@@ -11,7 +11,8 @@
 #define DEG_TO_RAD (M_PI/180)
 #define RAD_TO_DEG (180/M_PI)
 
-namespace jaco_arm{
+namespace jaco_arm
+{
 
 class JacoArm : public hardware_interface::RobotHW
 {
