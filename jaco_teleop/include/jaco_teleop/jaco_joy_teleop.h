@@ -86,9 +86,9 @@ private:
 
   int mode; /*!< the control mode */
   int controllerType; /*!< the type of joystick controller */
-  float linear_throttle_factor; /*!< factor for reducing the linear speed */
-  float angular_throttle_factor; /*!< factor for reducing the angular speed */
-  float finger_throttle_factor; /*!< factor for reducing the finger speed */
+  double linear_throttle_factor; /*!< factor for reducing the linear speed */
+  double angular_throttle_factor; /*!< factor for reducing the angular speed */
+  double finger_throttle_factor; /*!< factor for reducing the finger speed */
   bool stopMessageSentArm; /*!< flag to prevent the arm stop command from being sent repeatedly when the controller is in the neutral position */
   bool stopMessageSentFinger; /*!< flag to prevent the finger stop command from being sent repeatedly when the controller is in the neutral position */
   bool initLeftTrigger; /*!< flag for whether the left trigger is initialized */

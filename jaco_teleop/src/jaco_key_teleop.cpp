@@ -46,28 +46,21 @@ struct termios cooked, raw;
 
 jaco_key_teleop::jaco_key_teleop()
 {
+  // a private handle for this ROS node (allows retrieval of relative parameters)
+  ros::NodeHandle private_nh("~");
+  
   // create the ROS topics
   angular_cmd = nh_.advertise<jaco_msgs::AngularCommand>("jaco_arm/angular_cmd", 10);
   cartesian_cmd = nh_.advertise<jaco_msgs::CartesianCommand>("jaco_arm/cartesian_cmd", 10);
 
   // read in throttle values
   double temp;
-  if (nh_.getParam("/jaco_joy_teleop/linear_throttle_factor", temp))
-    linear_throttle_factor = (float)temp;
-  else
-    linear_throttle_factor = 1.0;
-  if (nh_.getParam("/jaco_joy_teleop/angular_throttle_factor", temp))
-    angular_throttle_factor = (float)temp;
-  else
-    angular_throttle_factor = 1.0;
-  if (nh_.getParam("/jaco_joy_teleop/finger_throttle_factor", temp))
-    finger_throttle_factor = (float)temp;
-  else
-    finger_throttle_factor = 1.0;
-
+  private_nh.param<double>("linear_throttle_factor", linear_throttle_factor, 1.0);
+  private_nh.param<double>("angular_throttle_factor", angular_throttle_factor, 1.0);
+  private_nh.param<double>("finger_throttle_factor", finger_throttle_factor, 1.0);
   mode = ARM_CONTROL;
 
-  ROS_INFO("JACO Joystick Teleop Started");
+  ROS_INFO("JACO Keyboard Teleop Started");
 }
 
 void jaco_key_teleop::watchdog()
@@ -130,7 +123,7 @@ void jaco_key_teleop::loop()
 
   puts("    Reading from Keyboard    ");
   puts("-----------------------------");
-  puts("  Press the H key for help ");
+  puts("   Press the H key for help");
 
   while (ros::ok())
   {
@@ -175,45 +168,45 @@ void jaco_key_teleop::loop()
         {
           case KEYCODE_W:
             cmd.arm.linear.y = -MAX_TRANS_VEL * linear_throttle_factor;
-            break;
+          break;
           case KEYCODE_S:
             cmd.arm.linear.y = MAX_TRANS_VEL * linear_throttle_factor;
-            break;
+          break;
           case KEYCODE_A:
             cmd.arm.linear.x = MAX_TRANS_VEL * linear_throttle_factor;
-            break;
+          break;
           case KEYCODE_D:
             cmd.arm.linear.x = -MAX_TRANS_VEL * linear_throttle_factor;
-            break;
+          break;
           case KEYCODE_R:
             cmd.arm.linear.z = MAX_TRANS_VEL * linear_throttle_factor;
-            break;
+          break;
           case KEYCODE_F:
             cmd.arm.linear.z = -MAX_TRANS_VEL * linear_throttle_factor;
-            break;
+          break;
           case KEYCODE_Q:
             cmd.arm.angular.z = -MAX_ANG_VEL * angular_throttle_factor;
-            break;
+          break;
           case KEYCODE_E:
             cmd.arm.angular.z = MAX_ANG_VEL * angular_throttle_factor;
-            break;
+          break;
           case KEYCODE_UP:
             cmd.arm.angular.x = -MAX_ANG_VEL * angular_throttle_factor;
-            break;
+          break;
           case KEYCODE_DOWN:
             cmd.arm.angular.x = MAX_ANG_VEL * angular_throttle_factor;
-            break;
+          break;
           case KEYCODE_LEFT:
             cmd.arm.angular.y = MAX_ANG_VEL * angular_throttle_factor;
-            break;
+          break;
           case KEYCODE_RIGHT:
             cmd.arm.angular.y = -MAX_ANG_VEL * angular_throttle_factor;
-            break;
+          break;
           case
           KEYCODE_2:
             mode = FINGER_CONTROL;
             ROS_INFO("Activated finger control mode");
-            break;
+          break;
         }
 
         //publish twist to arm controller
@@ -225,7 +218,7 @@ void jaco_key_teleop::loop()
         last_publish_ = ros::Time::now();
         cartesian_cmd.publish(cmd);
       }
-        break;
+      break;
       case FINGER_CONTROL:
       {
         //initialize finger command
@@ -247,37 +240,37 @@ void jaco_key_teleop::loop()
         {
           case KEYCODE_Q:
             cmd.fingers[0] = -MAX_FINGER_VEL * finger_throttle_factor;
-            break;
+          break;
           case KEYCODE_A:
             cmd.fingers[0] = MAX_FINGER_VEL * finger_throttle_factor;
-            break;
+          break;
           case KEYCODE_W:
             cmd.fingers[1] = -MAX_FINGER_VEL * finger_throttle_factor;
-            break;
+          break;
           case KEYCODE_S:
             cmd.fingers[1] = MAX_FINGER_VEL * finger_throttle_factor;
-            break;
+          break;
           case KEYCODE_E:
             cmd.fingers[2] = -MAX_FINGER_VEL * finger_throttle_factor;
-            break;
+          break;
           case KEYCODE_D:
             cmd.fingers[2] = MAX_FINGER_VEL * finger_throttle_factor;
-            break;
+          break;
           case KEYCODE_R:
             cmd.fingers[0] = -MAX_FINGER_VEL * finger_throttle_factor;
             cmd.fingers[1] = cmd.fingers[0];
             cmd.fingers[2] = cmd.fingers[0];
-            break;
+          break;
           case KEYCODE_F:
             cmd.fingers[0] = MAX_FINGER_VEL * finger_throttle_factor;
             cmd.fingers[1] = cmd.fingers[0];
             cmd.fingers[2] = cmd.fingers[0];
-            break;
+          break;
           case
           KEYCODE_1:
             mode = ARM_CONTROL;
             ROS_INFO("Activated arm control mode");
-            break;
+          break;
         }
 
         //publish twist to finger controller
@@ -289,7 +282,7 @@ void jaco_key_teleop::loop()
         last_publish_ = ros::Time::now();
         angular_cmd.publish(cmd);
       }
-        break;
+      break;
     }
   }
 }

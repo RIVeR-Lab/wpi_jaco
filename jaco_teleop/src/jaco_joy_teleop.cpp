@@ -15,39 +15,24 @@ using namespace std;
 
 jaco_joy_teleop::jaco_joy_teleop()
 {
+  // a private handle for this ROS node (allows retrieval of relative parameters)
+  ros::NodeHandle private_nh("~");
+
   // create the ROS topics
   angular_cmd = node.advertise<jaco_msgs::AngularCommand>("jaco_arm/angular_cmd", 10);
   cartesian_cmd = node.advertise<jaco_msgs::CartesianCommand>("jaco_arm/cartesian_cmd", 10);
   joy_sub = node.subscribe<sensor_msgs::Joy>("joy", 10, &jaco_joy_teleop::joy_cback, this);
 
   // read in throttle values
-  double temp;
-  if (node.getParam("/jaco_joy_teleop/linear_throttle_factor", temp))
-    linear_throttle_factor = (float)temp;
-  else
-    linear_throttle_factor = 1.0;
-  if (node.getParam("/jaco_joy_teleop/angular_throttle_factor", temp))
-    angular_throttle_factor = (float)temp;
-  else
-    angular_throttle_factor = 1.0;
-  if (node.getParam("/jaco_joy_teleop/finger_throttle_factor", temp))
-    finger_throttle_factor = (float)temp;
-  else
-    finger_throttle_factor = 1.0;
-
+  private_nh.param<double>("linear_throttle_factor", linear_throttle_factor, 1.0);
+  private_nh.param<double>("angular_throttle_factor", angular_throttle_factor, 1.0);
+  private_nh.param<double>("finger_throttle_factor", finger_throttle_factor, 1.0);
   string str;
-  if (node.getParam("/jaco_joy_teleop/controller_type", str))
-  {
-    if (str.compare("digital") == 0)
-      controllerType = DIGITAL;
-    else
-      controllerType = ANALOG;
-  }
+  private_nh.param<string>("controller_type", str, "digital");
+  if (str.compare("digital") == 0)
+    controllerType = DIGITAL;
   else
-  {
-    ROS_INFO("Couldn't read controller_type paramaeter");
     controllerType = ANALOG;
-  }
 
   //initialize everything
   stopMessageSentArm = true;
@@ -132,85 +117,84 @@ void jaco_joy_teleop::joy_cback(const sensor_msgs::Joy::ConstPtr& joy)
   }
 
   //help menu
-  if (controllerType == DIGITAL)
-  {
-    if (joy->axes.at(5) == -1.0)
-    {
-      if (!helpDisplayed)
-      {
-        helpDisplayed = true;
-        puts(" ----------------------------------------");
-        puts("| Jaco Joystick Teleop Help              |");
-        puts("|----------------------------------------|*");
-        if (mode == ARM_CONTROL)
-          puts("| Current Mode: Arm Control              |*");
-        else
-          puts("| Current Mode: Finger Control           |*");
-        puts("|----------------------------------------|*");
-        puts("|                Controls                |*");
-        puts("|   roll/down                 roll/up    |*");
-        puts("|    ________                ________    |*");
-        puts("|   /    _   \\______________/        \\   |*");
-        puts("|  |   _| |_    < >    < >     (4)    |  |*");
-        puts("|  |  |_   _|  Estop  start (1)   (3) |  |*");
-        puts("|  |    |_|    ___      ___    (2)    |  |*");
-        puts("|  |          /   \\    /   \\          |  |*");
-        puts("|  |          \\___/    \\___/          |  |*");
-        puts("|  |       x/y trans  pitch/yaw       |  |*");
-        puts("|  |        _______/--\\_______        |  |*");
-        puts("|  |       |                  |       |  |*");
-        puts("|   \\     /                    \\     /   |*");
-        puts("|    \\___/                      \\___/    |*");
-        puts("|                                        |*");
-        puts("| Buttons:                               |*");
-        puts("|   (1) Switch to finger control mode    |*");
-        puts("|   (2) Switch to arm control mode       |*");
-        puts("|   (3) No function                      |*");
-        puts("|   (4) No function                      |*");
-        puts(" ----------------------------------------**");
-        puts("  *****************************************");
-      }
-    }
-    else if (joy->axes.at(4) == 1.0)
-    {
-      if (!helpDisplayed)
-      {
-        helpDisplayed = true;
-        puts(" ----------------------------------------");
-        puts("| Jaco Joystick Teleop Help              |");
-        puts("|----------------------------------------|*");
-        if (mode == ARM_CONTROL)
-          puts("| Current Mode: Arm Control              |*");
-        else
-          puts("| Current Mode: Finger Control           |*");
-        puts("|----------------------------------------|*");
-        puts("|                Controls                |*");
-        puts("| finger1 open/close  finger2 open/close |*");
-        puts("|    ________                ________    |*");
-        puts("|   /    _   \\______________/        \\   |*");
-        puts("|  |   _| |_    < >    < >     (4)    |  |*");
-        puts("|  |  |_   _|  Estop  start (1)   (3) |  |*");
-        puts("|  |    |_|    ___      ___    (2)    |  |*");
-        puts("|  |          /   \\    /   \\          |  |*");
-        puts("|  |          \\___/    \\___/          |  |*");
-        puts("|  | hand open/close  thumb open/close|  |*");
-        puts("|  |        _______/--\\_______        |  |*");
-        puts("|  |       |                  |       |  |*");
-        puts("|   \\     /                    \\     /   |*");
-        puts("|    \\___/                      \\___/    |*");
-        puts("|                                        |*");
-        puts("| Buttons:                               |*");
-        puts("|   (1) Switch to finger control mode    |*");
-        puts("|   (2) Switch to arm control mode       |*");
-        puts("|   (3) No function                      |*");
-        puts("|   (4) No function                      |*");
-        puts(" ----------------------------------------**");
-        puts("  *****************************************");
-      }
-    }
-    else
-      helpDisplayed = false;
-  }
+	if ((controllerType == DIGITAL && joy->axes.at(5) == -1.0)
+    || (controllerType == ANALOG && joy->axes.at(7) == -1.0))
+	{
+		if (!helpDisplayed)
+		{
+			helpDisplayed = true;
+			puts(" ----------------------------------------");
+			puts("| Jaco Joystick Teleop Help              |");
+			puts("|----------------------------------------|*");
+			if (mode == ARM_CONTROL)
+				puts("| Current Mode: Arm Control              |*");
+			else
+				puts("| Current Mode: Finger Control           |*");
+			puts("|----------------------------------------|*");
+			puts("|                Controls                |*");
+			puts("|   roll/down                 roll/up    |*");
+			puts("|    ________                ________    |*");
+			puts("|   /    _   \\______________/        \\   |*");
+			puts("|  |   _| |_    < >    < >     (4)    |  |*");
+			puts("|  |  |_   _|  Estop  start (1)   (3) |  |*");
+			puts("|  |    |_|    ___      ___    (2)    |  |*");
+			puts("|  |          /   \\    /   \\          |  |*");
+			puts("|  |          \\___/    \\___/          |  |*");
+			puts("|  |       x/y trans  pitch/yaw       |  |*");
+			puts("|  |        _______/--\\_______        |  |*");
+			puts("|  |       |                  |       |  |*");
+			puts("|   \\     /                    \\     /   |*");
+			puts("|    \\___/                      \\___/    |*");
+			puts("|                                        |*");
+			puts("| Buttons:                               |*");
+			puts("|   (1) Switch to finger control mode    |*");
+			puts("|   (2) Switch to arm control mode       |*");
+			puts("|   (3) No function                      |*");
+			puts("|   (4) No function                      |*");
+			puts(" ----------------------------------------**");
+			puts("  *****************************************");
+		}
+	}
+	else if ((controllerType == DIGITAL && joy->axes.at(4) == 1.0)
+    || (controllerType == ANALOG && joy->axes.at(6) == 1.0))
+	{
+		if (!helpDisplayed)
+		{
+			helpDisplayed = true;
+			puts(" ----------------------------------------");
+			puts("| Jaco Joystick Teleop Help              |");
+			puts("|----------------------------------------|*");
+			if (mode == ARM_CONTROL)
+				puts("| Current Mode: Arm Control              |*");
+			else
+				puts("| Current Mode: Finger Control           |*");
+			puts("|----------------------------------------|*");
+			puts("|                Controls                |*");
+			puts("| finger1 open/close  finger2 open/close |*");
+			puts("|    ________                ________    |*");
+			puts("|   /    _   \\______________/        \\   |*");
+			puts("|  |   _| |_    < >    < >     (4)    |  |*");
+			puts("|  |  |_   _|  Estop  start (1)   (3) |  |*");
+			puts("|  |    |_|    ___      ___    (2)    |  |*");
+			puts("|  |          /   \\    /   \\          |  |*");
+			puts("|  |          \\___/    \\___/          |  |*");
+			puts("|  | hand open/close  thumb open/close|  |*");
+			puts("|  |        _______/--\\_______        |  |*");
+			puts("|  |       |                  |       |  |*");
+			puts("|   \\     /                    \\     /   |*");
+			puts("|    \\___/                      \\___/    |*");
+			puts("|                                        |*");
+			puts("| Buttons:                               |*");
+			puts("|   (1) Switch to finger control mode    |*");
+			puts("|   (2) Switch to arm control mode       |*");
+			puts("|   (3) No function                      |*");
+			puts("|   (4) No function                      |*");
+			puts(" ----------------------------------------**");
+			puts("  *****************************************");
+		}
+	}
+	else
+		helpDisplayed = false;
 
   int buttonIndex;
 

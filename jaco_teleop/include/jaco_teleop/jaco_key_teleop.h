@@ -130,9 +130,9 @@ private:
   ros::Publisher cartesian_cmd; /*!< cartesian commands for arm control */
 
   int mode; /*!< the controller mode */
-  float linear_throttle_factor; /*!< factor for reducing the linear speed */
-  float angular_throttle_factor; /*!< factor for reducing the angular speed */
-  float finger_throttle_factor; /*!< factor for reducing the finger speed */
+  double linear_throttle_factor; /*!< factor for reducing the linear speed */
+  double angular_throttle_factor; /*!< factor for reducing the angular speed */
+  double finger_throttle_factor; /*!< factor for reducing the finger speed */
 };
 
 /*!
