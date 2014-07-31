@@ -28,5 +28,5 @@ script:
   - catkin_make
   - catkin_make install
   - rosrun xacro xacro jaco_description/urdf/standalone_arm.xacro >> sanity.urdf
-  - diff sanity.urdf jaco_description/urdf/standalone_arm.xacro
+  - diff sanity.urdf jaco_description/urdf/standalone_arm.urdf
 
