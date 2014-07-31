@@ -1,0 +1,27 @@
+<package>
+  <name>wpi_jaco</name>
+  <version>0.0.0</version>
+  <description>Metapackage for the ROS Packages for the JACO Arm Developed at WPI</description>
+
+  <author email="rctoris@wpi.edu">Russell Toris</author>
+  <maintainer email="davidkent@wpi.edu">David Kent</maintainer>
+  <maintainer email="rctoris@wpi.edu">Russell Toris</maintainer>
+  
+  <url type="website">http://ros.org/wiki/wpi_jaco</url>
+  <url type="bugtracker">https://github.com/RIVeR-Lab/wpi_jaco/issues</url>
+  <url type="repository">https://github.com/RIVeR-Lab/wpi_jaco</url>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  
+  <run_depend>jaco_description</run_depend>
+  <run_depend>jaco_interaction</run_depend>
+  <run_depend>jaco_sdk</run_depend>
+  <run_depend>wpi_jaco_msgs</run_depend>
+  <run_depend>wpi_jaco_wrapper</run_depend>
+  
+  <export>
+    <metapackage />
+  </export>
+</package>

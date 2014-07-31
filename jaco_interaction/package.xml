@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package>
+  <name>jaco_interaction</name>
+  <version>0.0.0</version>
+  <description>Various Nodes for Teleoperating and Interacting with the JACO Arm</description>
+
+  <author email="davidkent@wpi.edu">David Kent</author>
+  <maintainer email="davidkent@wpi.edu">David Kent</maintainer>
+  <maintainer email="rctoris@wpi.edu">Russell Toris</maintainer>
+
+
+  <url type="website">http://ros.org/wiki/jaco_interaction</url>
+  <url type="bugtracker">https://github.com/RIVeR-Lab/wpi_jaco/issues</url>
+  <url type="repository">https://github.com/RIVeR-Lab/wpi_jaco</url>
+
+  <license>BSD</license>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+  
+  <build_depend>roscpp</build_depend>
+  <build_depend>actionlib</build_depend>
+  <build_depend>interactive_markers</build_depend>
+  <build_depend>wpi_jaco_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  
+  <run_depend>interactive_markers</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>actionlib</run_depend>
+  <run_depend>wpi_jaco_msgs</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+</package>

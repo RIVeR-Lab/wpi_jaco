@@ -1,0 +1,10 @@
+# Define the goal
+bool limitFingerVelocity					# true if specific finger velocities are specified
+wpi_jaco_msgs/JacoFingerVel fingerVelocities	# defined finger velocities to use only if limitFingerVelocity is true
+bool setLiftVelocity						# true if arm lifting velocity is set to a custom value
+float32 liftVelocity						# optional lift velocity
+---
+# Define the result
+bool success								# true if the pickup was successful
+---
+# Define feedback message

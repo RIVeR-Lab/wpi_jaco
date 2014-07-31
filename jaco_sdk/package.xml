@@ -1,14 +1,15 @@
 <?xml version="1.0"?>
 <package>
   <name>jaco_sdk</name>
-  <version>0.0.1</version>
+  <version>0.0.0</version>
   <description>JACO Software SDK and API</description>
 
   <maintainer email="davidkent@wpi.edu">David Kent</maintainer>
+  <maintainer email="rctoris@wpi.edu">Russell Toris</maintainer>
 
-  <url type="website">http://ros.org/wiki/jaco_ros</url>
-  <url type="bugtracker">https://github.com/RIVeR-Lab/jaco_ros/issues</url>
-  <url type="repository">https://github.com/RIVeR-Lab/jaco_ros</url>
+  <url type="website">http://ros.org/wiki/jaco_sdk</url>
+  <url type="bugtracker">https://github.com/RIVeR-Lab/wpi_jaco/issues</url>
+  <url type="repository">https://github.com/RIVeR-Lab/wpi_jaco</url>
 
   <license>BSD</license>
   

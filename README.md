@@ -1,10 +1,12 @@
 jaco_ros [![Build Status](https://api.travis-ci.org/RIVeR-Lab/jaco_ros.png)](https://travis-ci.org/RIVeR-Lab/jaco_ros)
 ========
 
-#### ROS Drivers for the JACO Arm
+#### ROS Packages for the JACO Arm Developed at WPI
 For full documentation, see [the ROS wiki](http://ros.org/wiki/jaco_ros).
 
 [Doxygen](http://docs.ros.org/indigo/api/jaco_ros/html/) files can be found on the ROS wiki.
+
+This package servers as an alternative to [jaco-arm](https://github.com/Kinovarobotics/jaco-ros).
 
 ### License
 For full terms and conditions, see the [LICENSE](LICENSE) file.
