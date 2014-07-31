@@ -28,6 +28,6 @@ script:
   - catkin_make
   - catkin_make install
   - cd src/package
-  - /opt/ros/indigo/share/xacro/xacro.py jaco_description/urdf/standalone_arm.xacro >> sanity.urdf
+  - /opt/ros/hydro/share/xacro/xacro.py jaco_description/urdf/standalone_arm.xacro >> sanity.urdf
   - diff sanity.urdf jaco_description/urdf/standalone_arm.urdf
 
