@@ -27,7 +27,7 @@ script:
   - source /opt/ros/hydro/setup.bash
   - catkin_make
   - catkin_make install
-  - cd src/package/wpi_jaco
-  - rosrun xacro xacro jaco_description/urdf/standalone_arm.xacro >> sanity.urdf
+  - cd src/package
+  - /opt/ros/indigo/share/xacro/xacro.py jaco_description/urdf/standalone_arm.xacro >> sanity.urdf
   - diff sanity.urdf jaco_description/urdf/standalone_arm.urdf
 
