@@ -2,6 +2,11 @@
 Changelog for package jaco_sdk
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.3 (2014-08-01)
+------------------
+* jaco_sdk now uses single set of include files
+* Contributors: Russell Toris
+
 0.0.2 (2014-08-01)
 ------------------
 * libusb-1.0 added to deps
