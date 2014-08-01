@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>jaco_sdk</name>
-  <version>0.0.1</version>
+  <version>0.0.3</version>
   <description>JACO Software SDK and API</description>
 
   <maintainer email="davidkent@wpi.edu">David Kent</maintainer>
@@ -14,4 +14,8 @@
   <license>BSD</license>
   
   <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>libusb-1.0</build_depend>
+  
+  <run_depend>libusb-1.0</run_depend>
 </package>

@@ -26,8 +26,9 @@ set(JACO_LIBS ${JACO_COMM_LIB} ${JACO_USB_LIB})
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include/${ARCH}
+  INCLUDE_DIRS include
   LIBRARIES ${JACO_LIBS}
+  DEPENDS libusb-1.0
 )
 
 #############
@@ -40,7 +41,6 @@ install(FILES ${JACO_LIBS}
 )
 
 ## Copy header files
-install(DIRECTORY include/${ARCH}
+install(FILES include/Kinova.API.UsbCommandLayerUbuntu.h include/KinovaTypes.h
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-  FILES_MATCHING PATTERN "*.hpp" PATTERN "*.h"
 )

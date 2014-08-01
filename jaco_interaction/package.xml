@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>jaco_interaction</name>
-  <version>0.0.1</version>
+  <version>0.0.3</version>
   <description>Various Nodes for Teleoperating and Interacting with the JACO Arm</description>
 
   <author email="davidkent@wpi.edu">David Kent</author>
