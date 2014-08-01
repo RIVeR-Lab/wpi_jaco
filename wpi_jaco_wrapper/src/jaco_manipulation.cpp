@@ -1,4 +1,4 @@
-#include <jaco_ros/jaco_manipulation.h>
+#include <wpi_jaco_wrapper/jaco_manipulation.h>
 
 using namespace std;
 

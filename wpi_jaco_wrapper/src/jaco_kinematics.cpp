@@ -1,4 +1,4 @@
-#include <jaco_ros/jaco_kinematics.h>
+#include <wpi_jaco_wrapper/jaco_kinematics.h>
 
 using namespace std;
 

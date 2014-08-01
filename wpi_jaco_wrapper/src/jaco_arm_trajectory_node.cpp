@@ -1,4 +1,4 @@
-#include <jaco_ros/jaco_arm_trajectory_node.h>
+#include <wpi_jaco_wrapper/jaco_arm_trajectory_node.h>
 
 using namespace std;
 
