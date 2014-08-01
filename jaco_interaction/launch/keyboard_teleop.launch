@@ -3,7 +3,7 @@
   <arg name="angular_throttle_factor" value="1.0" />
   <arg name="finger_throttle_factor" value="1.0" />
   
-  <node name="jaco_key_teleop" pkg="jaco_teleop" type="jaco_key_teleop" output="screen">
+  <node name="jaco_key_teleop" pkg="jaco_interaction" type="jaco_key_teleop" output="screen">
     <param name="linear_throttle_factor" type="double" value="$(arg linear_throttle_factor)" />
     <param name="angular_throttle_factor" type="double" value="$(arg angular_throttle_factor)" />
     <param name="finger_throttle_factor" type="double" value="$(arg finger_throttle_factor)" />

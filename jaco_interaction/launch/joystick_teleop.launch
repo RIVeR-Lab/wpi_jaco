@@ -10,7 +10,7 @@
     <param name="coalesce_interval" type="double" value="0.033" />
   </node>
   
-  <node name="jaco_joy_teleop" pkg="jaco_teleop" type="jaco_joy_teleop" output="screen">
+  <node name="jaco_joy_teleop" pkg="jaco_interaction" type="jaco_joy_teleop" output="screen">
     <param name="linear_throttle_factor" type="double" value="$(arg linear_throttle_factor)" />
     <param name="angular_throttle_factor" type="double" value="$(arg angular_throttle_factor)" />
     <param name="finger_throttle_factor" type="double" value="$(arg finger_throttle_factor)" />
