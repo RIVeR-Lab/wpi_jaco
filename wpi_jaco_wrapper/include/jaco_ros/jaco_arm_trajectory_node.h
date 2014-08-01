@@ -16,7 +16,7 @@
 #include <wpi_jaco_msgs/QuaternionToEuler.h>
 #include <sensor_msgs/JointState.h>
 
-#include <Kinova.API.UsbCommandLayerUbuntu.h>
+#include <jaco_sdk/Kinova.API.UsbCommandLayerUbuntu.h>
 
 #define NUM_JACO_JOINTS 6
 #define NUM_JACO_FINGER_JOINTS 3
