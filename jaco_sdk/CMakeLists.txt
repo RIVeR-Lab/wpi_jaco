@@ -28,6 +28,7 @@ set(JACO_LIBS ${JACO_COMM_LIB} ${JACO_USB_LIB})
 catkin_package(
   INCLUDE_DIRS include/${ARCH}
   LIBRARIES ${JACO_LIBS}
+  DEPENDS libusb-1.0
 )
 
 #############
