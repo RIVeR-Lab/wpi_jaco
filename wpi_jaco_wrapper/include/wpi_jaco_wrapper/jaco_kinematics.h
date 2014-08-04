@@ -1,3 +1,13 @@
+/*!
+ * \jaco_kinematics.h
+ * \brief Provides services for JACO kinematics.
+ *
+ * jaco_kinematics creates a ROS node that provides services for converting calculating
+ * kinematics for the JACO arm.
+ *
+ * \author David Kent, WPI - davidkent@wpi.edu
+ */
+
 #ifndef JACO_ARM_KINEMATICS_H_
 #define JACO_ARM_KINEMATICS_H_
 
@@ -16,6 +26,13 @@
 
 #define PI 3.14159
 
+/*!
+ * \class JacoKinematics
+ * \brief Provides services for JACO kinematics.
+ *
+ * JacoKinematics creates a ROS node that provides services for converting calculating
+ * kinematics for the JACO arm.
+ */
 class JacoKinematics
 {
 
@@ -24,7 +41,7 @@ public:
   JacoKinematics(void);
 
   /**
-   * Callback for the forward kinematics service
+   * \brief Callback for the forward kinematics service
    * @param req service request
    * @param res service response
    * @return true on success
@@ -32,14 +49,14 @@ public:
   bool callFK(wpi_jaco_msgs::JacoFK::Request &req, wpi_jaco_msgs::JacoFK::Response &res);
 
   /**
-   * Calculates the forward kinematics for the JACO arm
+   * \brief Calculates the forward kinematics for the JACO arm
    * @param joints vector of joint angles from the arm
    * @return pose of the end effector relative to the arm's base
    */
   geometry_msgs::PoseStamped calculateFK(std::vector<float> joints);
 
   /**
-   * Generates a transform given D-H parameters
+   * \brief Generates a transform given D-H parameters
    * @param theta joint angle
    * @param d link length
    * @param a offset
@@ -51,12 +68,11 @@ public:
 private:
   ros::NodeHandle n;
   ros::ServiceServer fkServer;
-  ros::Publisher visPublisher;	//pose publisher for debugging and visualization
 
   //robot parameters
-  std::vector<float> ds;
-  std::vector<float> as;
-  std::vector<float> alphas;
+  std::vector<float> ds; //!< d parameters in the D-H convention
+  std::vector<float> as; //!< a parameters in the D-H convention
+  std::vector<float> alphas; //!< alpha parameters in the D-H convention
 };
 
 #endif

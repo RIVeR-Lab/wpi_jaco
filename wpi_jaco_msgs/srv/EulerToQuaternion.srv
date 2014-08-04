@@ -1,5 +1,5 @@
-float32 roll
-float32 pitch
-float32 yaw
+float32 roll                            # Rotation about x axis (rad)
+float32 pitch                           # Rotation about y axis (rad)
+float32 yaw                             # Rotation about z axis (rad)
 ---
-geometry_msgs/Quaternion orientation
+geometry_msgs/Quaternion orientation    # Quaternion representation of rotation

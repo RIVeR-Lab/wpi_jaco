@@ -1,3 +1,14 @@
+/*!
+ * \jaco_conversions.h
+ * \brief Provides services for conversions between 3D rotation representations.
+ *
+ * jaco_conversions creates a ROS node that provides services for converting
+ * between the JACO's internal representation of 3D rotations (Euler xyz convention)
+ * and commonly used representations in ROS (quaternions)
+ *
+ * \author David Kent, WPI - davidkent@wpi.edu
+ */
+
 #ifndef JACO_CONVERSIONS_H_
 #define JACO_CONVERSIONS_H_
 
@@ -5,6 +16,14 @@
 #include <wpi_jaco_msgs/EulerToQuaternion.h>
 #include <wpi_jaco_msgs/QuaternionToEuler.h>
 
+/*!
+ * \class JacoConversions
+ * \brief Provides services for conversions between 3D rotation representations.
+ *
+ * JacoConversions creates a ROS node that provides services for converting
+ * between the JACO's internal representation of 3D rotations (Euler xyz convention)
+ * and commonly used representations in ROS (quaternions)
+ */
 class JacoConversions
 {
 
@@ -13,7 +32,7 @@ public:
   JacoConversions(void);
 
   /**
-   * Callback for the Euler to Quaternion service
+   * \brief Callback for the Euler to Quaternion service
    * @param req service request
    * @param res service response
    * @return true on success
@@ -21,7 +40,7 @@ public:
   bool callEQ(wpi_jaco_msgs::EulerToQuaternion::Request &req, wpi_jaco_msgs::EulerToQuaternion::Response &res);
 
   /**
-   * Callback for the Quaternion to Euler service
+   * \brief Callback for the Quaternion to Euler service
    * @param req service request
    * @param res service response
    * @return true on success

@@ -29,7 +29,7 @@
 
 /*!
  * \jaco_key_teleop.h
- * \brief Allows for control of CARL with a keyboard.
+ * \brief Allows for control of the JACO arm with a keyboard.
  *
  * jaco_key_teleop creates a ROS node that allows the control of the JACO arm
  * with a keyboard.
@@ -92,10 +92,19 @@
  */
 #define MAX_ANG_VEL 1.047
 
+/*!
+ * \class jaco_joy_teleop
+ * \brief Allows for control of the JACO arm with a keyboard.
+ *
+ * jaco_joy_teleop creates a ROS node that allows for the control of the
+ * JACO arm with a keyboard, by reading keyboard input to a terminal.
+ */
 class jaco_key_teleop
 {
 public:
   /*!
+   * \brief Constructor
+   *
    * Creates a jaco_key_teleop object that can be used control the JACO arm 
    * with a keyboard. ROS nodes, services, and publishers
    * are created and maintained within this object.
@@ -103,12 +112,12 @@ public:
   jaco_key_teleop();
 
   /*!
-   * Monitors the keyboard and publishes to the arm controller whenever a key corresponding to a motion command is pressed.
+   * \brief Monitors the keyboard and publishes to the arm controller whenever a key corresponding to a motion command is pressed.
    */
   void loop();
 
   /*!
-   * Publishes cmd_vels to stop the robot if no key is pressed after a short time period.
+   * \brief Publishes cmd_vels to stop the robot if no key is pressed after a short time period.
    */
   void watchdog();
 
@@ -136,14 +145,14 @@ private:
 };
 
 /*!
- * A function to close ROS and exit the program.
+ * \brief A function to close ROS and exit the program.
  *
  * \param sig The signal value.
  */
 void shutdown(int sig);
 
 /*!
- * Creates and runs the jaco_key_teleop node.
+ * \brief Creates and runs the jaco_key_teleop node.
  *
  * \param argc argument count that is passed to ros::init
  * \param argv arguments that are passed to ros::init

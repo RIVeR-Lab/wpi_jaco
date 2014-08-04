@@ -1,3 +1,13 @@
+/*!
+ * \jaco_manipulation.h
+ * \brief Provides manipulation actions for the JACO arm.
+ *
+ * jaco_manipulation creates a ROS node that provides action servers for executing
+ * manipulation actions including grasping, releasing, and object pickup.
+ *
+ * \author David Kent, WPI - davidkent@wpi.edu
+ */
+
 #ifndef JACO_MANIPULATION_H_
 #define JACO_MANIPULATION_H_
 
@@ -20,6 +30,13 @@
 #define LIFT_HEIGHT .15 //height for object pickup (m)
 #define LIFT_TIMEOUT 5 //timeout for pickup action (s)
 
+/*!
+ * \class JacoManipulation
+ * \brief Provides manipulation actions for the JACO arm.
+ *
+ * JacoManipulation creates a ROS node that provides action servers for executing
+ * manipulation actions including grasping, releasing, and object pickup.
+ */
 class JacoManipulation
 {
 private:
@@ -41,24 +58,26 @@ private:
 
 public:
   /**
-   * Constructor
+   * \brief Constructor
    */
   JacoManipulation();
 
   /**
-   * Callback for the executeGraspServer, closes the gripper until an object is grasped,
-   * alternatively opens the gripper fully
+   * \brief Callback for the executeGraspServer, closes the gripper until an object is grasped, alternatively opens the gripper fully
    * @param goal action goal
    */
   void execute_grasp(const wpi_jaco_msgs::ExecuteGraspGoalConstPtr &goal);
 
   /**
-   * Callback for the executePickupServer, lifts the arm while applying input to
-   * keep the gripper closed
+   * \brief Callback for the executePickupServer, lifts the arm while applying input to keep the gripper closed
    * @param goal action goal
    */
   void execute_pickup(const wpi_jaco_msgs::ExecutePickupGoalConstPtr &goal);
 
+  /**
+   * \brief Callback for joint state updates
+   * @param msg joint state message
+   */
   void jointStateCallback(const sensor_msgs::JointState msg);
 
 };

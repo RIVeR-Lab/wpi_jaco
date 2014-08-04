@@ -40,9 +40,6 @@ JacoKinematics::JacoKinematics(void)
 
   //advertise service
   fkServer = n.advertiseService("jaco_arm/kinematics/fk", &JacoKinematics::callFK, this);
-
-  //initialize publisher for debugging
-  visPublisher = n.advertise<geometry_msgs::PoseStamped>("fk_pose_debug", 1, this);
 }
 
 bool JacoKinematics::callFK(wpi_jaco_msgs::JacoFK::Request &req, wpi_jaco_msgs::JacoFK::Response &res)
@@ -55,8 +52,6 @@ bool JacoKinematics::callFK(wpi_jaco_msgs::JacoFK::Request &req, wpi_jaco_msgs::
 
   res.handPose = calculateFK(req.joints);
 
-  //debugging:
-  visPublisher.publish(res.handPose);
   double roll, pitch, yaw;
 
   //Manual conversion:

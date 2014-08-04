@@ -1,3 +1,15 @@
+/*!
+ * \jaco_interactive_manipulation.h
+ * \brief Allows for control of the JACO with a interactive markers.
+ *
+ * jaco_interactive_manipulation creates a ROS node that displays interactive markers
+ * for the JACO arm and allows control of the end effector position and gripper through
+ * an interactive marker client.
+ *
+ * \author David Kent, WPI - davidkent@wpi.edu
+ * \date June 26, 2014
+ */
+
 #ifndef JACO_INTERACTIVE_MANIPULATION_H_
 #define JACO_INTERACTIVE_MANIPULATION_H_
 
@@ -12,44 +24,50 @@
 #include <wpi_jaco_msgs/QuaternionToEuler.h>
 #include <sensor_msgs/JointState.h>
 
+/*!
+ * \class jacoInteractiveManipulation
+ * \brief Allows for control of the JACO arm with interactive markers.
+ *
+ * jaco_joy_teleop creates a ROS node that displays interactive markers for
+ * the JACO arm, and allows control of the arm's end effector pose and gripper
+ * commands through an interactive marker client such as rviz.
+ */
 class JacoInteractiveManipulation
 {
 
 public:
 
   /**
-   * Constructor
+   * \brief Constructor
    */
   JacoInteractiveManipulation();
 
   /**
-   * Process feedback for the interactive marker on the JACO's end effector
+   * \brief Process feedback for the interactive marker on the JACO's end effector
    * @param feedback interactive marker feedback
    */
   void processHandMarkerFeedback(const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback);
 
   /**
-   * Callback for the joint state listener
+   * \brief Callback for the joint state listener
    * @param msg new joint state message
    */
   void updateJoints(const sensor_msgs::JointState::ConstPtr& msg);
 
   /**
-   * Update the interactive marker on the JACO's end effector to move based on the
-   * the current joint state of the arm
+   * \brief Update the interactive marker on the JACO's end effector to move based on the the current joint state of the arm
    */
   void updateMarkerPosition();
 
 private:
 
   /**
-   * Create the interactive marker on the JACO's end effector, including pose
-   * controls and menus
+   * \brief Create the interactive marker on the JACO's end effector, including pose controls and menus
    */
   void makeHandMarker();
 
   /**
-   * Send a 0 velocity command to the robot's arm
+   * \brief Send a 0 velocity command to the robot's arm
    */
   void sendStopCommand();
 
@@ -60,17 +78,17 @@ private:
   ros::Subscriber jointStateSubscriber;
 
   //services
-  ros::ServiceClient jacoFkClient;	//forward kinematics
-  ros::ServiceClient qeClient;	//rotation representation conversion client
+  ros::ServiceClient jacoFkClient;	//!< forward kinematics
+  ros::ServiceClient qeClient;	//!< rotation representation conversion client
 
   //actionlib
   actionlib::SimpleActionClient<wpi_jaco_msgs::ExecuteGraspAction> acGrasp;
   actionlib::SimpleActionClient<wpi_jaco_msgs::ExecutePickupAction> acPickup;
 
-  boost::shared_ptr<interactive_markers::InteractiveMarkerServer> imServer;	//interactive marker server
-  interactive_markers::MenuHandler menuHandler;	//interactive marker menu handler
-  std::vector<float> joints;	//current joint state
-  bool lockPose;//flag to stop the arm from updating on pose changes, this is used to prevent the slight movement when left clicking on the center of the marker
+  boost::shared_ptr<interactive_markers::InteractiveMarkerServer> imServer;	//!< interactive marker server
+  interactive_markers::MenuHandler menuHandler;	//!< interactive marker menu handler
+  std::vector<float> joints;	//!< current joint state
+  bool lockPose;//!< flag to stop the arm from updating on pose changes, this is used to prevent the slight movement when left clicking on the center of the marker
 };
 
 #endif

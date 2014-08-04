@@ -56,6 +56,8 @@ class jaco_joy_teleop
 {
 public:
   /*!
+   * \brief Constructor
+   *
    * Creates a jaco_joy_teleop object that can be used control the JACO arm
    * with a joystick. ROS nodes, services, and publishers
    * are created and maintained within this object.
@@ -63,13 +65,13 @@ public:
   jaco_joy_teleop();
 
   /*!
-   * Periodically publish velocity message to the arm controller
+   * \brief Periodically publish velocity message to the arm controller
    */
   void publish_velocity();
 
 private:
   /*!
-   * Joy topic callback function.
+   * \brief Joy topic callback function.
    *
    * \param joy the message for the joy topic
    */
@@ -99,7 +101,7 @@ private:
 };
 
 /*!
- * Creates and runs the jaco_joy_teleop node.
+ * \brief Creates and runs the jaco_joy_teleop node.
  *
  * \param argc argument count that is passed to ros::init
  * \param argv arguments that are passed to ros::init
