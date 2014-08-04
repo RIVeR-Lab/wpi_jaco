@@ -2,7 +2,7 @@
 
 using namespace std;
 
-namespace jaco_arm
+namespace jaco
 {
 JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros::NodeHandle pnh) :
     trajectory_server_(nh, "jaco_arm/arm_controller",
@@ -922,6 +922,6 @@ int main(int argc, char** argv)
   ros::NodeHandle nh;
   ros::NodeHandle pnh("~");
 
-  jaco_arm::JacoArmTrajectoryController robot(nh, pnh);
+  jaco::JacoArmTrajectoryController robot(nh, pnh);
   ros::spin();
 }

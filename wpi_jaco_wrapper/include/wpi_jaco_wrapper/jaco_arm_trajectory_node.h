@@ -38,7 +38,7 @@
 #define ANGULAR_CONTROL 1
 #define CARTESIAN_CONTROL 2
 
-namespace jaco_arm
+namespace jaco
 {
 
 class JacoArmTrajectoryController
