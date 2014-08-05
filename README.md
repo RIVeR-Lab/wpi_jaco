@@ -16,7 +16,7 @@ This package servers as an alternative to [jaco-arm](https://github.com/Kinovaro
    * `cd /path/to/wpi_jaco/jaco_description/meshes/original`
    * `xmllint --noblanks my_modified_mesh.dae > ../my_modified_mesh.min.dae`
  1. Re-compile the modified URDF
-   * `cd /path/to/carl_bot`
+   * `cd /path/to/wpi_jaco`
    * `rosrun xacro xacro carl_description/robots/carl.urdf.xacro > carl_description/robots/carl.urdf`
 
 ### License
