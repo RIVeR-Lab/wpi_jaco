@@ -2,6 +2,12 @@
 Changelog for package jaco_sdk
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.4 (2014-08-05)
+------------------
+* fixes broken include link
+* correctly links against JACO libraries via cmake
+* Contributors: Russell Toris
+
 0.0.3 (2014-08-01)
 ------------------
 * jaco_sdk now uses single set of include files

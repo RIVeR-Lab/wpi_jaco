@@ -2,6 +2,21 @@
 Changelog for package jaco_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.4 (2014-08-05)
+------------------
+* fixed install cmake bug
+* recompiled URDF
+* fixed URDF to load minified files
+* updated pre-compiled URDF
+* minified XML
+* removed large unused mesh originals
+* removed large unused mesh originals
+* Removed soft links
+* Using low poly version of all meshes
+* Removed duplicate meshes
+* Improved meshes and URDF
+* Contributors: Russell Toris, Steven Kordell
+
 0.0.3 (2014-08-01)
 ------------------
 

@@ -2,6 +2,11 @@
 Changelog for package wpi_jaco_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.4 (2014-08-05)
+------------------
+* documentation
+* Contributors: dekent
+
 0.0.3 (2014-08-01)
 ------------------
 
