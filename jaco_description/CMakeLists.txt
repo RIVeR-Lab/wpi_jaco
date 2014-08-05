@@ -25,7 +25,7 @@ install(DIRECTORY launch/
 )
 
 ## Install meshes
-install(DIRECTORY meshes
+install(DIRECTORY meshes/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes
 )
 
