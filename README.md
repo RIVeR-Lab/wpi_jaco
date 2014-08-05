@@ -8,6 +8,17 @@ For full documentation, see [the ROS wiki](http://ros.org/wiki/wpi_jaco).
 
 This package servers as an alternative to [jaco-arm](https://github.com/Kinovarobotics/jaco-ros).
 
+### Contributing
+
+[jaco_description](jaco_description) includes both minified versions of the 3D Collada models as well as pre-compiled URDF files. To properly contribute, do the following:
+
+ 1. Re-minify any modified Collada files
+   * `cd /path/to/wpi_jaco/jaco_description/meshes/original`
+   * `xmllint --noblanks my_modified_mesh.dae > ../my_modified_mesh.min.dae`
+ 1. Re-compile the modified URDF
+   * `cd /path/to/carl_bot`
+   * `rosrun xacro xacro carl_description/robots/carl.urdf.xacro > carl_description/robots/carl.urdf`
+
 ### License
 For full terms and conditions, see the [LICENSE](LICENSE) file.
 
