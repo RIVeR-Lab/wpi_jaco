@@ -205,12 +205,12 @@ void JacoInteractiveManipulation::processHandMarkerFeedback(
           homeGoal.retractPosition.repeat = false;
           homeGoal.retractPosition.joints.resize(6);
           //TODO: set these to retracted value
-          homeGoal.retractPosition.joints[0] = -2.542;
-          homeGoal.retractPosition.joints[1] = 1.377;
-          homeGoal.retractPosition.joints[2] = .282;
-          homeGoal.retractPosition.joints[3] = .141;
-          homeGoal.retractPosition.joints[4] = 1.130;
-          homeGoal.retractPosition.joints[5] = -.071;
+          homeGoal.retractPosition.joints[0] = -2.57;
+          homeGoal.retractPosition.joints[1] = 1.39;
+          homeGoal.retractPosition.joints[2] = .377;
+          homeGoal.retractPosition.joints[3] = -.084;
+          homeGoal.retractPosition.joints[4] = .515;
+          homeGoal.retractPosition.joints[5] = -1.745;
           acHome.sendGoal(homeGoal);
           acHome.waitForResult(ros::Duration(15.0));
         }
