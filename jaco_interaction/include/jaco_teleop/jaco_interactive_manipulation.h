@@ -20,6 +20,7 @@
 #include <wpi_jaco_msgs/CartesianCommand.h>
 #include <wpi_jaco_msgs/ExecuteGraspAction.h>
 #include <wpi_jaco_msgs/ExecutePickupAction.h>
+#include <wpi_jaco_msgs/HomeArmAction.h>
 #include <wpi_jaco_msgs/JacoFK.h>
 #include <wpi_jaco_msgs/QuaternionToEuler.h>
 #include <sensor_msgs/JointState.h>
@@ -84,6 +85,7 @@ private:
   //actionlib
   actionlib::SimpleActionClient<wpi_jaco_msgs::ExecuteGraspAction> acGrasp;
   actionlib::SimpleActionClient<wpi_jaco_msgs::ExecutePickupAction> acPickup;
+  actionlib::SimpleActionClient<wpi_jaco_msgs::HomeArmAction> acHome;
 
   boost::shared_ptr<interactive_markers::InteractiveMarkerServer> imServer;	//!< interactive marker server
   interactive_markers::MenuHandler menuHandler;	//!< interactive marker menu handler

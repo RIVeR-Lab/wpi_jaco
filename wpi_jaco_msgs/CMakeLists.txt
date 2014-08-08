@@ -32,6 +32,7 @@ add_action_files(
   FILES
   ExecuteGrasp.action
   ExecutePickup.action
+  HomeArm.action
 )
 
 ## Generate added messages and services with any dependencies listed here

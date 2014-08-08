@@ -3,7 +3,7 @@
 using namespace std;
 
 JacoInteractiveManipulation::JacoInteractiveManipulation() :
-    acGrasp("jaco_arm/manipulation/grasp", true), acPickup("jaco_arm/manipulation/pickup", true)
+    acGrasp("jaco_arm/manipulation/grasp", true), acPickup("jaco_arm/manipulation/pickup", true), acHome("jaco_arm/home_arm", true)
 {
   joints.resize(6);
 
@@ -16,10 +16,11 @@ JacoInteractiveManipulation::JacoInteractiveManipulation() :
   qeClient = n.serviceClient<wpi_jaco_msgs::QuaternionToEuler>("jaco_conversions/quaternion_to_euler");
 
   //actionlib
-  ROS_INFO("Waiting for grasp and pickup action servers...");
+  ROS_INFO("Waiting for grasp, pickup, and home arm action servers...");
   acGrasp.waitForServer();
   acPickup.waitForServer();
-  ROS_INFO("Finsihed waiting for grasp and pickup action servers");
+  acHome.waitForServer();
+  ROS_INFO("Finished waiting for action servers");
 
   lockPose = false;
 
@@ -130,6 +131,8 @@ void JacoInteractiveManipulation::makeHandMarker()
   menuHandler.insert(fingersSubMenuHandle, "Release",
                      boost::bind(&JacoInteractiveManipulation::processHandMarkerFeedback, this, _1));
   menuHandler.insert("Pickup", boost::bind(&JacoInteractiveManipulation::processHandMarkerFeedback, this, _1));
+  menuHandler.insert("Home", boost::bind(&JacoInteractiveManipulation::processHandMarkerFeedback, this, _1));
+  menuHandler.insert("Retract", boost::bind(&JacoInteractiveManipulation::processHandMarkerFeedback, this, _1));
 
   visualization_msgs::InteractiveMarkerControl menuControl;
   menuControl.interaction_mode = visualization_msgs::InteractiveMarkerControl::MENU;
@@ -180,6 +183,36 @@ void JacoInteractiveManipulation::processHandMarkerFeedback(
           pickupGoal.limitFingerVelocity = false;
           pickupGoal.setLiftVelocity = false;
           acPickup.sendGoal(pickupGoal);
+        }
+        else if (feedback->menu_entry_id == 5)  //home requested
+        {
+          acGrasp.cancelAllGoals();
+          acPickup.cancelAllGoals();
+          wpi_jaco_msgs::HomeArmGoal homeGoal;
+          homeGoal.retract = false;
+          acHome.sendGoal(homeGoal);
+          acHome.waitForResult(ros::Duration(10.0));
+        }
+        else if (feedback->menu_entry_id == 6)
+        {
+          acGrasp.cancelAllGoals();
+          acPickup.cancelAllGoals();
+          wpi_jaco_msgs::HomeArmGoal homeGoal;
+          homeGoal.retract = true;
+          homeGoal.retractPosition.position = true;
+          homeGoal.retractPosition.armCommand = true;
+          homeGoal.retractPosition.fingerCommand = false;
+          homeGoal.retractPosition.repeat = false;
+          homeGoal.retractPosition.joints.resize(6);
+          //TODO: set these to retracted value
+          homeGoal.retractPosition.joints[0] = 1.5;
+          homeGoal.retractPosition.joints[1] = 1.5;
+          homeGoal.retractPosition.joints[2] = 1.5;
+          homeGoal.retractPosition.joints[3] = 1.5;
+          homeGoal.retractPosition.joints[4] = 1.5;
+          homeGoal.retractPosition.joints[5] = 1.5;
+          acHome.sendGoal(homeGoal);
+          acHome.waitForResult(ros::Duration(15.0));
         }
       }
       break;

@@ -11,7 +11,8 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
         boost::bind(&JacoArmTrajectoryController::execute_smooth_trajectory, this, _1), false), smooth_joint_trajectory_server(
         nh, "jaco_arm/joint_velocity_controller",
         boost::bind(&JacoArmTrajectoryController::execute_joint_trajectory, this, _1), false), gripper_server_(
-        nh, "jaco_arm/fingers_controller", boost::bind(&JacoArmTrajectoryController::execute_gripper, this, _1), false)
+        nh, "jaco_arm/fingers_controller", boost::bind(&JacoArmTrajectoryController::execute_gripper, this, _1), false),
+        home_arm_server(nh, "jaco_arm/home_arm", boost::bind(&JacoArmTrajectoryController::home_arm, this, _1), false)
 {
   boost::recursive_mutex::scoped_lock lock(api_mutex);
 
@@ -68,6 +69,7 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
   smooth_trajectory_server_.start();
   smooth_joint_trajectory_server.start();
   gripper_server_.start();
+  home_arm_server.start();
 
   joint_state_timer_ = nh.createTimer(ros::Duration(0.0333),
                                       boost::bind(&JacoArmTrajectoryController::update_joint_states, this));
@@ -169,6 +171,7 @@ static inline double nearest_equivalent(double desired, double current)
     return medVal;
   return highVal;
 }
+
 
 /*****************************************/
 /**********  Trajectory Control **********/
@@ -658,7 +661,7 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
   cmd.fingers[1] = goal->command.position;
   cmd.fingers[2] = goal->command.position;
 
-  cartesianCmdPublisher.publish(cmd);
+  angularCmdPublisher.publish(cmd);
 
   ros::Rate rate(10);
   int trajectory_size = 1;
@@ -672,7 +675,7 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
       cmd.fingers[0] = 0.0;
       cmd.fingers[1] = 0.0;
       cmd.fingers[2] = 0.0;
-      cartesianCmdPublisher.publish(cmd);
+      angularCmdPublisher.publish(cmd);
 
       //preempt action server
       ROS_INFO("Gripper action server preempted by client");
@@ -696,7 +699,7 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
   cmd.fingers[0] = 0.0;
   cmd.fingers[1] = 0.0;
   cmd.fingers[2] = 0.0;
-  cartesianCmdPublisher.publish(cmd);
+  angularCmdPublisher.publish(cmd);
 
   control_msgs::GripperCommandResult result;
   result.position = joint_pos[6];
@@ -704,6 +707,64 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
   result.stalled = false;
   result.reached_goal = true;
   gripper_server_.setSucceeded(result);
+}
+
+/*****************************************/
+/**********  Other Arm Actions  **********/
+/*****************************************/
+
+void JacoArmTrajectoryController::home_arm(const wpi_jaco_msgs::HomeArmGoalConstPtr &goal)
+{
+  boost::recursive_mutex::scoped_lock lock(api_mutex);
+
+  StopControlAPI();
+  MoveHome();
+  StartControlAPI();
+  
+  if (goal->retract)
+  {
+    //retract to given position
+    controlType = ANGULAR_CONTROL;
+    SetAngularControl();
+    
+    angularCmdPublisher.publish(goal->retractPosition);
+    
+    ros::Rate rate(10);
+    int trajectory_size = 1;
+    while (trajectory_size > 0)
+    {
+      //check for preempt requests from clients
+      if (home_arm_server.isPreemptRequested() || !ros::ok())
+      {
+        //preempt action server
+        ROS_INFO("Gripper action server preempted by client");
+        gripper_server_.setPreempted();
+
+        return;
+      }
+
+      TrajectoryFIFO Trajectory_Info;
+      memset(&Trajectory_Info, 0, sizeof(Trajectory_Info));
+      {
+        boost::recursive_mutex::scoped_lock lock(api_mutex);
+        GetGlobalTrajectoryInfo(Trajectory_Info);
+      }
+      trajectory_size = Trajectory_Info.TrajectoryCount;
+      rate.sleep();
+    }
+  }
+  else
+  {
+    //set control type to previous value
+    if (controlType == ANGULAR_CONTROL)
+      SetAngularControl();
+    else
+      SetCartesianControl();
+  }
+  
+  wpi_jaco_msgs::HomeArmResult result;
+  result.success = true;
+  home_arm_server.setSucceeded(result);
 }
 
 /*****************************************/
@@ -743,12 +804,12 @@ void JacoArmTrajectoryController::angularCmdCallback(const wpi_jaco_msgs::Angula
   else
   {
     jacoPoint.Position.Type = ANGULAR_VELOCITY;
-    jacoPoint.Position.Actuators.Actuator1 = 0.0;
-    jacoPoint.Position.Actuators.Actuator2 = 0.0;
-    jacoPoint.Position.Actuators.Actuator3 = 0.0;
-    jacoPoint.Position.Actuators.Actuator4 = 0.0;
-    jacoPoint.Position.Actuators.Actuator5 = 0.0;
-    jacoPoint.Position.Actuators.Actuator6 = 0.0;
+    jacoPoint.Position.Actuators.Actuator1 = -2.542;
+    jacoPoint.Position.Actuators.Actuator2 = 1.377;
+    jacoPoint.Position.Actuators.Actuator3 = .282;
+    jacoPoint.Position.Actuators.Actuator4 = .141;
+    jacoPoint.Position.Actuators.Actuator5 = 1.130;
+    jacoPoint.Position.Actuators.Actuator6 = -.071;
   }
 
   //populate finger command

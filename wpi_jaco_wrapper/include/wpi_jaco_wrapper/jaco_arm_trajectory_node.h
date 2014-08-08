@@ -23,6 +23,7 @@
 #include <wpi_jaco_msgs/AngularCommand.h>
 #include <wpi_jaco_msgs/CartesianCommand.h>
 #include <wpi_jaco_msgs/GetCartesianPosition.h>
+#include <wpi_jaco_msgs/HomeArmAction.h>
 #include <wpi_jaco_msgs/JacoFK.h>
 #include <wpi_jaco_msgs/QuaternionToEuler.h>
 #include <sensor_msgs/JointState.h>
@@ -81,6 +82,7 @@ private:
   actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> smooth_trajectory_server_; //!< smooth point-to-point trajectory follower based on Cartesian end effector positions
   actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> smooth_joint_trajectory_server; //!< smooth point-to-point trajectory follower based on joint velocity control
   actionlib::SimpleActionServer<control_msgs::GripperCommandAction> gripper_server_; //!< gripper command action server
+  actionlib::SimpleActionServer<wpi_jaco_msgs::HomeArmAction> home_arm_server;
 
   boost::recursive_mutex api_mutex;
 
@@ -101,6 +103,12 @@ public:
    * \brief Reads joint states from the arm and publishes them as a JointState message
    */
   void update_joint_states();
+
+  /**
+   * \brief move the arm to the home position
+   * @param goal action goal
+   */
+  void home_arm(const wpi_jaco_msgs::HomeArmGoalConstPtr &goal);
 
   /**
    * \brief Callback for the arm_controller, executes a joint angle trajectory
