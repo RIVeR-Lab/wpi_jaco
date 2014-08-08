@@ -791,15 +791,37 @@ void JacoArmTrajectoryController::angularCmdCallback(const wpi_jaco_msgs::Angula
   if (msg.armCommand)
   {
     if (msg.position)
+    {
       jacoPoint.Position.Type = ANGULAR_POSITION;
+      
+      float current_joint_pos[6];
+      AngularPosition position_data;
+      GetAngularPosition(position_data);
+      current_joint_pos[0] = position_data.Actuators.Actuator1 * DEG_TO_RAD;
+      current_joint_pos[1] = position_data.Actuators.Actuator2 * DEG_TO_RAD;
+      current_joint_pos[2] = position_data.Actuators.Actuator3 * DEG_TO_RAD;
+      current_joint_pos[3] = position_data.Actuators.Actuator4 * DEG_TO_RAD;
+      current_joint_pos[4] = position_data.Actuators.Actuator5 * DEG_TO_RAD;
+      current_joint_pos[5] = position_data.Actuators.Actuator6 * DEG_TO_RAD;
+      
+      jacoPoint.Position.Actuators.Actuator1 = nearest_equivalent(simplify_angle(msg.joints[0]), current_joint_pos[0]) * RAD_TO_DEG;
+      jacoPoint.Position.Actuators.Actuator2 = nearest_equivalent(simplify_angle(msg.joints[1]), current_joint_pos[1]) * RAD_TO_DEG;
+      jacoPoint.Position.Actuators.Actuator3 = nearest_equivalent(simplify_angle(msg.joints[2]), current_joint_pos[2]) * RAD_TO_DEG;
+      jacoPoint.Position.Actuators.Actuator4 = nearest_equivalent(simplify_angle(msg.joints[3]), current_joint_pos[3]) * RAD_TO_DEG;
+      jacoPoint.Position.Actuators.Actuator5 = nearest_equivalent(simplify_angle(msg.joints[4]), current_joint_pos[4]) * RAD_TO_DEG;
+      jacoPoint.Position.Actuators.Actuator6 = nearest_equivalent(simplify_angle(msg.joints[5]), current_joint_pos[5]) * RAD_TO_DEG;
+    }
     else
+    {
       jacoPoint.Position.Type = ANGULAR_VELOCITY;
-    jacoPoint.Position.Actuators.Actuator1 = msg.joints[0] * RAD_TO_DEG;
-    jacoPoint.Position.Actuators.Actuator2 = msg.joints[1] * RAD_TO_DEG;
-    jacoPoint.Position.Actuators.Actuator3 = msg.joints[2] * RAD_TO_DEG;
-    jacoPoint.Position.Actuators.Actuator4 = msg.joints[3] * RAD_TO_DEG;
-    jacoPoint.Position.Actuators.Actuator5 = msg.joints[4] * RAD_TO_DEG;
-    jacoPoint.Position.Actuators.Actuator6 = msg.joints[5] * RAD_TO_DEG;
+      jacoPoint.Position.Actuators.Actuator1 = msg.joints[0] * RAD_TO_DEG;
+      jacoPoint.Position.Actuators.Actuator2 = msg.joints[1] * RAD_TO_DEG;
+      jacoPoint.Position.Actuators.Actuator3 = msg.joints[2] * RAD_TO_DEG;
+      jacoPoint.Position.Actuators.Actuator4 = msg.joints[3] * RAD_TO_DEG;
+      jacoPoint.Position.Actuators.Actuator5 = msg.joints[4] * RAD_TO_DEG;
+      jacoPoint.Position.Actuators.Actuator6 = msg.joints[5] * RAD_TO_DEG;
+    }
+    
   }
   else
   {
