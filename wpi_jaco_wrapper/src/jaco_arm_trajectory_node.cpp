@@ -794,12 +794,12 @@ void JacoArmTrajectoryController::angularCmdCallback(const wpi_jaco_msgs::Angula
       jacoPoint.Position.Type = ANGULAR_POSITION;
     else
       jacoPoint.Position.Type = ANGULAR_VELOCITY;
-    jacoPoint.Position.Actuators.Actuator1 = msg.joints[0];
-    jacoPoint.Position.Actuators.Actuator2 = msg.joints[1];
-    jacoPoint.Position.Actuators.Actuator3 = msg.joints[2];
-    jacoPoint.Position.Actuators.Actuator4 = msg.joints[3];
-    jacoPoint.Position.Actuators.Actuator5 = msg.joints[4];
-    jacoPoint.Position.Actuators.Actuator6 = msg.joints[5];
+    jacoPoint.Position.Actuators.Actuator1 = msg.joints[0] * RAD_TO_DEG;
+    jacoPoint.Position.Actuators.Actuator2 = msg.joints[1] * RAD_TO_DEG;
+    jacoPoint.Position.Actuators.Actuator3 = msg.joints[2] * RAD_TO_DEG;
+    jacoPoint.Position.Actuators.Actuator4 = msg.joints[3] * RAD_TO_DEG;
+    jacoPoint.Position.Actuators.Actuator5 = msg.joints[4] * RAD_TO_DEG;
+    jacoPoint.Position.Actuators.Actuator6 = msg.joints[5] * RAD_TO_DEG;
   }
   else
   {
