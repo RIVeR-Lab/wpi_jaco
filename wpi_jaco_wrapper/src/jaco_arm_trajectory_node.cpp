@@ -804,12 +804,12 @@ void JacoArmTrajectoryController::angularCmdCallback(const wpi_jaco_msgs::Angula
   else
   {
     jacoPoint.Position.Type = ANGULAR_VELOCITY;
-    jacoPoint.Position.Actuators.Actuator1 = -2.542;
-    jacoPoint.Position.Actuators.Actuator2 = 1.377;
-    jacoPoint.Position.Actuators.Actuator3 = .282;
-    jacoPoint.Position.Actuators.Actuator4 = .141;
-    jacoPoint.Position.Actuators.Actuator5 = 1.130;
-    jacoPoint.Position.Actuators.Actuator6 = -.071;
+    jacoPoint.Position.Actuators.Actuator1 = 0.0;
+    jacoPoint.Position.Actuators.Actuator2 = 0.0;
+    jacoPoint.Position.Actuators.Actuator3 = 0.0;
+    jacoPoint.Position.Actuators.Actuator4 = 0.0;
+    jacoPoint.Position.Actuators.Actuator5 = 0.0;
+    jacoPoint.Position.Actuators.Actuator6 = 0.0;
   }
 
   //populate finger command
