@@ -19,7 +19,6 @@ jaco_joy_teleop::jaco_joy_teleop()
   ros::NodeHandle private_nh("~");
 
   // create the ROS topics
-  angular_cmd = node.advertise<wpi_jaco_msgs::AngularCommand>("jaco_arm/angular_cmd", 10);
   cartesian_cmd = node.advertise<wpi_jaco_msgs::CartesianCommand>("jaco_arm/cartesian_cmd", 10);
   joy_sub = node.subscribe<sensor_msgs::Joy>("joy", 10, &jaco_joy_teleop::joy_cback, this);
 
@@ -40,11 +39,11 @@ jaco_joy_teleop::jaco_joy_teleop()
   EStopEnabled = false;
   helpDisplayed = false;
   mode = ARM_CONTROL;
-  angularCmd.position = false;
-  angularCmd.armCommand = false;
-  angularCmd.fingerCommand = true;
-  angularCmd.repeat = true;
-  angularCmd.fingers.resize(3);
+  fingerCmd.position = false;
+  fingerCmd.armCommand = false;
+  fingerCmd.fingerCommand = true;
+  fingerCmd.repeat = true;
+  fingerCmd.fingers.resize(3);
   cartesianCmd.position = false;
   cartesianCmd.armCommand = true;
   cartesianCmd.fingerCommand = false;
@@ -269,52 +268,52 @@ void jaco_joy_teleop::joy_cback(const sensor_msgs::Joy::ConstPtr& joy)
         //individual finger control
         //thumb controlled by right thumbstick
         if (controllerType == DIGITAL)
-          angularCmd.fingers[0] = -joy->axes.at(3) * MAX_FINGER_VEL * finger_throttle_factor;
+          fingerCmd.fingers[0] = -joy->axes.at(3) * MAX_FINGER_VEL * finger_throttle_factor;
         else
-          angularCmd.fingers[0] = -joy->axes.at(4) * MAX_FINGER_VEL * finger_throttle_factor;
+          fingerCmd.fingers[0] = -joy->axes.at(4) * MAX_FINGER_VEL * finger_throttle_factor;
 
         //top finger controlled by left triggers
         if (controllerType == DIGITAL)
         {
           if (joy->buttons.at(4) == 1)
-            angularCmd.fingers[1] = -MAX_FINGER_VEL * finger_throttle_factor;
+            fingerCmd.fingers[1] = -MAX_FINGER_VEL * finger_throttle_factor;
           else if (joy->buttons.at(6) == 1)
-            angularCmd.fingers[1] = MAX_FINGER_VEL * finger_throttle_factor;
+            fingerCmd.fingers[1] = MAX_FINGER_VEL * finger_throttle_factor;
           else
-            angularCmd.fingers[1] = 0.0;
+            fingerCmd.fingers[1] = 0.0;
         }
         else
         {
           if (joy->buttons.at(4) == 1)
-            angularCmd.fingers[1] = -MAX_FINGER_VEL * finger_throttle_factor;
+            fingerCmd.fingers[1] = -MAX_FINGER_VEL * finger_throttle_factor;
           else
-            angularCmd.fingers[1] = (0.5 - joy->axes.at(2) / 2.0) * MAX_FINGER_VEL * finger_throttle_factor;
+            fingerCmd.fingers[1] = (0.5 - joy->axes.at(2) / 2.0) * MAX_FINGER_VEL * finger_throttle_factor;
         }
 
         //bottom finger controlled by right bumpers
         if (controllerType == DIGITAL)
         {
           if (joy->buttons.at(5) == 1)
-            angularCmd.fingers[2] = -MAX_FINGER_VEL * finger_throttle_factor;
+            fingerCmd.fingers[2] = -MAX_FINGER_VEL * finger_throttle_factor;
           else if (joy->buttons.at(7) == 1)
-            angularCmd.fingers[2] = MAX_FINGER_VEL * finger_throttle_factor;
+            fingerCmd.fingers[2] = MAX_FINGER_VEL * finger_throttle_factor;
           else
-            angularCmd.fingers[2] = 0.0;
+            fingerCmd.fingers[2] = 0.0;
         }
         else
         {
           if (joy->buttons.at(5) == 1)
-            angularCmd.fingers[2] = -MAX_FINGER_VEL * finger_throttle_factor;
+            fingerCmd.fingers[2] = -MAX_FINGER_VEL * finger_throttle_factor;
           else
-            angularCmd.fingers[2] = (0.5 - joy->axes.at(5) / 2.0) * MAX_FINGER_VEL * finger_throttle_factor;
+            fingerCmd.fingers[2] = (0.5 - joy->axes.at(5) / 2.0) * MAX_FINGER_VEL * finger_throttle_factor;
         }
       }
       else
       {
         //control full gripper (outprioritizes individual finger control)
-        angularCmd.fingers[0] = -joy->axes.at(1) * MAX_FINGER_VEL * finger_throttle_factor;
-        angularCmd.fingers[1] = angularCmd.fingers[0];
-        angularCmd.fingers[2] = angularCmd.fingers[0];
+        fingerCmd.fingers[0] = -joy->axes.at(1) * MAX_FINGER_VEL * finger_throttle_factor;
+        fingerCmd.fingers[1] = fingerCmd.fingers[0];
+        fingerCmd.fingers[2] = fingerCmd.fingers[0];
       }
 
       //mode switching
@@ -326,10 +325,10 @@ void jaco_joy_teleop::joy_cback(const sensor_msgs::Joy::ConstPtr& joy)
       if (joy->buttons.at(buttonIndex) == 1)
       {
         //cancel trajectory and switch to arm control mode
-        angularCmd.fingers[0] = 0.0;
-        angularCmd.fingers[1] = 0.0;
-        angularCmd.fingers[2] = 0.0;
-        angular_cmd.publish(angularCmd);
+        fingerCmd.fingers[0] = 0.0;
+        fingerCmd.fingers[1] = 0.0;
+        fingerCmd.fingers[2] = 0.0;
+        cartesian_cmd.publish(fingerCmd);
         mode = ARM_CONTROL;
 
         ROS_INFO("Activated arm control mode");
@@ -349,12 +348,12 @@ void jaco_joy_teleop::publish_velocity()
     cartesianCmd.arm.angular.x = 0.0;
     cartesianCmd.arm.angular.y = 0.0;
     cartesianCmd.arm.angular.z = 0.0;
-    angularCmd.fingers[0] = 0.0;
-    angularCmd.fingers[1] = 0.0;
-    angularCmd.fingers[2] = 0.0;
+    fingerCmd.fingers[0] = 0.0;
+    fingerCmd.fingers[1] = 0.0;
+    fingerCmd.fingers[2] = 0.0;
 
     cartesian_cmd.publish(cartesianCmd);
-    angular_cmd.publish(angularCmd);
+    cartesian_cmd.publish(fingerCmd);
 
     return;
   }
@@ -384,18 +383,18 @@ void jaco_joy_teleop::publish_velocity()
     case FINGER_CONTROL:
       //only publish stop message once; this allows other nodes to publish velocities
       //while the controller is not being used
-      if (angularCmd.fingers[0] == 0.0 && angularCmd.fingers[1] == 0.0 && angularCmd.fingers[2] == 0.0)
+      if (fingerCmd.fingers[0] == 0.0 && fingerCmd.fingers[1] == 0.0 && fingerCmd.fingers[2] == 0.0)
       {
         if (!stopMessageSentFinger)
         {
-          angular_cmd.publish(angularCmd);
+          cartesian_cmd.publish(fingerCmd);
           stopMessageSentFinger = true;
         }
       }
       else
       {
         //send the finger velocity command
-        angular_cmd.publish(angularCmd);
+        cartesian_cmd.publish(fingerCmd);
         stopMessageSentFinger = false;
       }
       break;

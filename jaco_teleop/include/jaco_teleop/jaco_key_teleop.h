@@ -44,7 +44,6 @@
 #include <ros/ros.h>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/thread.hpp>
-#include <wpi_jaco_msgs/AngularCommand.h>
 #include <wpi_jaco_msgs/CartesianCommand.h>
 #include <signal.h>
 #include <stdio.h>
@@ -135,7 +134,6 @@ private:
 
   boost::mutex publish_mutex_; /*! The mutex for the twist topic. */
 
-  ros::Publisher angular_cmd; /*!< angular commands for arm control */
   ros::Publisher cartesian_cmd; /*!< cartesian commands for arm control */
 
   int mode; /*!< the controller mode */

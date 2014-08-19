@@ -2,10 +2,18 @@
   <arg name="linear_throttle_factor" value="1.0" />
   <arg name="angular_throttle_factor" value="1.0" />
   <arg name="finger_throttle_factor" value="1.0" />
+  <arg name="controller_type" value="digital" />
   
-  <node name="jaco_key_teleop" pkg="jaco_interaction" type="jaco_key_teleop" output="screen">
+  <node pkg="joy" type="joy_node" name="joy_node">
+    <param name="deadzone" type="double" value="0.033" />
+    <param name="autorepeat_rate" type="double" value="30" />
+    <param name="coalesce_interval" type="double" value="0.033" />
+  </node>
+  
+  <node name="jaco_joy_teleop" pkg="jaco_teleop" type="jaco_joy_teleop" output="screen">
     <param name="linear_throttle_factor" type="double" value="$(arg linear_throttle_factor)" />
     <param name="angular_throttle_factor" type="double" value="$(arg angular_throttle_factor)" />
     <param name="finger_throttle_factor" type="double" value="$(arg finger_throttle_factor)" />
+    <param name="controller_type" type="string" value="$(arg controller_type)" />
   </node>
 </launch>
