@@ -100,6 +100,8 @@ void JacoInteractiveManipulation::segmentedObjectsCallback(const rail_segmentati
     
     imServer->insert(objectMarker);
     imServer->setCallback(objectMarker.name, boost::bind(&JacoInteractiveManipulation::processPickupMarkerFeedback, this, _1));
+    
+    segmentedObjects.push_back(objectMarker);
   }
   
   imServer->applyChanges();
@@ -109,6 +111,7 @@ void JacoInteractiveManipulation::segmentedObjectsCallback(const rail_segmentati
 
 void JacoInteractiveManipulation::clearSegmentedObjects()
 {
+  ROS_INFO("Before clear, %lu segmented objects", segmentedObjects.size());
   for (unsigned int i = 0; i < segmentedObjects.size(); i ++)
   {
     stringstream ss;
@@ -117,6 +120,7 @@ void JacoInteractiveManipulation::clearSegmentedObjects()
     imServer->erase(ss.str());
   }
   segmentedObjects.clear();
+  ROS_INFO("After clear, %lu segmented objects", segmentedObjects.size());
   
   imServer->applyChanges();
 }
