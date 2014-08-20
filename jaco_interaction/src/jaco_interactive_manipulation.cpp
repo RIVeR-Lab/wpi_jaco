@@ -10,7 +10,6 @@ JacoInteractiveManipulation::JacoInteractiveManipulation() :
   //messages
   cartesianCmd = n.advertise<wpi_jaco_msgs::CartesianCommand>("jaco_arm/cartesian_cmd", 1);
   jointStateSubscriber = n.subscribe("jaco_arm/joint_states", 1, &JacoInteractiveManipulation::updateJoints, this);
-  segmentedObjectsSubscriber = n.subscribe("rail_segmentation/segmented_objects_visualization", 1, &JacoInteractiveManipulation::segmentedObjectsCallback, this);
 
   //services
   jacoFkClient = n.serviceClient<wpi_jaco_msgs::JacoFK>("jaco_arm/kinematics/fk");
@@ -41,88 +40,6 @@ void JacoInteractiveManipulation::updateJoints(const sensor_msgs::JointState::Co
   {
     joints.at(i) = msg->position.at(i);
   }
-}
-
-void JacoInteractiveManipulation::segmentedObjectsCallback(const rail_segmentation::SegmentedObjectList::ConstPtr& objectList)
-{
-  ROS_INFO("Received new segmented point clouds");
-  clearSegmentedObjects();
-  for (unsigned int i = 0; i < objectList->objects.size(); i ++)
-  {
-    visualization_msgs::InteractiveMarker objectMarker;
-    objectMarker.header = objectList->header;
-
-    objectMarker.pose.position.x = 0.0;
-    objectMarker.pose.position.y = 0.0;
-    objectMarker.pose.position.z = 0.0;
-    objectMarker.pose.orientation.x = 0.0;
-    objectMarker.pose.orientation.y = 0.0;
-    objectMarker.pose.orientation.z = 0.0;
-    objectMarker.pose.orientation.w = 1.0;
-    
-    stringstream ss;
-    ss.str("");
-    ss << "object" << i;
-    objectMarker.name = ss.str();
-    
-    visualization_msgs::Marker cloudMarker;
-    cloudMarker.header = objectList->header;
-    cloudMarker.type = visualization_msgs::Marker::POINTS;
-    cloudMarker.color.r = ((float)(rand())/(float)(RAND_MAX))/2.0;
-    cloudMarker.color.g = ((float)(rand())/(float)(RAND_MAX))/2.0 + 0.5;
-    cloudMarker.color.b = ((float)(rand())/(float)(RAND_MAX))/2.0;
-    cloudMarker.color.a = 1.0;
-
-    //add point cloud to cloud marker
-    sensor_msgs::PointCloud cloudCopy;
-    sensor_msgs::convertPointCloud2ToPointCloud(objectList->objects[i].objectCloud, cloudCopy);
-    cloudMarker.scale.x = .01;
-    cloudMarker.scale.y = .01;
-    cloudMarker.scale.z = .01;
-    cloudMarker.points.resize(cloudCopy.points.size());
-    for (unsigned int j = 0; j < cloudCopy.points.size(); j ++)
-    {
-      cloudMarker.points[j].x = cloudCopy.points[j].x;
-      cloudMarker.points[j].y = cloudCopy.points[j].y;
-      cloudMarker.points[j].z = cloudCopy.points[j].z;
-    }
-    
-    visualization_msgs::InteractiveMarkerControl objectControl;
-    ss << "control";
-    objectControl.name = ss.str();
-    objectControl.interaction_mode = visualization_msgs::InteractiveMarkerControl::NONE;
-    objectControl.always_visible = true;
-    objectControl.markers.resize(1);
-    objectControl.markers[0] = cloudMarker;
-    
-    objectMarker.controls.resize(1);
-    objectMarker.controls[0] = objectControl;
-    
-    imServer->insert(objectMarker);
-    imServer->setCallback(objectMarker.name, boost::bind(&JacoInteractiveManipulation::processPickupMarkerFeedback, this, _1));
-    
-    segmentedObjects.push_back(objectMarker);
-  }
-  
-  imServer->applyChanges();
-
-  ROS_INFO("Point cloud markers created");
-}
-
-void JacoInteractiveManipulation::clearSegmentedObjects()
-{
-  ROS_INFO("Before clear, %lu segmented objects", segmentedObjects.size());
-  for (unsigned int i = 0; i < segmentedObjects.size(); i ++)
-  {
-    stringstream ss;
-    ss.str("");
-    ss << "object" << i;
-    imServer->erase(ss.str());
-  }
-  segmentedObjects.clear();
-  ROS_INFO("After clear, %lu segmented objects", segmentedObjects.size());
-  
-  imServer->applyChanges();
 }
 
 void JacoInteractiveManipulation::makeHandMarker()
@@ -226,11 +143,6 @@ void JacoInteractiveManipulation::makeHandMarker()
   imServer->setCallback(iMarker.name, boost::bind(&JacoInteractiveManipulation::processHandMarkerFeedback, this, _1));
 
   menuHandler.apply(*imServer, iMarker.name);
-}
-
-void JacoInteractiveManipulation::processPickupMarkerFeedback(const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback)
-{
-
 }
 
 void JacoInteractiveManipulation::processHandMarkerFeedback(
