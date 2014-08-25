@@ -50,7 +50,7 @@ public:
    * @param feedback interactive marker feedback
    */
   void processHandMarkerFeedback(const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback);
-  
+
   /**
    * \brief Callback for the joint state listener
    * @param msg new joint state message

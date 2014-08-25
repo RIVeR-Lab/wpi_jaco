@@ -1,13 +1,12 @@
 <?xml version="1.0"?>
 <package>
   <name>jaco_teleop</name>
-  <version>0.0.1</version>
-  <description>Various nodes for teleoperating the JACO Arm</description>
+  <version>0.0.4</version>
+  <description>Various Nodes for Teleoperating the JACO Arm</description>
 
   <author email="davidkent@wpi.edu">David Kent</author>
   <maintainer email="davidkent@wpi.edu">David Kent</maintainer>
   <maintainer email="rctoris@wpi.edu">Russell Toris</maintainer>
-
 
   <url type="website">http://ros.org/wiki/jaco_teleop</url>
   <url type="bugtracker">https://github.com/RIVeR-Lab/wpi_jaco/issues</url>

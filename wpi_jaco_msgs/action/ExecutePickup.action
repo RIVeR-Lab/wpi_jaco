@@ -5,6 +5,6 @@ bool setLiftVelocity                          # true if arm lifting velocity is 
 float32 liftVelocity                          # optional lift velocity
 ---
 # Define the result
-bool success         # true if the pickup was successful
+bool success                                  # true if the pickup was successful
 ---
 # Define feedback message

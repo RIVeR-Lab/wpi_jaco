@@ -3,7 +3,8 @@
 using namespace std;
 
 JacoInteractiveManipulation::JacoInteractiveManipulation() :
-    acGrasp("jaco_arm/manipulation/grasp", true), acPickup("jaco_arm/manipulation/pickup", true), acHome("jaco_arm/home_arm", true)
+    acGrasp("jaco_arm/manipulation/grasp", true), acPickup("jaco_arm/manipulation/pickup", true), acHome(
+        "jaco_arm/home_arm", true)
 {
   joints.resize(6);
 

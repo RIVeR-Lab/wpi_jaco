@@ -11,8 +11,8 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
         boost::bind(&JacoArmTrajectoryController::execute_smooth_trajectory, this, _1), false), smooth_joint_trajectory_server(
         nh, "jaco_arm/joint_velocity_controller",
         boost::bind(&JacoArmTrajectoryController::execute_joint_trajectory, this, _1), false), gripper_server_(
-        nh, "jaco_arm/fingers_controller", boost::bind(&JacoArmTrajectoryController::execute_gripper, this, _1), false),
-        home_arm_server(nh, "jaco_arm/home_arm", boost::bind(&JacoArmTrajectoryController::home_arm, this, _1), false)
+        nh, "jaco_arm/fingers_controller", boost::bind(&JacoArmTrajectoryController::execute_gripper, this, _1), false), home_arm_server(
+        nh, "jaco_arm/home_arm", boost::bind(&JacoArmTrajectoryController::home_arm, this, _1), false)
 {
   boost::recursive_mutex::scoped_lock lock(api_mutex);
 
@@ -171,7 +171,6 @@ static inline double nearest_equivalent(double desired, double current)
     return medVal;
   return highVal;
 }
-
 
 /*****************************************/
 /**********  Trajectory Control **********/
@@ -720,15 +719,15 @@ void JacoArmTrajectoryController::home_arm(const wpi_jaco_msgs::HomeArmGoalConst
   StopControlAPI();
   MoveHome();
   StartControlAPI();
-  
+
   if (goal->retract)
   {
     //retract to given position
     controlType = ANGULAR_CONTROL;
     SetAngularControl();
-    
+
     angularCmdPublisher.publish(goal->retractPosition);
-    
+
     ros::Rate rate(10);
     int trajectory_size = 1;
     while (trajectory_size > 0)
@@ -761,7 +760,7 @@ void JacoArmTrajectoryController::home_arm(const wpi_jaco_msgs::HomeArmGoalConst
     else
       SetCartesianControl();
   }
-  
+
   wpi_jaco_msgs::HomeArmResult result;
   result.success = true;
   home_arm_server.setSucceeded(result);
@@ -793,7 +792,7 @@ void JacoArmTrajectoryController::angularCmdCallback(const wpi_jaco_msgs::Angula
     if (msg.position)
     {
       jacoPoint.Position.Type = ANGULAR_POSITION;
-      
+
       float current_joint_pos[6];
       AngularPosition position_data;
       GetAngularPosition(position_data);
@@ -803,13 +802,19 @@ void JacoArmTrajectoryController::angularCmdCallback(const wpi_jaco_msgs::Angula
       current_joint_pos[3] = position_data.Actuators.Actuator4 * DEG_TO_RAD;
       current_joint_pos[4] = position_data.Actuators.Actuator5 * DEG_TO_RAD;
       current_joint_pos[5] = position_data.Actuators.Actuator6 * DEG_TO_RAD;
-      
-      jacoPoint.Position.Actuators.Actuator1 = nearest_equivalent(simplify_angle(msg.joints[0]), current_joint_pos[0]) * RAD_TO_DEG;
-      jacoPoint.Position.Actuators.Actuator2 = nearest_equivalent(simplify_angle(msg.joints[1]), current_joint_pos[1]) * RAD_TO_DEG;
-      jacoPoint.Position.Actuators.Actuator3 = nearest_equivalent(simplify_angle(msg.joints[2]), current_joint_pos[2]) * RAD_TO_DEG;
-      jacoPoint.Position.Actuators.Actuator4 = nearest_equivalent(simplify_angle(msg.joints[3]), current_joint_pos[3]) * RAD_TO_DEG;
-      jacoPoint.Position.Actuators.Actuator5 = nearest_equivalent(simplify_angle(msg.joints[4]), current_joint_pos[4]) * RAD_TO_DEG;
-      jacoPoint.Position.Actuators.Actuator6 = nearest_equivalent(simplify_angle(msg.joints[5]), current_joint_pos[5]) * RAD_TO_DEG;
+
+      jacoPoint.Position.Actuators.Actuator1 = nearest_equivalent(simplify_angle(msg.joints[0]),
+                                                                  current_joint_pos[0]) * RAD_TO_DEG;
+      jacoPoint.Position.Actuators.Actuator2 = nearest_equivalent(simplify_angle(msg.joints[1]),
+                                                                  current_joint_pos[1]) * RAD_TO_DEG;
+      jacoPoint.Position.Actuators.Actuator3 = nearest_equivalent(simplify_angle(msg.joints[2]),
+                                                                  current_joint_pos[2]) * RAD_TO_DEG;
+      jacoPoint.Position.Actuators.Actuator4 = nearest_equivalent(simplify_angle(msg.joints[3]),
+                                                                  current_joint_pos[3]) * RAD_TO_DEG;
+      jacoPoint.Position.Actuators.Actuator5 = nearest_equivalent(simplify_angle(msg.joints[4]),
+                                                                  current_joint_pos[4]) * RAD_TO_DEG;
+      jacoPoint.Position.Actuators.Actuator6 = nearest_equivalent(simplify_angle(msg.joints[5]),
+                                                                  current_joint_pos[5]) * RAD_TO_DEG;
     }
     else
     {
@@ -821,7 +826,7 @@ void JacoArmTrajectoryController::angularCmdCallback(const wpi_jaco_msgs::Angula
       jacoPoint.Position.Actuators.Actuator5 = msg.joints[4] * RAD_TO_DEG;
       jacoPoint.Position.Actuators.Actuator6 = msg.joints[5] * RAD_TO_DEG;
     }
-    
+
   }
   else
   {
