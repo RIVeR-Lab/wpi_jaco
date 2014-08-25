@@ -2,6 +2,16 @@
 Changelog for package wpi_jaco_wrapper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.5 (2014-08-25)
+------------------
+* release prep
+* adjusted teleop due to a mode switching bug in the arm; moved teleop to jaco_teleop and included support for segmentation in jaco_interaction
+* fix for issue with single angular position commands
+* testing retract command
+* adjusted retract position
+* Home and retract actions added to interactive markers
+* Contributors: Russell Toris, dekent
+
 0.0.4 (2014-08-05)
 ------------------
 * documentation

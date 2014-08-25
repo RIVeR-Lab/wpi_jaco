@@ -2,6 +2,12 @@
 Changelog for package wpi_jaco_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.5 (2014-08-25)
+------------------
+* release prep
+* Home and retract actions added to interactive markers
+* Contributors: Russell Toris, dekent
+
 0.0.4 (2014-08-05)
 ------------------
 * documentation
