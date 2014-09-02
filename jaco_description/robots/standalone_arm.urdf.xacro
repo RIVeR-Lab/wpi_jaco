@@ -30,5 +30,5 @@
 		</collision>
 	</link>
 
-	<xacro:jaco_arm parent="root" />
+	<xacro:jaco_arm parent="root" xyz="0 0 0" rpy="0 0 0" />
 </robot>

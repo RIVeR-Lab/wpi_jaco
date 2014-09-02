@@ -27,38 +27,36 @@
 
 	<xacro:property name="joint_base" value="jaco_joint_base" />
 	<xacro:property name="joint_base_axis_xyz" value="0 0 0" />
-	<xacro:property name="joint_base_origin_xyz" value="0 0 0" />
-	<xacro:property name="joint_base_origin_rpy" value="0 0 0" />
 
 	<xacro:property name="joint_1" value="jaco_joint_1" />
 	<xacro:property name="joint_1_axis_xyz" value="0 0 1" />
 	<xacro:property name="joint_1_origin_xyz" value="0 0 0.1535" />
-	<xacro:property name="joint_1_origin_rpy" value="${M_PI} 0 0" />
+	<xacro:property name="joint_1_origin_rpy" value="${M_PI} 0 1.412" />
 
 	<xacro:property name="joint_2" value="jaco_joint_2" />
 	<xacro:property name="joint_2_axis_xyz" value="0 0 1" />
 	<xacro:property name="joint_2_origin_xyz" value="0 0 -0.1185" />
-	<xacro:property name="joint_2_origin_rpy" value="-${M_PI/2} -${M_PI/2} 0" />
+	<xacro:property name="joint_2_origin_rpy" value="-${M_PI/2} 1.403 0" />
 
 	<xacro:property name="joint_3" value="jaco_joint_3" />
 	<xacro:property name="joint_3_axis_xyz" value="0 0 1" />
 	<xacro:property name="joint_3_origin_xyz" value="0.41 0 0" />
-	<xacro:property name="joint_3_origin_rpy" value="${M_PI} 0 ${M_PI}" />
+	<xacro:property name="joint_3_origin_rpy" value="-${M_PI} 0 2.274" />
 
 	<xacro:property name="joint_4" value="jaco_joint_4" />
 	<xacro:property name="joint_4_axis_xyz" value="0 0 1" />
 	<xacro:property name="joint_4_origin_xyz" value="0.207 0 -0.01125" />
-	<xacro:property name="joint_4_origin_rpy" value="0 -${M_PI/2} 0" />
+	<xacro:property name="joint_4_origin_rpy" value="${M_PI/2} 0.752 -${M_PI/2}" />
 
 	<xacro:property name="joint_5" value="jaco_joint_5" />
 	<xacro:property name="joint_5_axis_xyz" value="0 0 1" />
 	<xacro:property name="joint_5_origin_xyz" value="0.0343 0 -0.06588" />
-	<xacro:property name="joint_5_origin_rpy" value="0 ${M_PI/180*55} ${M_PI}" />
+	<xacro:property name="joint_5_origin_rpy" value="0.959 -0.045 -1.539" />
 
 	<xacro:property name="joint_6" value="jaco_joint_6" />
 	<xacro:property name="joint_6_axis_xyz" value="0 0 1" />
 	<xacro:property name="joint_6_origin_xyz" value="0.0343 0 -0.06588" />
-	<xacro:property name="joint_6_origin_rpy" value="0 ${M_PI/180*55} ${M_PI}" />
+	<xacro:property name="joint_6_origin_rpy" value="0.953 0.139 -1.669" />
 
 	<xacro:property name="joint_finger_1" value="jaco_joint_finger_1" />
 	<xacro:property name="joint_finger_1_axis_xyz" value="0 0 1" />
@@ -194,9 +192,9 @@
 		</joint>
 	</xacro:macro>
 
-	<xacro:macro name="jaco_arm" params="parent">
+	<xacro:macro name="jaco_arm" params="parent xyz rpy">
 		<xacro:jaco_link link_name="${link_base}" />
-		<xacro:jaco_joint joint_name="${joint_base}" type="fixed" parent="${parent}" child="${link_base}" joint_axis_xyz="${joint_base_axis_xyz}" joint_origin_xyz="${joint_base_origin_xyz}" joint_origin_rpy="${joint_base_origin_rpy}" lower_limit="-${J_LIM}" upper_limit="${J_LIM}" />
+		<xacro:jaco_joint joint_name="${joint_base}" type="fixed" parent="${parent}" child="${link_base}" joint_axis_xyz="${joint_base_axis_xyz}" joint_origin_xyz="${xyz}" joint_origin_rpy="${rpy}" lower_limit="-${J_LIM}" upper_limit="${J_LIM}" />
 		<xacro:jaco_link link_name="${link_1}" />
 		<xacro:jaco_joint joint_name="${joint_1}" type="revolute" parent="${link_base}" child="${link_1}" joint_axis_xyz="${joint_1_axis_xyz}" joint_origin_xyz="${joint_1_origin_xyz}" joint_origin_rpy="${joint_1_origin_rpy}" lower_limit="-${J_LIM}" upper_limit="${J_LIM}" />
 		<xacro:jaco_link link_name="${link_2}" />
