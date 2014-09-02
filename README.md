@@ -13,8 +13,8 @@ This package servers as an alternative to [jaco-arm](https://github.com/Kinovaro
 [jaco_description](jaco_description) includes both minified versions of the 3D Collada models as well as pre-compiled URDF files. To properly contribute, do the following:
 
  1. Re-minify any modified Collada files
-   * `cd /path/to/wpi_jaco/jaco_description/meshes/original`
-   * `xmllint --noblanks my_modified_mesh.dae > ../my_modified_mesh.min.dae`
+   * `cd /path/to/wpi_jaco/jaco_description/meshes`
+   * `xmllint --noblanks my_modified_mesh.dae > my_modified_mesh.min.dae`
  1. Re-compile the modified URDF
    * `cd /path/to/wpi_jaco`
    * `rosrun xacro xacro jaco_description/robots/standalone_arm.urdf.xacro > jaco_description/robots/standalone_arm.urdf`

@@ -106,7 +106,7 @@
 		<link name="${link_name}">
 			<visual>
 				<geometry>
-					<mesh scale="${M_SCALE} ${M_SCALE} ${M_SCALE}" filename="package://jaco_description/meshes/${link_name}.dae" />
+					<mesh scale="${M_SCALE} ${M_SCALE} ${M_SCALE}" filename="package://jaco_description/meshes/${link_name}.min.dae" />
 				</geometry>
 				<material name="carbon_fiber">
 					<color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
@@ -124,7 +124,7 @@
 		<link name="${link_name}_${suffix}">
 			<visual>
 				<geometry>
-					<mesh scale="${M_SCALE} ${M_SCALE} ${M_SCALE}" filename="package://jaco_description/meshes/${link_name}.dae" />
+					<mesh scale="${M_SCALE} ${M_SCALE} ${M_SCALE}" filename="package://jaco_description/meshes/${link_name}.min.dae" />
 				</geometry>
 				<material name="carbon_fiber">
 					<color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
@@ -142,7 +142,7 @@
 		<link name="${link_name}_${suffix}">
 			<visual>
 				<geometry>
-					<mesh scale="${M_SCALE} ${M_SCALE} ${M_SCALE}" filename="package://jaco_description/meshes/${link_name}_4_5.dae" />
+					<mesh scale="${M_SCALE} ${M_SCALE} ${M_SCALE}" filename="package://jaco_description/meshes/${link_name}_4_5.min.dae" />
 				</geometry>
 				<material name="carbon_fiber">
 					<color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
@@ -160,7 +160,7 @@
 		<link name="jaco_${size}_ring_cover_${suffix}">
 			<visual>
 				<geometry>
-					<mesh scale="${M_SCALE} ${M_SCALE} ${M_SCALE}" filename="package://jaco_description/meshes/jaco_${size}_ring_cover.dae" />
+					<mesh scale="${M_SCALE} ${M_SCALE} ${M_SCALE}" filename="package://jaco_description/meshes/jaco_${size}_ring_cover.min.dae" />
 				</geometry>
 				<material name="carbon_fiber">
 					<color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
