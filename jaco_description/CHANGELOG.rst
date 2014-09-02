@@ -2,6 +2,17 @@
 Changelog for package jaco_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.6 (2014-09-02)
+------------------
+* start position fixed
+* added rviz to install
+* fixed start position of arm
+* Updated urdf and regenerated urdf file
+* rebuild of URDF
+* minified XML
+* fixed collision models in URDF
+* Contributors: Russell Toris, dekent
+
 0.0.5 (2014-08-25)
 ------------------
 
