@@ -43,7 +43,7 @@
 	<xacro:property name="joint_3" value="jaco_joint_3" />
 	<xacro:property name="joint_3_axis_xyz" value="0 0 1" />
 	<xacro:property name="joint_3_origin_xyz" value="0.41 0 0" />
-	<xacro:property name="joint_3_origin_rpy" value="0 0 ${M_PI}" />
+	<xacro:property name="joint_3_origin_rpy" value="${M_PI} 0 ${M_PI}" />
 
 	<xacro:property name="joint_4" value="jaco_joint_4" />
 	<xacro:property name="joint_4_axis_xyz" value="0 0 1" />
@@ -221,7 +221,7 @@
 		<xacro:jaco_ring_cover suffix="2" size="small"/>
 		<xacro:jaco_joint joint_name="jaco_large_ring_cover_5_joint" type="fixed" parent="${link}_4" child="jaco_small_ring_cover_2" joint_axis_xyz="${joint_5_axis_xyz}" joint_origin_xyz="${joint_5_origin_xyz}" joint_origin_rpy="${joint_5_origin_rpy}" lower_limit="-${J_LIM}" upper_limit="${J_LIM}" />
 		<xacro:jaco_ring_cover suffix="3" size="small"/>
-		<xacro:jaco_joint joint_name="jaco_large_ring_cover_6_joint" type="fixed" parent="${link}_4" child="jaco_small_ring_cover_3" joint_axis_xyz="${joint_6_axis_xyz}" joint_origin_xyz="${joint_6_origin_xyz}" joint_origin_rpy="${joint_6_origin_rpy}" lower_limit="-${J_LIM}" upper_limit="${J_LIM}" />
+		<xacro:jaco_joint joint_name="jaco_large_ring_cover_6_joint" type="fixed" parent="${link}_5" child="jaco_small_ring_cover_3" joint_axis_xyz="${joint_6_axis_xyz}" joint_origin_xyz="${joint_6_origin_xyz}" joint_origin_rpy="${joint_6_origin_rpy}" lower_limit="-${J_LIM}" upper_limit="${J_LIM}" />
 		
 		<xacro:jaco_link_suffix link_name="${link_finger}" suffix="1"/>
 		<xacro:jaco_finger_joint joint_name="${joint_finger_1}" type="revolute" parent="${link_hand}" child="${link_finger}_1" joint_axis_xyz="${joint_finger_1_axis_xyz}" joint_origin_xyz="${joint_finger_1_origin_xyz}" joint_origin_rpy="${joint_finger_1_origin_rpy}" lower_limit="${joint_finger_1_lower_limit}" upper_limit="${joint_finger_1_upper_limit}" />
