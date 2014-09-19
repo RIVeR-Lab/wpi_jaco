@@ -38,7 +38,7 @@ void JacoManipulation::execute_grasp(const wpi_jaco_msgs::ExecuteGraspGoalConstP
     return;
   }
 
-  wpi_jaco_msgs::CartesianCommand cmd;
+  wpi_jaco_msgs::AngularCommand cmd;
   cmd.position = false;
   cmd.armCommand = false;
   cmd.fingerCommand = true;
@@ -86,7 +86,7 @@ void JacoManipulation::execute_grasp(const wpi_jaco_msgs::ExecuteGraspGoalConstP
       cmd.fingers[0] = 0.0;
       cmd.fingers[1] = 0.0;
       cmd.fingers[2] = 0.0;
-      cartesianCmdPublisher.publish(cmd);
+      angularCmdPublisher.publish(cmd);
 
       //preempt action server
       executeGraspServer.setPreempted();
@@ -95,7 +95,7 @@ void JacoManipulation::execute_grasp(const wpi_jaco_msgs::ExecuteGraspGoalConstP
       return;
     }
 
-    cartesianCmdPublisher.publish(cmd);
+    angularCmdPublisher.publish(cmd);
 
     if (ros::Time::now().toSec() - prevCheckTime > .25)	//occaisionally check to see if the fingers have stopped moving
     {
@@ -123,7 +123,7 @@ void JacoManipulation::execute_grasp(const wpi_jaco_msgs::ExecuteGraspGoalConstP
   cmd.fingers[0] = 0.0;
   cmd.fingers[1] = 0.0;
   cmd.fingers[2] = 0.0;
-  cartesianCmdPublisher.publish(cmd);
+  angularCmdPublisher.publish(cmd);
 
   wpi_jaco_msgs::ExecuteGraspResult result;
   result.fingerJoints.resize(3);
