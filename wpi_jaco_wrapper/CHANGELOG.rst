@@ -2,6 +2,11 @@
 Changelog for package wpi_jaco_wrapper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.7 (2014-09-19)
+------------------
+* bugfix on gripper closing
+* Contributors: dekent
+
 0.0.6 (2014-09-02)
 ------------------
 
