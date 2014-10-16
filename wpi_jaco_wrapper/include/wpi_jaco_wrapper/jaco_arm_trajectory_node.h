@@ -85,6 +85,8 @@ private:
   actionlib::SimpleActionServer<wpi_jaco_msgs::HomeArmAction> home_arm_server;
 
   boost::recursive_mutex api_mutex;
+  
+  double max_curvature;
 
 public:
   /**

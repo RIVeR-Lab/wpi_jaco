@@ -104,17 +104,33 @@ void JacoManipulation::execute_grasp(const wpi_jaco_msgs::ExecuteGraspGoalConstP
       currentFingerPos[1] = jointPos[7];
       currentFingerPos[2] = jointPos[8];
 
-      //grasp is finished if fingers haven't moved since the last check
-      if ((fabs(prevFingerPos[0] - currentFingerPos[0]) + fabs(prevFingerPos[1] - currentFingerPos[1])
-          + fabs(prevFingerPos[2] - currentFingerPos[2])) == 0.0)
+      if (!goal->closeGripper)
       {
-        finishedGrasp = true;
+        if (currentFingerPos[0] <= GRIPPER_OPEN_THRESHOLD && currentFingerPos[1] <= GRIPPER_OPEN_THRESHOLD && currentFingerPos[2] <= GRIPPER_OPEN_THRESHOLD)
+        {
+          finishedGrasp = true;
+        }
+        else
+        {
+          prevFingerPos[0] = currentFingerPos[0];
+          prevFingerPos[1] = currentFingerPos[1];
+          prevFingerPos[2] = currentFingerPos[2];
+        }
       }
       else
       {
-        prevFingerPos[0] = currentFingerPos[0];
-        prevFingerPos[1] = currentFingerPos[1];
-        prevFingerPos[2] = currentFingerPos[2];
+        //grasp is finished if fingers haven't moved since the last check
+        if ((fabs(prevFingerPos[0] - currentFingerPos[0]) + fabs(prevFingerPos[1] - currentFingerPos[1])
+            + fabs(prevFingerPos[2] - currentFingerPos[2])) == 0.0)
+        {
+          finishedGrasp = true;
+        }
+        else
+        {
+          prevFingerPos[0] = currentFingerPos[0];
+          prevFingerPos[1] = currentFingerPos[1];
+          prevFingerPos[2] = currentFingerPos[2];
+        }
       }
     }
   }

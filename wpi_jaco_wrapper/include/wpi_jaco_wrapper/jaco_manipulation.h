@@ -29,6 +29,7 @@
 #define DEFAULT_LIFT_VEL .1 //the default velocity for lifting objects during pickup (m/s)
 #define LIFT_HEIGHT .15 //height for object pickup (m)
 #define LIFT_TIMEOUT 5 //timeout for pickup action (s)
+#define GRIPPER_OPEN_THRESHOLD .02 //gripper position where the fingers are considered "open"
 
 /*!
  * \class JacoManipulation
