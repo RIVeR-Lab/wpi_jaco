@@ -77,6 +77,16 @@ void JacoManipulation::execute_grasp(const wpi_jaco_msgs::ExecuteGraspGoalConstP
 
   double prevCheckTime = ros::Time::now().toSec();
   bool finishedGrasp = false;
+
+  //check if grasp is already finished (for opening case only)
+  if (!goal->closeGripper)
+  {
+    if (currentFingerPos[0] <= GRIPPER_OPEN_THRESHOLD && currentFingerPos[1] <= GRIPPER_OPEN_THRESHOLD && currentFingerPos[2] <= GRIPPER_OPEN_THRESHOLD)
+    {
+      finishedGrasp = true;
+    }
+  }
+  
   while (!finishedGrasp)
   {
     //check for preempt requests from clients
