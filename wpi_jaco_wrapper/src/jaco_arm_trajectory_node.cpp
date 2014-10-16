@@ -15,7 +15,9 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
         nh, "jaco_arm/home_arm", boost::bind(&JacoArmTrajectoryController::home_arm, this, _1), false)
 {
   ros::NodeHandle private_nh("~");
-  private_nh.param<double>("max_curvature", max_curvature, 6.0);
+  private_nh.param<double>("max_curvature", max_curvature, 10.0);
+
+  ROS_INFO("max_curvature: %f", max_curvature);
 
   boost::recursive_mutex::scoped_lock lock(api_mutex);
 
