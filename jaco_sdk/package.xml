@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>jaco_sdk</name>
-  <version>0.0.7</version>
+  <version>0.0.8</version>
   <description>JACO Software SDK and API</description>
 
   <maintainer email="davidkent@wpi.edu">David Kent</maintainer>
