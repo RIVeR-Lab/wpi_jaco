@@ -22,6 +22,7 @@ add_message_files(
 add_service_files(
   FILES
   EulerToQuaternion.srv
+  GetAngularPosition.srv
   GetCartesianPosition.srv
   JacoFK.srv
   QuaternionToEuler.srv

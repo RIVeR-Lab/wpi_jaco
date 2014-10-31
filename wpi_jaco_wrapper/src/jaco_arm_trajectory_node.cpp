@@ -66,6 +66,7 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
   // Services
   jaco_fk_client = nh.serviceClient<wpi_jaco_msgs::JacoFK>("jaco_arm/kinematics/fk");
   qe_client = nh.serviceClient<wpi_jaco_msgs::QuaternionToEuler>("jaco_conversions/quaternion_to_euler");
+  angularPositionServer = nh.advertiseService("jaco_arm/get_angular_position", &JacoArmTrajectoryController::getAngularPosition, this);
   cartesianPositionServer = nh.advertiseService("jaco_arm/get_cartesian_position",
                                                 &JacoArmTrajectoryController::getCartesianPosition, this);
 
@@ -987,6 +988,17 @@ void JacoArmTrajectoryController::executeCartesianTrajectoryPoint(TrajectoryPoin
     EraseAllTrajectories();
 
   SendBasicTrajectory(point);
+}
+
+bool JacoArmTrajectoryController::getAngularPosition(wpi_jaco_msgs::GetAngularPosition::Request &req, wpi_jaco_msgs::GetAngularPosition::Response &res)
+{
+  res.pos.resize(NUM_JOINTS);
+  for (unsigned int i = 0; i < NUM_JOINTS; i ++)
+  {
+    res.pos[i] = joint_pos[i];
+  }
+
+  return true;
 }
 
 bool JacoArmTrajectoryController::getCartesianPosition(wpi_jaco_msgs::GetCartesianPosition::Request &req,

@@ -22,6 +22,7 @@
 #include <ecl/geometry.hpp>
 #include <wpi_jaco_msgs/AngularCommand.h>
 #include <wpi_jaco_msgs/CartesianCommand.h>
+#include <wpi_jaco_msgs/GetAngularPosition.h>
 #include <wpi_jaco_msgs/GetCartesianPosition.h>
 #include <wpi_jaco_msgs/HomeArmAction.h>
 #include <wpi_jaco_msgs/JacoFK.h>
@@ -73,6 +74,7 @@ private:
   // Services
   ros::ServiceClient jaco_fk_client; //!< forward kinematics client
   ros::ServiceClient qe_client; //!< quaternion to euler (XYZ) conversion client
+  ros::ServiceServer angularPositionServer; //!< service server to get the joint positions
   ros::ServiceServer cartesianPositionServer; //!< service server to get end effector pose
 
   ros::Timer joint_state_timer_; //!< timer for joint state publisher
@@ -185,6 +187,17 @@ private:
    * @param erase if true, clear the trajectory point stack before sending point
    */
   void executeCartesianTrajectoryPoint(TrajectoryPoint point, bool erase);
+
+  /**
+   * \brief Service callback for getting the current joint positions of the arm and fingers
+   *
+   * This allows other nodes to request the joint positions when needed, rather than listening to the joint_state
+   * topic.  The positions are given in radians on [-pi, pi].
+   * @param req empty service request
+   * @param res service response including joint positions
+   * @return true on success
+   */
+  bool getAngularPosition(wpi_jaco_msgs::GetAngularPosition::Request &req, wpi_jaco_msgs::GetAngularPosition::Response &res);
 
   /**
    * \brief Service callback for getting the current Cartesian pose of the end effector
