@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>jaco_description</name>
-  <version>0.0.7</version>
+  <version>0.0.8</version>
   <description>3D Model and URDF of the Kinova JACO Arm</description>
   
   <maintainer email="davidkent@wpi.edu">David Kent</maintainer>

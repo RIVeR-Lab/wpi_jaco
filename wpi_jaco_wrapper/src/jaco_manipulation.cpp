@@ -83,6 +83,7 @@ void JacoManipulation::execute_grasp(const wpi_jaco_msgs::ExecuteGraspGoalConstP
   {
     if (currentFingerPos[0] <= GRIPPER_OPEN_THRESHOLD && currentFingerPos[1] <= GRIPPER_OPEN_THRESHOLD && currentFingerPos[2] <= GRIPPER_OPEN_THRESHOLD)
     {
+      ROS_INFO("Gripper already open.");
       finishedGrasp = true;
     }
   }

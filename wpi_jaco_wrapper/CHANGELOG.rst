@@ -2,6 +2,14 @@
 Changelog for package wpi_jaco_wrapper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.8 (2014-10-22)
+------------------
+* tuning
+* Added check to see if the gripper is already open before the gripper opening loop
+* Parameter tuning
+* Added max_curvature parameter for trajectory planning, thresholded gripper opening to prevent a bug that causes gripper opening to terminate late
+* Contributors: David Kent
+
 0.0.7 (2014-09-19)
 ------------------
 * bugfix on gripper closing
