@@ -18,6 +18,7 @@
   <run_depend>jaco_description</run_depend>
   <run_depend>jaco_interaction</run_depend>
   <run_depend>jaco_sdk</run_depend>
+  <run_depend>jaco_teleop</run_depend>
   <run_depend>wpi_jaco_msgs</run_depend>
   <run_depend>wpi_jaco_wrapper</run_depend>
   
