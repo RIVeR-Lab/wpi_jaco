@@ -2,6 +2,11 @@
 Changelog for package wpi_jaco
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.10 (2014-12-12)
+-------------------
+* added dependency on jaco_teleop for the metapackage
+* Contributors: David Kent
+
 0.0.9 (2014-12-02)
 ------------------
 
