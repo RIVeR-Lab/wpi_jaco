@@ -19,6 +19,7 @@ jaco_joy_teleop::jaco_joy_teleop()
   ros::NodeHandle private_nh("~");
 
   // create the ROS topics
+  angular_cmd = node.advertise<wpi_jaco_msgs::AngularCommand>("jaco_arm/angular_cmd", 10);
   cartesian_cmd = node.advertise<wpi_jaco_msgs::CartesianCommand>("jaco_arm/cartesian_cmd", 10);
   joy_sub = node.subscribe<sensor_msgs::Joy>("joy", 10, &jaco_joy_teleop::joy_cback, this);
 
@@ -328,7 +329,7 @@ void jaco_joy_teleop::joy_cback(const sensor_msgs::Joy::ConstPtr& joy)
         fingerCmd.fingers[0] = 0.0;
         fingerCmd.fingers[1] = 0.0;
         fingerCmd.fingers[2] = 0.0;
-        cartesian_cmd.publish(fingerCmd);
+        angular_cmd.publish(fingerCmd);
         mode = ARM_CONTROL;
 
         ROS_INFO("Activated arm control mode");
@@ -353,7 +354,7 @@ void jaco_joy_teleop::publish_velocity()
     fingerCmd.fingers[2] = 0.0;
 
     cartesian_cmd.publish(cartesianCmd);
-    cartesian_cmd.publish(fingerCmd);
+    angular_cmd.publish(fingerCmd);
 
     return;
   }
@@ -387,14 +388,14 @@ void jaco_joy_teleop::publish_velocity()
       {
         if (!stopMessageSentFinger)
         {
-          cartesian_cmd.publish(fingerCmd);
+          angular_cmd.publish(fingerCmd);
           stopMessageSentFinger = true;
         }
       }
       else
       {
         //send the finger velocity command
-        cartesian_cmd.publish(fingerCmd);
+        angular_cmd.publish(fingerCmd);
         stopMessageSentFinger = false;
       }
       break;

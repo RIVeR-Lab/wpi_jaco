@@ -3,6 +3,6 @@ bool retract                                  # set to true to retract arm to a 
 wpi_jaco_msgs/AngularCommand retractPosition  # position to which the arm should retract (only if retract is true)
 ---
 # Define the result
-bool success                                  # true if the pickup was successful
+bool success                                  # true if arm move was successful
 ---
 # Define feedback message

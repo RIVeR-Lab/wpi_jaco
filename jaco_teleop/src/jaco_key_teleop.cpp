@@ -50,6 +50,7 @@ jaco_key_teleop::jaco_key_teleop()
   ros::NodeHandle private_nh("~");
 
   // create the ROS topics
+  angular_cmd = nh_.advertise<wpi_jaco_msgs::AngularCommand>("jaco_arm/angular_cmd", 10);
   cartesian_cmd = nh_.advertise<wpi_jaco_msgs::CartesianCommand>("jaco_arm/cartesian_cmd", 10);
 
   // read in throttle values
@@ -93,7 +94,7 @@ void jaco_key_teleop::watchdog()
       if ((ros::Time::now() > last_publish_ + ros::Duration(0.15))
           && (ros::Time::now() > first_publish_ + ros::Duration(0.50)))
       {
-        wpi_jaco_msgs::CartesianCommand cmd;
+        wpi_jaco_msgs::AngularCommand cmd;
         cmd.position = false;
         cmd.armCommand = false;
         cmd.fingerCommand = true;
@@ -102,7 +103,7 @@ void jaco_key_teleop::watchdog()
         cmd.fingers[0] = 0.0;
         cmd.fingers[1] = 0.0;
         cmd.fingers[2] = 0.0;
-        cartesian_cmd.publish(cmd);
+        angular_cmd.publish(cmd);
       }
     }
       break;
@@ -221,7 +222,7 @@ void jaco_key_teleop::loop()
       case FINGER_CONTROL:
       {
         //initialize finger command
-        wpi_jaco_msgs::CartesianCommand cmd;
+        wpi_jaco_msgs::AngularCommand cmd;
         cmd.position = false;
         cmd.armCommand = false;
         cmd.fingerCommand = true;
@@ -279,7 +280,7 @@ void jaco_key_teleop::loop()
           first_publish_ = ros::Time::now();
         }
         last_publish_ = ros::Time::now();
-        cartesian_cmd.publish(cmd);
+        angular_cmd.publish(cmd);
       }
         break;
     }
