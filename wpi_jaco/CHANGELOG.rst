@@ -2,6 +2,9 @@
 Changelog for package wpi_jaco
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.11 (2014-12-18)
+-------------------
+
 0.0.10 (2014-12-12)
 -------------------
 * added dependency on jaco_teleop for the metapackage

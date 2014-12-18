@@ -2,6 +2,11 @@
 Changelog for package jaco_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.11 (2014-12-18)
+-------------------
+* minify script
+* Contributors: Russell Toris
+
 0.0.10 (2014-12-12)
 -------------------
 

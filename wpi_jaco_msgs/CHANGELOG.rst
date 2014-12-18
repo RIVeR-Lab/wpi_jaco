@@ -2,6 +2,11 @@
 Changelog for package wpi_jaco_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.11 (2014-12-18)
+-------------------
+* Changed teleop to use angular commands for finger movement; this will allow finger control even near/in arm singularities
+* Contributors: David Kent
+
 0.0.10 (2014-12-12)
 -------------------
 
