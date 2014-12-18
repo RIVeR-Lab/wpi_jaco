@@ -29,5 +29,6 @@ script:
   - catkin_make install
   - source install/setup.bash
   - cd src/package
-  - /opt/ros/hydro/share/xacro/xacro.py jaco_description/robots/standalone_arm.urdf.xacro >> sanity.urdf
-  - diff sanity.urdf jaco_description/robots/standalone_arm.urdf
+  - ./jaco_description/scripts/minify.bash
+  - git diff --exit-code
+  - /opt/ros/hydro/share/xacro/xacro.py jaco_description/robots/standalone_arm.urdf.xacro
