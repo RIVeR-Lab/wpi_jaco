@@ -2,7 +2,7 @@ wpi_jaco  [![Build Status](https://api.travis-ci.org/RIVeR-Lab/wpi_jaco.png)](ht
 ========
 
 #### ROS Packages for the JACO Arm Developed at WPI
-For full documentation, see [the ROS wiki](http://ros.org/wiki/wpi_jaco).
+For full documentation, see [the ROS wiki](http://wiki.ros.org/wpi_jaco).
 
 [Doxygen](http://docs.ros.org/indigo/api/wpi_jaco/html/) files can be found on the ROS wiki.
 
