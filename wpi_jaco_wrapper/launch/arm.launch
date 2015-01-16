@@ -6,6 +6,7 @@
     <remap from="jaco_arm/arm_controller" to="/jaco_arm/arm_controller/trajectory"/>
     <remap from="jaco_arm/smooth_arm_controller" to="/jaco_arm/smooth_arm_controller/trajectory"/>
     <remap from="jaco_arm/joint_velocity_controller" to="/jaco_arm/joint_velocity_controller/trajectory"/>
+    <remap from="jaco_arm/joint_states" to="/joint_states" />
     <param name="max_curvature" type="double" value="$(arg max_curvature)" />
   </node>
   
