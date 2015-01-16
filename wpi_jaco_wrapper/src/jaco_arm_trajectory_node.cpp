@@ -409,8 +409,8 @@ void JacoArmTrajectoryController::execute_smooth_trajectory(const control_msgs::
         trajPoint.Position.CartesianPosition.ThetaY = qeSrv.response.pitch;
         trajPoint.Position.CartesianPosition.ThetaZ = qeSrv.response.yaw;
 
-        //for debugging:
-        //ROS_INFO("Trajectory point: (%f, %f, %f); (%f, %f, %f)", trajPoint.Position.CartesianPosition.X, trajPoint.Position.CartesianPosition.Y, trajPoint.Position.CartesianPosition.Z, trajPoint.Position.CartesianPosition.ThetaX, trajPoint.Position.CartesianPosition.ThetaY, trajPoint.Position.CartesianPosition.ThetaZ);
+        // for debugging:
+        ROS_INFO("Trajectory point: (%f, %f, %f); (%f, %f, %f)", trajPoint.Position.CartesianPosition.X, trajPoint.Position.CartesianPosition.Y, trajPoint.Position.CartesianPosition.Z, trajPoint.Position.CartesianPosition.ThetaX, trajPoint.Position.CartesianPosition.ThetaY, trajPoint.Position.CartesianPosition.ThetaZ);
 
         //send point to arm trajectory
         executeCartesianTrajectoryPoint(trajPoint, false);
@@ -503,8 +503,8 @@ void JacoArmTrajectoryController::execute_smooth_trajectory(const control_msgs::
     }
     trajectory_size = Trajectory_Info.TrajectoryCount;
 
-    //ROS_INFO("%f, %f, %f, %f, %f, %f", joint_pos[0], joint_pos[1], joint_pos[2], joint_pos[3], joint_pos[4], joint_pos[5]);
-    //ROS_INFO("Trajectory points complete: %d; remaining: %d", initialTrajectorySize - trajectory_size, trajectory_size);
+    ROS_INFO("%f, %f, %f, %f, %f, %f", joint_pos[0], joint_pos[1], joint_pos[2], joint_pos[3], joint_pos[4], joint_pos[5]);
+    ROS_INFO("Trajectory points complete: %d; remaining: %d", initialTrajectorySize - trajectory_size, trajectory_size);
     rate.sleep();
   }
   ROS_INFO("Trajectory Control Complete.");
@@ -696,7 +696,7 @@ void JacoArmTrajectoryController::execute_joint_trajectory(const control_msgs::F
     trajPoint.Position.Actuators.Actuator6 = (KP * error[5] + KV * (error[5] - prevError[5]) * RAD_TO_DEG);
 
     //for debugging:
-    //cout << "Errors: " << error[0] << ", " << error[1] << ", " << error[2] << ", " << error[3] << ", " << error[4] << ", " << error[5] << endl;
+    // cout << "Errors: " << error[0] << ", " << error[1] << ", " << error[2] << ", " << error[3] << ", " << error[4] << ", " << error[5] << endl;
 
     //send the velocity command
     executeAngularTrajectoryPoint(trajPoint, true);
@@ -1051,6 +1051,7 @@ void JacoArmTrajectoryController::cartesianCmdCallback(const wpi_jaco_msgs::Cart
   //populate arm command
   if (msg.armCommand)
   {
+    ROS_INFO("arm command");
     if (msg.position)
       jacoPoint.Position.Type = CARTESIAN_POSITION;
     else
@@ -1084,6 +1085,7 @@ void JacoArmTrajectoryController::cartesianCmdCallback(const wpi_jaco_msgs::Cart
   //populate finger command
   if (msg.fingerCommand)
   {
+    ROS_INFO("fingers command");
     if (msg.position)
       jacoPoint.Position.HandMode = POSITION_MODE;
     else
