@@ -882,11 +882,6 @@ void JacoArmTrajectoryController::angularCmdCallback(const wpi_jaco_msgs::Angula
   else
     jacoPoint.Position.HandMode = HAND_NOMOVEMENT;
 
-  ROS_INFO("Arm command populated:");
-  if (jacoPoint.Position.Type == ANGULAR_VELOCITY && jacoPoint.Position.HandMode == POSITION_MODE)
-    ROS_INFO("Modes are consistent.");
-  ROS_INFO("Fingers: [%f, %f, %f]\n", jacoPoint.Position.Fingers.Finger1, jacoPoint.Position.Fingers.Finger2, jacoPoint.Position.Fingers.Finger3);
-
   //send command
   if (msg.position)
   {
