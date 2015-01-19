@@ -21,15 +21,25 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
 
   boost::recursive_mutex::scoped_lock lock(api_mutex);
 
+  //ROS_INFO("Trying to initialize JACO API...");
   InitAPI();
+  //ROS_INFO("Api initialized.");
   ros::Duration(1.0).sleep();
+  //ROS_INFO("Starting control API...");
   StartControlAPI();
+  //ROS_INFO("Control API started...");
   ros::Duration(3.0).sleep();
+  //ROS_INFO("Stopping control API...");
   StopControlAPI();
+  //ROS_INFO("Control API stopped.");
 
   // Initialize arm
+  //ROS_INFO("Homing arm...");
   MoveHome();
+  //ROS_INFO("Done.");
+  //ROS_INFO("Initializing fingers...");
   InitFingers();
+  //ROS_INFO("Done.");
   SetFrameType(0); //set end effector to move with respect to the fixed frame
 
   // Initialize joint names
@@ -720,7 +730,6 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
 void JacoArmTrajectoryController::home_arm(const wpi_jaco_msgs::HomeArmGoalConstPtr &goal)
 {
   boost::recursive_mutex::scoped_lock lock(api_mutex);
-
   StopControlAPI();
   MoveHome();
   StartControlAPI();
@@ -835,13 +844,28 @@ void JacoArmTrajectoryController::angularCmdCallback(const wpi_jaco_msgs::Angula
   }
   else
   {
-    jacoPoint.Position.Type = ANGULAR_VELOCITY;
-    jacoPoint.Position.Actuators.Actuator1 = 0.0;
-    jacoPoint.Position.Actuators.Actuator2 = 0.0;
-    jacoPoint.Position.Actuators.Actuator3 = 0.0;
-    jacoPoint.Position.Actuators.Actuator4 = 0.0;
-    jacoPoint.Position.Actuators.Actuator5 = 0.0;
-    jacoPoint.Position.Actuators.Actuator6 = 0.0;
+    if (msg.position)
+    {
+      AngularPosition position_data;
+      GetAngularPosition(position_data);
+      jacoPoint.Position.Type = ANGULAR_POSITION;
+      jacoPoint.Position.Actuators.Actuator1 = position_data.Actuators.Actuator1;
+      jacoPoint.Position.Actuators.Actuator2 = position_data.Actuators.Actuator2;
+      jacoPoint.Position.Actuators.Actuator3 = position_data.Actuators.Actuator3;
+      jacoPoint.Position.Actuators.Actuator4 = position_data.Actuators.Actuator4;
+      jacoPoint.Position.Actuators.Actuator5 = position_data.Actuators.Actuator5;
+      jacoPoint.Position.Actuators.Actuator6 = position_data.Actuators.Actuator6;
+    }
+    else
+    {
+      jacoPoint.Position.Type = ANGULAR_VELOCITY;
+      jacoPoint.Position.Actuators.Actuator1 = 0.0;
+      jacoPoint.Position.Actuators.Actuator2 = 0.0;
+      jacoPoint.Position.Actuators.Actuator3 = 0.0;
+      jacoPoint.Position.Actuators.Actuator4 = 0.0;
+      jacoPoint.Position.Actuators.Actuator5 = 0.0;
+      jacoPoint.Position.Actuators.Actuator6 = 0.0;
+    }
   }
 
   //populate finger command
@@ -857,6 +881,11 @@ void JacoArmTrajectoryController::angularCmdCallback(const wpi_jaco_msgs::Angula
   }
   else
     jacoPoint.Position.HandMode = HAND_NOMOVEMENT;
+
+  ROS_INFO("Arm command populated:");
+  if (jacoPoint.Position.Type == ANGULAR_VELOCITY && jacoPoint.Position.HandMode == POSITION_MODE)
+    ROS_INFO("Modes are consistent.");
+  ROS_INFO("Fingers: [%f, %f, %f]\n", jacoPoint.Position.Fingers.Finger1, jacoPoint.Position.Fingers.Finger2, jacoPoint.Position.Fingers.Finger3);
 
   //send command
   if (msg.position)
@@ -913,15 +942,30 @@ void JacoArmTrajectoryController::cartesianCmdCallback(const wpi_jaco_msgs::Cart
   }
   else
   {
-    jacoPoint.Position.Type = CARTESIAN_VELOCITY;
-    jacoPoint.Position.CartesianPosition.X = 0.0;
-    jacoPoint.Position.CartesianPosition.Y = 0.0;
-    jacoPoint.Position.CartesianPosition.Z = 0.0;
-    jacoPoint.Position.CartesianPosition.ThetaX = 0.0;
-    jacoPoint.Position.CartesianPosition.ThetaY = 0.0;
-    jacoPoint.Position.CartesianPosition.ThetaZ = 0.0;
+    if (msg.position)
+    {
+      AngularPosition position_data;
+      GetAngularPosition(position_data);
+      jacoPoint.Position.Type = ANGULAR_POSITION;
+      jacoPoint.Position.Actuators.Actuator1 = position_data.Actuators.Actuator1;
+      jacoPoint.Position.Actuators.Actuator2 = position_data.Actuators.Actuator2;
+      jacoPoint.Position.Actuators.Actuator3 = position_data.Actuators.Actuator3;
+      jacoPoint.Position.Actuators.Actuator4 = position_data.Actuators.Actuator4;
+      jacoPoint.Position.Actuators.Actuator5 = position_data.Actuators.Actuator5;
+      jacoPoint.Position.Actuators.Actuator6 = position_data.Actuators.Actuator6;
+    }
+    else
+    {
+      jacoPoint.Position.Type = ANGULAR_VELOCITY;
+      jacoPoint.Position.Actuators.Actuator1 = 0.0;
+      jacoPoint.Position.Actuators.Actuator2 = 0.0;
+      jacoPoint.Position.Actuators.Actuator3 = 0.0;
+      jacoPoint.Position.Actuators.Actuator4 = 0.0;
+      jacoPoint.Position.Actuators.Actuator5 = 0.0;
+      jacoPoint.Position.Actuators.Actuator6 = 0.0;
+    }
   }
-  EraseAllTrajectories();
+  //EraseAllTrajectories();
   //populate finger command
   if (msg.fingerCommand)
   {
