@@ -2,6 +2,9 @@
 Changelog for package jaco_interaction
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.12 (2015-01-20)
+-------------------
+
 0.0.11 (2014-12-18)
 -------------------
 * Changed teleop to use angular commands for finger movement; this will allow finger control even near/in arm singularities
