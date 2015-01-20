@@ -985,6 +985,10 @@ void JacoArmTrajectoryController::cartesianCmdCallback(const wpi_jaco_msgs::Cart
 
 void JacoArmTrajectoryController::fingerPositionControl(float f1, float f2, float f3)
 {
+  f1 = max(f1, .02f);
+  f2 = max(f2, .02f);
+  f3 = max(f3, .02f);
+
   TrajectoryPoint jacoPoint;
   jacoPoint.InitStruct();
   jacoPoint.Position.Type = ANGULAR_VELOCITY;
@@ -999,12 +1003,20 @@ void JacoArmTrajectoryController::fingerPositionControl(float f1, float f2, floa
   bool goalReached = false;
   AngularPosition position_data;
   float error[3];
+  float prevTotalError;
+  float counter = 0; //check if error is unchanging, this likely means a finger is blocked by something so the controller should terminate
   vector<float> errorFinger1;
   vector<float> errorFinger2;
   vector<float> errorFinger3;
   errorFinger1.resize(10);
   errorFinger2.resize(10);
   errorFinger3.resize(10);
+  for (unsigned int i = 0; i < errorFinger1.size(); i ++)
+  {
+    errorFinger1[i] = 0.0;
+    errorFinger2[i] = 0.0;
+    errorFinger3[i] = 0.0;
+  }
   ros::Rate rate(600);
   while (!goalReached)
   {
@@ -1013,7 +1025,19 @@ void JacoArmTrajectoryController::fingerPositionControl(float f1, float f2, floa
     error[0] = f1 - position_data.Fingers.Finger1;
     error[1] = f2 - position_data.Fingers.Finger2;
     error[2] = f3 - position_data.Fingers.Finger3;
-    if (sqrt(pow(error[0], 2) + pow(error[1], 2) + pow(error[2], 2)) < FINGER_ERROR_THRESHOLD)
+
+    float totalError = sqrt(pow(error[0], 2) + pow(error[1], 2) + pow(error[2], 2));
+    if (totalError == prevTotalError)
+    {
+      counter ++;
+    }
+    else
+    {
+      counter = 0;
+      prevTotalError = totalError;
+    }
+
+    if (totalError < FINGER_ERROR_THRESHOLD || counter > 40)
     {
       goalReached = true;
       jacoPoint.Position.Fingers.Finger1 = 0.0;
@@ -1022,16 +1046,16 @@ void JacoArmTrajectoryController::fingerPositionControl(float f1, float f2, floa
     }
     else
     {
-      float errorSum[3];
+      float errorSum[3] = {0};
       for (unsigned int i = 0; i < errorFinger1.size(); i ++)
       {
         errorSum[0] += errorFinger1[i];
         errorSum[1] += errorFinger2[i];
         errorSum[2] += errorFinger3[i];
       }
-      jacoPoint.Position.Fingers.Finger1 = KP_F*error[0] + KV_F*(error[0] - errorFinger1.front()) + KI_F*errorSum[0];
-      jacoPoint.Position.Fingers.Finger2 = KP_F*error[1] + KV_F*(error[1] - errorFinger2.front()) + KI_F*errorSum[1];
-      jacoPoint.Position.Fingers.Finger3 = KP_F*error[2] + KV_F*(error[2] - errorFinger3.front()) + KI_F*errorSum[2];
+      jacoPoint.Position.Fingers.Finger1 = max(min(KP_F*error[0] + KV_F*(error[0] - errorFinger1.front()) + KI_F*errorSum[0], 30.0), -30.0);
+      jacoPoint.Position.Fingers.Finger2 = max(min(KP_F*error[1] + KV_F*(error[1] - errorFinger2.front()) + KI_F*errorSum[1], 30.0), -30.0);
+      jacoPoint.Position.Fingers.Finger3 = max(min(KP_F*error[2] + KV_F*(error[2] - errorFinger3.front()) + KI_F*errorSum[2], 30.0), -30.0);
       errorFinger1.insert(errorFinger1.begin(), error[0]);
       errorFinger2.insert(errorFinger2.begin(), error[1]);
       errorFinger3.insert(errorFinger3.begin(), error[2]);
@@ -1039,7 +1063,7 @@ void JacoArmTrajectoryController::fingerPositionControl(float f1, float f2, floa
       errorFinger2.resize(10);
       errorFinger3.resize(10);
     }
-
+    EraseAllTrajectories();
     SendBasicTrajectory(jacoPoint);
     rate.sleep();
   }

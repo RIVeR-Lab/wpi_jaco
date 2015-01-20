@@ -48,10 +48,10 @@
 #define ERROR_THRESHOLD .03 //threshold in radians for combined joint error to consider motion a success
 
 //gains for finger controller
-#define KP_F 50
-#define KV_F 5
-#define KI_F 1
-#define FINGER_ERROR_THRESHOLD .1 //threshold in the JACO API's finger position units to consider a finger position reached
+#define KP_F 7.5
+#define KV_F 0.05
+#define KI_F 0.1
+#define FINGER_ERROR_THRESHOLD 1 //threshold in the JACO API's finger position units to consider a finger position reached
 
 //control types
 #define ANGULAR_CONTROL 1
