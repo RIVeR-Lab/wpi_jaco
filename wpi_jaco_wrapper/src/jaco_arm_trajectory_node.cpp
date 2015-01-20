@@ -846,15 +846,8 @@ void JacoArmTrajectoryController::angularCmdCallback(const wpi_jaco_msgs::Angula
   {
     if (msg.position)
     {
-      AngularPosition position_data;
-      GetAngularPosition(position_data);
-      jacoPoint.Position.Type = ANGULAR_POSITION;
-      jacoPoint.Position.Actuators.Actuator1 = position_data.Actuators.Actuator1;
-      jacoPoint.Position.Actuators.Actuator2 = position_data.Actuators.Actuator2;
-      jacoPoint.Position.Actuators.Actuator3 = position_data.Actuators.Actuator3;
-      jacoPoint.Position.Actuators.Actuator4 = position_data.Actuators.Actuator4;
-      jacoPoint.Position.Actuators.Actuator5 = position_data.Actuators.Actuator5;
-      jacoPoint.Position.Actuators.Actuator6 = position_data.Actuators.Actuator6;
+      fingerPositionControl(msg.fingers[0], msg.fingers[1], msg.fingers[2]);
+      return;
     }
     else
     {
@@ -939,15 +932,8 @@ void JacoArmTrajectoryController::cartesianCmdCallback(const wpi_jaco_msgs::Cart
   {
     if (msg.position)
     {
-      AngularPosition position_data;
-      GetAngularPosition(position_data);
-      jacoPoint.Position.Type = ANGULAR_POSITION;
-      jacoPoint.Position.Actuators.Actuator1 = position_data.Actuators.Actuator1;
-      jacoPoint.Position.Actuators.Actuator2 = position_data.Actuators.Actuator2;
-      jacoPoint.Position.Actuators.Actuator3 = position_data.Actuators.Actuator3;
-      jacoPoint.Position.Actuators.Actuator4 = position_data.Actuators.Actuator4;
-      jacoPoint.Position.Actuators.Actuator5 = position_data.Actuators.Actuator5;
-      jacoPoint.Position.Actuators.Actuator6 = position_data.Actuators.Actuator6;
+      fingerPositionControl(msg.fingers[0], msg.fingers[1], msg.fingers[2]);
+      return;
     }
     else
     {
@@ -960,7 +946,7 @@ void JacoArmTrajectoryController::cartesianCmdCallback(const wpi_jaco_msgs::Cart
       jacoPoint.Position.Actuators.Actuator6 = 0.0;
     }
   }
-  //EraseAllTrajectories();
+
   //populate finger command
   if (msg.fingerCommand)
   {
@@ -994,6 +980,68 @@ void JacoArmTrajectoryController::cartesianCmdCallback(const wpi_jaco_msgs::Cart
         rate.sleep();
       }
     }
+  }
+}
+
+void JacoArmTrajectoryController::fingerPositionControl(float f1, float f2, float f3)
+{
+  TrajectoryPoint jacoPoint;
+  jacoPoint.InitStruct();
+  jacoPoint.Position.Type = ANGULAR_VELOCITY;
+  jacoPoint.Position.Actuators.Actuator1 = 0.0;
+  jacoPoint.Position.Actuators.Actuator2 = 0.0;
+  jacoPoint.Position.Actuators.Actuator3 = 0.0;
+  jacoPoint.Position.Actuators.Actuator4 = 0.0;
+  jacoPoint.Position.Actuators.Actuator5 = 0.0;
+  jacoPoint.Position.Actuators.Actuator6 = 0.0;
+  jacoPoint.Position.HandMode = VELOCITY_MODE;
+
+  bool goalReached = false;
+  AngularPosition position_data;
+  float error[3];
+  vector<float> errorFinger1;
+  vector<float> errorFinger2;
+  vector<float> errorFinger3;
+  errorFinger1.resize(10);
+  errorFinger2.resize(10);
+  errorFinger3.resize(10);
+  ros::Rate rate(600);
+  while (!goalReached)
+  {
+    //get current finger position
+    GetAngularPosition(position_data);
+    error[0] = f1 - position_data.Fingers.Finger1;
+    error[1] = f2 - position_data.Fingers.Finger2;
+    error[2] = f3 - position_data.Fingers.Finger3;
+    if (sqrt(pow(error[0], 2) + pow(error[1], 2) + pow(error[2], 2)) < FINGER_ERROR_THRESHOLD)
+    {
+      goalReached = true;
+      jacoPoint.Position.Fingers.Finger1 = 0.0;
+      jacoPoint.Position.Fingers.Finger2 = 0.0;
+      jacoPoint.Position.Fingers.Finger3 = 0.0;
+    }
+    else
+    {
+      float errorSum[3];
+      for (unsigned int i = 0; i < errorFinger1.size(); i ++)
+      {
+        errorSum[0] += errorFinger1[i];
+        errorSum[1] += errorFinger2[i];
+        errorSum[2] += errorFinger3[i];
+      }
+      jacoPoint.Position.Fingers.Finger1 = KP_F*error[0] + KV_F*(error[0] - errorFinger1.front()) + KI_F*errorSum[0];
+      jacoPoint.Position.Fingers.Finger2 = KP_F*error[1] + KV_F*(error[1] - errorFinger2.front()) + KI_F*errorSum[1];
+      jacoPoint.Position.Fingers.Finger3 = KP_F*error[2] + KV_F*(error[2] - errorFinger3.front()) + KI_F*errorSum[2];
+      errorFinger1.insert(errorFinger1.begin(), error[0]);
+      errorFinger2.insert(errorFinger2.begin(), error[1]);
+      errorFinger3.insert(errorFinger3.begin(), error[2]);
+      errorFinger1.resize(10);
+      errorFinger2.resize(10);
+      errorFinger3.resize(10);
+    }
+
+    SendBasicTrajectory(jacoPoint);
+    rate.sleep();
   }
 }
 
