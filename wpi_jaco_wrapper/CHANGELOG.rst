@@ -2,6 +2,14 @@
 Changelog for package wpi_jaco_wrapper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.12 (2015-01-20)
+-------------------
+* Tuned finger position controller, added detection and termination if the fingers are blocked from reaching their goal
+* Finger position control test
+* Removed unused debug statement
+* Adjusted angular and cartesian command callbacks to correctly execute finger position commands when arm joint commands are not specified
+* Contributors: David Kent
+
 0.0.11 (2014-12-18)
 -------------------
 

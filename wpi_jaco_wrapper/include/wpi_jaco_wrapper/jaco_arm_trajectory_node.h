@@ -47,6 +47,12 @@
 #define KV 20.0
 #define ERROR_THRESHOLD .03 //threshold in radians for combined joint error to consider motion a success
 
+//gains for finger controller
+#define KP_F 7.5
+#define KV_F 0.05
+#define KI_F 0.1
+#define FINGER_ERROR_THRESHOLD 1 //threshold in the JACO API's finger position units to consider a finger position reached
+
 //control types
 #define ANGULAR_CONTROL 1
 #define CARTESIAN_CONTROL 2
@@ -168,6 +174,14 @@ private:
    * @param msg Cartesian command and info
    */
   void cartesianCmdCallback(const wpi_jaco_msgs::CartesianCommand& msg);
+
+  /**
+  * \brief Control with finger velocity inputs to reach a given position
+  * @param f1 position of finger 1
+  * @param f2 position of finger 2
+  * @param f3 position of finger 3
+  */
+  void fingerPositionControl(float f1, float f2, float f3);
 
   /**
    *\brief Stripped-down angular trajectory point sending to the arm
