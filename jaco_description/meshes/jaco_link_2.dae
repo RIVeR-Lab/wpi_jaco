@@ -1917,7 +1917,7 @@
     </library_effects>
     <library_images>
         <image id="ID9">
-            <init_from>materials/dark_gray.png</init_from>
+            <init_from>materials/dark_gray.jpeg</init_from>
         </image>
     </library_images>
     <scene>
