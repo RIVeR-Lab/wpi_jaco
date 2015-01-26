@@ -14,7 +14,7 @@
                 <instance_geometry url="#ID19">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID20">
+                            <instance_material symbol="Material2" target="#ID6">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -143,37 +143,35 @@
         <material id="ID6" name="material_1">
             <instance_effect url="#ID7" />
         </material>
-        <material id="ID20" name="edge_color000255">
-            <instance_effect url="#ID21" />
-        </material>
     </library_materials>
     <library_effects>
         <effect id="ID7">
             <profile_COMMON>
+                <newparam sid="ID1001">
+                    <surface type="2D">
+                        <init_from>ID1002</init_from>
+                    </surface>
+                </newparam>
+                <newparam sid="ID1000">
+                    <sampler2D>
+                        <source>ID1001</source>
+                    </sampler2D>
+                </newparam>
                 <technique sid="COMMON">
                     <lambert>
                         <diffuse>
-                            <color>0.8666667 0.8666667 0.8666667 1</color>
+                            <texture texture="ID1000" texcoord="UVSET0" />
                         </diffuse>
                     </lambert>
                 </technique>
             </profile_COMMON>
         </effect>
-        <effect id="ID21">
-            <profile_COMMON>
-                <technique sid="COMMON">
-                    <constant>
-                        <transparent opaque="A_ONE">
-                            <color>0 0 0 1</color>
-                        </transparent>
-                        <transparency>
-                            <float>1</float>
-                        </transparency>
-                    </constant>
-                </technique>
-            </profile_COMMON>
-        </effect>
     </library_effects>
+    <library_images>
+        <image id="ID1002">
+            <init_from>materials/gray.jpeg</init_from>
+        </image>
+    </library_images>
     <scene>
         <instance_visual_scene url="#ID1" />
     </scene>
