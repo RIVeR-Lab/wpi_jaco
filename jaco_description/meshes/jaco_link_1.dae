@@ -2029,8 +2029,6 @@
         <image id="ID1005">
             <init_from>materials/dark_gray.jpeg</init_from>
         </image>
-    </library_images>
-    <library_images>
         <image id="ID1002">
             <init_from>materials/gray.jpeg</init_from>
         </image>
