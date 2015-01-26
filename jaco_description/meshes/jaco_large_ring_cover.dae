@@ -102,7 +102,7 @@
         </geometry>
     </library_geometries>
     <library_materials>
-        <material id="ID4" name="dark_gray">
+        <material id="ID4" name="gray">
             <instance_effect url="#ID5" />
         </material>
     </library_materials>
