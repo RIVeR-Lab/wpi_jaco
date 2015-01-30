@@ -707,7 +707,6 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
       GetAngularVelocity(velocity_data);
     }
     float totalSpeed = fabs(velocity_data.Fingers.Finger1) + fabs(velocity_data.Fingers.Finger2) + fabs(velocity_data.Fingers.Finger3);
-    ROS_INFO("Gripper speed: %f", totalSpeed);
     if (totalSpeed <= 0.01)
     {
       gripperMoving = false;
@@ -728,7 +727,7 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
     GetAngularPosition(position_data);
     GetAngularForce(force_data);
   }
-  float finalError = fabs(position_data.Fingers.Finger1) + fabs(position_data.Fingers.Finger2) + fabs(position_data.Fingers.Finger3);
+  float finalError = fabs(goal->command.position - position_data.Fingers.Finger1) + fabs(goal->command.position - position_data.Fingers.Finger2) + fabs(goal->command.position - position_data.Fingers.Finger3);
   if (finalError <= FINGER_ERROR_THRESHOLD)
     result.reached_goal = true;
   else
@@ -1048,7 +1047,7 @@ void JacoArmTrajectoryController::fingerPositionControl(float f1, float f2, floa
     error[1] = f2 - position_data.Fingers.Finger2;
     error[2] = f3 - position_data.Fingers.Finger3;
 
-    float totalError = error[0] + error[1] + error[2];
+    float totalError = fabs(error[0]) + fabs(error[1]) + fabs(error[2]);
     if (totalError == prevTotalError)
     {
       counter ++;
