@@ -135,6 +135,7 @@ void JacoArmTrajectoryController::update_joint_states()
     joint_vel[3] = velocity_data.Actuators.Actuator4 * DEG_TO_RAD;
     joint_vel[4] = velocity_data.Actuators.Actuator5 * DEG_TO_RAD;
     joint_vel[5] = velocity_data.Actuators.Actuator6 * DEG_TO_RAD;
+    //NOTE: the finger units are arbitrary, but converting them as if they were in degrees provides an approximately correct visualization
     joint_vel[6] = velocity_data.Fingers.Finger1 * DEG_TO_RAD;
     joint_vel[7] = velocity_data.Fingers.Finger2 * DEG_TO_RAD;
     joint_vel[8] = velocity_data.Fingers.Finger3 * DEG_TO_RAD;
@@ -678,9 +679,10 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
   angularCmdPublisher.publish(cmd);
 
   ros::Rate rate(10);
-  int trajectory_size = 1;
-  while (trajectory_size > 0)
+  bool gripperMoving = true;
+  while (gripperMoving)
   {
+    rate.sleep();
     //check for preempt requests from clients
     if (gripper_server_.isPreemptRequested() || !ros::ok())
     {
@@ -698,16 +700,19 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
       return;
     }
 
-    TrajectoryFIFO Trajectory_Info;
-    memset(&Trajectory_Info, 0, sizeof(Trajectory_Info));
+    //see if fingers are still moving
+    AngularPosition velocity_data;
     {
       boost::recursive_mutex::scoped_lock lock(api_mutex);
-      GetGlobalTrajectoryInfo(Trajectory_Info);
+      GetAngularVelocity(velocity_data);
     }
-    trajectory_size = Trajectory_Info.TrajectoryCount;
-    rate.sleep();
+    float totalSpeed = fabs(velocity_data.Fingers.Finger1) + fabs(velocity_data.Fingers.Finger2) + fabs(velocity_data.Fingers.Finger3);
+    ROS_INFO("Gripper speed: %f", totalSpeed);
+    if (totalSpeed <= 0.01)
+    {
+      gripperMoving = false;
+    }
   }
-
   //stop gripper control
   cmd.position = false;
   cmd.fingers[0] = 0.0;
@@ -716,10 +721,21 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
   angularCmdPublisher.publish(cmd);
 
   control_msgs::GripperCommandResult result;
-  result.position = joint_pos[6];
-  result.effort = joint_eff[6];
+  AngularPosition force_data;
+
+  AngularPosition position_data;
+  {
+    GetAngularPosition(position_data);
+    GetAngularForce(force_data);
+  }
+  float finalError = fabs(position_data.Fingers.Finger1) + fabs(position_data.Fingers.Finger2) + fabs(position_data.Fingers.Finger3);
+  if (finalError <= FINGER_ERROR_THRESHOLD)
+    result.reached_goal = true;
+  else
+    result.reached_goal = false;
+  result.position = position_data.Fingers.Finger1;
+  result.effort =force_data.Fingers.Finger1;
   result.stalled = false;
-  result.reached_goal = true;
   gripper_server_.setSucceeded(result);
 }
 
@@ -729,16 +745,21 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
 
 void JacoArmTrajectoryController::home_arm(const wpi_jaco_msgs::HomeArmGoalConstPtr &goal)
 {
-  boost::recursive_mutex::scoped_lock lock(api_mutex);
-  StopControlAPI();
-  MoveHome();
-  StartControlAPI();
+  {
+    boost::recursive_mutex::scoped_lock lock(api_mutex);
+    StopControlAPI();
+    MoveHome();
+    StartControlAPI();
+  }
 
   if (goal->retract)
   {
-    //retract to given position
-    controlType = ANGULAR_CONTROL;
-    SetAngularControl();
+    {
+      boost::recursive_mutex::scoped_lock lock(api_mutex);
+      //retract to given position
+      controlType = ANGULAR_CONTROL;
+      SetAngularControl();
+    }
 
     angularCmdPublisher.publish(goal->retractPosition);
 
@@ -768,6 +789,7 @@ void JacoArmTrajectoryController::home_arm(const wpi_jaco_msgs::HomeArmGoalConst
   }
   else
   {
+    boost::recursive_mutex::scoped_lock lock(api_mutex);
     //set control type to previous value
     if (controlType == ANGULAR_CONTROL)
       SetAngularControl();
@@ -1026,7 +1048,7 @@ void JacoArmTrajectoryController::fingerPositionControl(float f1, float f2, floa
     error[1] = f2 - position_data.Fingers.Finger2;
     error[2] = f3 - position_data.Fingers.Finger3;
 
-    float totalError = sqrt(pow(error[0], 2) + pow(error[1], 2) + pow(error[2], 2));
+    float totalError = error[0] + error[1] + error[2];
     if (totalError == prevTotalError)
     {
       counter ++;
