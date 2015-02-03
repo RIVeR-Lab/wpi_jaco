@@ -2,6 +2,12 @@
 Changelog for package wpi_jaco_wrapper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.13 (2015-02-03)
+-------------------
+* Result on gripper control action server now reports correctly.
+* Initial adjustment of gripper action server to fix result feedback
+* Contributors: David Kent
+
 0.0.12 (2015-01-20)
 -------------------
 * Tuned finger position controller, added detection and termination if the fingers are blocked from reaching their goal
