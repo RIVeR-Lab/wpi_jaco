@@ -131,7 +131,7 @@
     </library_effects>
     <library_images>
         <image id="ID17">
-            <init_from>materials/gray.jpeg</init_from>
+            <init_from>materials/gray.jpg</init_from>
         </image>
     </library_images>
     <scene>

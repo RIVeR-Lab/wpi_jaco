@@ -1154,10 +1154,10 @@
     </library_effects>
     <library_images>
         <image id="ID1002">
-            <init_from>materials/dark_gray.jpeg</init_from>
+            <init_from>materials/dark_gray.jpg</init_from>
         </image>
         <image id="ID1005">
-            <init_from>materials/gray.jpeg</init_from>
+            <init_from>materials/gray.jpg</init_from>
         </image>
     </library_images>
     <scene>
