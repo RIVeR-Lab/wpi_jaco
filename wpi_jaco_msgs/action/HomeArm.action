@@ -1,6 +1,7 @@
 # Define the goal
 bool retract                                  # set to true to retract arm to a given position after moving home
 wpi_jaco_msgs/AngularCommand retractPosition  # position to which the arm should retract (only if retract is true)
+int16 numAttempts                                # attempts for moving to given joint pose (only used in motion planning versions)
 ---
 # Define the result
 bool success                                  # true if arm move was successful
