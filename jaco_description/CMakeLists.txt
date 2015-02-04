@@ -34,6 +34,11 @@ install(DIRECTORY urdf/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf
 )
 
+## Install robot files
+install(DIRECTORY robots/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/robots
+)
+
 ## Install rviz files
 install(DIRECTORY rviz/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/rviz
