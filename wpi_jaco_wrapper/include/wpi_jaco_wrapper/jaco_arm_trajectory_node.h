@@ -22,6 +22,7 @@
 #include <ecl/geometry.hpp>
 #include <wpi_jaco_msgs/AngularCommand.h>
 #include <wpi_jaco_msgs/CartesianCommand.h>
+#include <wpi_jaco_msgs/EStop.h>
 #include <wpi_jaco_msgs/GetAngularPosition.h>
 #include <wpi_jaco_msgs/GetCartesianPosition.h>
 #include <wpi_jaco_msgs/HomeArmAction.h>
@@ -57,6 +58,8 @@
 #define ANGULAR_CONTROL 1
 #define CARTESIAN_CONTROL 2
 
+#define NO_ERROR 1 //no error from Kinova API
+
 namespace jaco
 {
 
@@ -82,6 +85,7 @@ private:
   ros::ServiceClient qe_client; //!< quaternion to euler (XYZ) conversion client
   ros::ServiceServer angularPositionServer; //!< service server to get the joint positions
   ros::ServiceServer cartesianPositionServer; //!< service server to get end effector pose
+  ros::ServiceServer eStopServer; //!< service server for software estop and restart
 
   ros::Timer joint_state_timer_; //!< timer for joint state publisher
 
@@ -95,6 +99,8 @@ private:
   boost::recursive_mutex api_mutex;
   
   double max_curvature;
+
+  bool eStopEnabled;
 
 public:
   /**
@@ -115,7 +121,7 @@ public:
   void update_joint_states();
 
   /**
-   * \brief move the arm to the home position
+   * \brief move the arm to the home position using the Kinova API home call
    * @param goal action goal
    */
   void home_arm(const wpi_jaco_msgs::HomeArmGoalConstPtr &goal);
@@ -224,6 +230,15 @@ private:
    */
   bool getCartesianPosition(wpi_jaco_msgs::GetCartesianPosition::Request &req,
                             wpi_jaco_msgs::GetCartesianPosition::Response &res);
+
+  /**
+  * \brief Callback for enabling/disabling the software emergency stop
+  *
+  * @param req service request
+  * @param res service response
+  * @return true on success
+  */
+  bool eStopCallback(wpi_jaco_msgs::EStop::Request &req, wpi_jaco_msgs::EStop::Response &res);
 };
 
 }

@@ -21,6 +21,7 @@ add_message_files(
 ## Generate services in the 'srv' folder
 add_service_files(
   FILES
+  EStop.srv
   EulerToQuaternion.srv
   GetAngularPosition.srv
   GetCartesianPosition.srv

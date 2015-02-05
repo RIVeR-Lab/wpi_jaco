@@ -23,6 +23,8 @@ jaco_joy_teleop::jaco_joy_teleop()
   cartesian_cmd = node.advertise<wpi_jaco_msgs::CartesianCommand>("jaco_arm/cartesian_cmd", 10);
   joy_sub = node.subscribe<sensor_msgs::Joy>("joy", 10, &jaco_joy_teleop::joy_cback, this);
 
+  eStopClient = node.serviceClient<wpi_jaco_msgs::EStop>("jaco_arm/software_estop");
+
   // read in throttle values
   private_nh.param<double>("linear_throttle_factor", linear_throttle_factor, 1.0);
   private_nh.param<double>("angular_throttle_factor", angular_throttle_factor, 1.0);
@@ -104,16 +106,40 @@ void jaco_joy_teleop::joy_cback(const sensor_msgs::Joy::ConstPtr& joy)
   if (controllerType == DIGITAL)
   {
     if (joy->buttons.at(8) == 1)
+    {
       EStopEnabled = true;
+      wpi_jaco_msgs::EStop srv;
+      srv.request.enableEStop = true;
+      if (!eStopClient.call(srv))
+        ROS_INFO("Couldn't call software estop service.");
+    }
     else if (joy->buttons.at(9) == 1)
+    {
       EStopEnabled = false;
+      wpi_jaco_msgs::EStop srv;
+      srv.request.enableEStop = false;
+      if (!eStopClient.call(srv))
+        ROS_INFO("Couldn't call software estop service.");
+    }
   }
   else
   {
     if (joy->buttons.at(6) == 1)
+    {
       EStopEnabled = true;
+      wpi_jaco_msgs::EStop srv;
+      srv.request.enableEStop = true;
+      if (!eStopClient.call(srv))
+        ROS_INFO("Couldn't call software estop service.");
+    }
     else if (joy->buttons.at(7) == 1)
+    {
       EStopEnabled = false;
+      wpi_jaco_msgs::EStop srv;
+      srv.request.enableEStop = false;
+      if (!eStopClient.call(srv))
+        ROS_INFO("Couldn't call software estop service.");
+    }
   }
 
   //help menu
@@ -342,22 +368,7 @@ void jaco_joy_teleop::publish_velocity()
 {
   //publish stop commands if EStop is enabled
   if (EStopEnabled)
-  {
-    cartesianCmd.arm.linear.x = 0.0;
-    cartesianCmd.arm.linear.y = 0.0;
-    cartesianCmd.arm.linear.z = 0.0;
-    cartesianCmd.arm.angular.x = 0.0;
-    cartesianCmd.arm.angular.y = 0.0;
-    cartesianCmd.arm.angular.z = 0.0;
-    fingerCmd.fingers[0] = 0.0;
-    fingerCmd.fingers[1] = 0.0;
-    fingerCmd.fingers[2] = 0.0;
-
-    cartesian_cmd.publish(cartesianCmd);
-    angular_cmd.publish(fingerCmd);
-
     return;
-  }
 
   switch (mode)
   {
