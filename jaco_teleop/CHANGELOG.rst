@@ -2,6 +2,11 @@
 Changelog for package jaco_interaction
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Added software estop for the arm
+* Contributors: David Kent
+
 0.0.13 (2015-02-03)
 -------------------
 

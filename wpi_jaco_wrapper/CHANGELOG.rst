@@ -2,6 +2,11 @@
 Changelog for package wpi_jaco_wrapper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Added software estop for the arm
+* Contributors: David Kent
+
 0.0.13 (2015-02-03)
 -------------------
 * Result on gripper control action server now reports correctly.

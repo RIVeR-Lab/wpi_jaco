@@ -2,6 +2,12 @@
 Changelog for package wpi_jaco_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Added software estop for the arm
+* Added numAttempts method to home arm action
+* Contributors: David Kent
+
 0.0.13 (2015-02-03)
 -------------------
 
