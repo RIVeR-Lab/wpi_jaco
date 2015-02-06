@@ -2,8 +2,8 @@
 Changelog for package wpi_jaco_wrapper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.14 (2015-02-06)
+-------------------
 * Added software estop for the arm
 * Contributors: David Kent
 
