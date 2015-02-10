@@ -81,6 +81,7 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
   cartesianPositionServer = nh.advertiseService("jaco_arm/get_cartesian_position",
                                                 &JacoArmTrajectoryController::getCartesianPosition, this);
   eStopServer = nh.advertiseService("jaco_arm/software_estop", &JacoArmTrajectoryController::eStopCallback, this);
+  eraseTrajectoriesServer = nh.advertiseService("jaco_arm/erase_trajectories", &JacoArmTrajectoryController::eraseTrajectoriesCallback, this);
 
   // Action servers
   trajectory_server_.start();
@@ -1284,8 +1285,6 @@ bool JacoArmTrajectoryController::getCartesianPosition(wpi_jaco_msgs::GetCartesi
 
 bool JacoArmTrajectoryController::eStopCallback(wpi_jaco_msgs::EStop::Request &req, wpi_jaco_msgs::EStop::Response &res)
 {
-  ROS_INFO("In callback");
-
   res.success = true;
   if (req.enableEStop)
   {
@@ -1326,6 +1325,14 @@ bool JacoArmTrajectoryController::eStopCallback(wpi_jaco_msgs::EStop::Request &r
   }
 
   return true;
+}
+
+bool JacoArmTrajectoryController::eraseTrajectoriesCallback(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res)
+{
+  if (EraseAllTrajectories() != NO_ERROR)
+  {
+    ROS_INFO("Error stopping arm trajectories.");
+  }
 }
 }
 

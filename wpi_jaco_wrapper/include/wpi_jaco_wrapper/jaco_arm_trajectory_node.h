@@ -29,6 +29,7 @@
 #include <wpi_jaco_msgs/JacoFK.h>
 #include <wpi_jaco_msgs/QuaternionToEuler.h>
 #include <sensor_msgs/JointState.h>
+#include <std_srvs/Empty.h>
 
 #include <jaco_sdk/Kinova.API.UsbCommandLayerUbuntu.h>
 
@@ -86,6 +87,7 @@ private:
   ros::ServiceServer angularPositionServer; //!< service server to get the joint positions
   ros::ServiceServer cartesianPositionServer; //!< service server to get end effector pose
   ros::ServiceServer eStopServer; //!< service server for software estop and restart
+  ros::ServiceServer eraseTrajectoriesServer;
 
   ros::Timer joint_state_timer_; //!< timer for joint state publisher
 
@@ -239,6 +241,8 @@ private:
   * @return true on success
   */
   bool eStopCallback(wpi_jaco_msgs::EStop::Request &req, wpi_jaco_msgs::EStop::Response &res);
+
+  bool eraseTrajectoriesCallback(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 };
 
 }

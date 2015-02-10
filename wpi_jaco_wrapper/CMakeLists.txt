@@ -4,7 +4,7 @@ project(wpi_jaco_wrapper)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS actionlib controller_manager control_msgs ecl_geometry hardware_interface wpi_jaco_msgs jaco_sdk roscpp sensor_msgs)
+find_package(catkin REQUIRED COMPONENTS actionlib controller_manager control_msgs ecl_geometry hardware_interface wpi_jaco_msgs jaco_sdk roscpp sensor_msgs std_srvs)
 
 ###################################################
 ## Declare things to be passed to other projects ##
