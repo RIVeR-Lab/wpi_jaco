@@ -242,6 +242,12 @@ private:
   */
   bool eStopCallback(wpi_jaco_msgs::EStop::Request &req, wpi_jaco_msgs::EStop::Response &res);
 
+  /**
+  * \brief Callback for erasing trajectories currently running on the arm
+  *
+  * @param req empty service request
+  * @param res empty service response
+  */
   bool eraseTrajectoriesCallback(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 };
 
