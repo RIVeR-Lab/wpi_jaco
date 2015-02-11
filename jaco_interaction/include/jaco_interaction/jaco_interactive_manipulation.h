@@ -26,6 +26,7 @@
 #include <sensor_msgs/JointState.h>
 #include <sensor_msgs/PointCloud.h>
 #include <sensor_msgs/point_cloud_conversion.h>
+#include <std_srvs/Empty.h>
 
 /*!
  * \class jacoInteractiveManipulation
@@ -81,6 +82,7 @@ private:
   ros::Subscriber jointStateSubscriber;
 
   //services
+  ros::ServiceClient eraseTrajectoriesClient;
   ros::ServiceClient jacoFkClient;	//!< forward kinematics
   ros::ServiceClient qeClient;	//!< rotation representation conversion client
 

@@ -4,7 +4,7 @@ project(jaco_interaction)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS actionlib interactive_markers roscpp sensor_msgs wpi_jaco_msgs)
+find_package(catkin REQUIRED COMPONENTS actionlib interactive_markers roscpp sensor_msgs std_srvs wpi_jaco_msgs)
 
 ###################################################
 ## Declare things to be passed to other projects ##

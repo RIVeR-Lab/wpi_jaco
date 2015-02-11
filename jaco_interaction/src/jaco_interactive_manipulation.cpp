@@ -13,6 +13,7 @@ JacoInteractiveManipulation::JacoInteractiveManipulation() :
   jointStateSubscriber = n.subscribe("jaco_arm/joint_states", 1, &JacoInteractiveManipulation::updateJoints, this);
 
   //services
+  eraseTrajectoriesClient = n.serviceClient<std_srvs::Empty>("jaco_arm/erase_trajectories");
   jacoFkClient = n.serviceClient<wpi_jaco_msgs::JacoFK>("jaco_arm/kinematics/fk");
   qeClient = n.serviceClient<wpi_jaco_msgs::QuaternionToEuler>("jaco_conversions/quaternion_to_euler");
 
@@ -285,6 +286,12 @@ void JacoInteractiveManipulation::sendStopCommand()
   cmd.arm.angular.y = 0.0;
   cmd.arm.angular.z = 0.0;
   cartesianCmd.publish(cmd);
+
+  std_srvs::Empty srv;
+  if (!eraseTrajectoriesClient.call(srv))
+  {
+    ROS_INFO("Could not call erase trajectories service...");
+  }
 }
 
 void JacoInteractiveManipulation::updateMarkerPosition()
