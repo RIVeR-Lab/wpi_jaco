@@ -1332,7 +1332,9 @@ bool JacoArmTrajectoryController::eraseTrajectoriesCallback(std_srvs::Empty::Req
   if (EraseAllTrajectories() != NO_ERROR)
   {
     ROS_INFO("Error stopping arm trajectories.");
+    return false;
   }
+  return true;
 }
 }
 
