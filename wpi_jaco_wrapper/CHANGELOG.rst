@@ -2,6 +2,14 @@
 Changelog for package wpi_jaco_wrapper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.15 (2015-02-17)
+-------------------
+* Documentation
+* adjustment to erase trajectories service
+* Merge branch 'develop' of https://github.com/RIVeR-Lab/wpi_jaco into develop
+* Added some minor service calls to support some other packages
+* Contributors: David Kent
+
 0.0.14 (2015-02-06)
 -------------------
 * Added software estop for the arm
