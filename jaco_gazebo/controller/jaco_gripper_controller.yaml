@@ -1,0 +1,35 @@
+jaco_gripper_controller:
+  type: "position_controllers/JointTrajectoryController"
+  publish_rate: 50
+
+  joints:
+    - jaco_joint_finger_1
+    - jaco_joint_finger_tip_1
+    - jaco_joint_finger_2
+    - jaco_joint_finger_tip_2
+    - jaco_joint_finger_3
+    - jaco_joint_finger_tip_3
+
+  constraints:
+    goal_time: 2.0
+    jaco_joint_finger_1:
+      goal: 2.0
+    jaco_joint_finger_tip_1:
+      goal: 2.0
+    jaco_joint_finger_2:
+      goal: 2.0
+    jaco_joint_finger_tip_2:
+      goal: 2.0
+    jaco_joint_finger_3:
+      goal: 2.0
+    jaco_joint_finger_tip_3:
+      goal: 2.0
+  
+  # gains:
+  #   jaco_finger_joint_1:
+  #     {p: 2400.0, d: 1800.0, i: 800.0, i_clamp: 800.0}
+  #   jaco_finger_joint_2:
+  #     {p: 2400.0, d: 1800.0, i: 800.0, i_clamp: 800.0}
+  #   jaco_finger_joint_3:
+  #     {p: 2400.0, d: 1800.0, i: 800.0, i_clamp: 800.0}
+

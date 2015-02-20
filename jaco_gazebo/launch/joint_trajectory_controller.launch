@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Arm -->
+  <rosparam command="load" file="$(find jaco_gazebo)/controller/jaco_arm_controller.yaml" />
+  <node name="arm_controller_spawner" pkg="controller_manager" type="spawner" args="jaco_arm_controller" output="screen" />
+
+  <!-- Gripper -->
+  <rosparam command="load" file="$(find jaco_gazebo)/controller/jaco_gripper_controller.yaml" />
+  <node name="gripper_controller_spawner" pkg="controller_manager" type="spawner" args="jaco_gripper_controller" output="screen" />
+
+  <!-- spawn controller -->
+  <node name="joint_state_controller_spawner" pkg="controller_manager" type="spawner" args="joint_state_controller" />
+</launch>

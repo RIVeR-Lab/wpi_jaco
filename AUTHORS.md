@@ -11,3 +11,4 @@ Contributors
 ------------
 
  * [Russell Toris](rctoris@wpi.edu)
+ * [Alex Henning](alex@thoriumrobotics.com)
