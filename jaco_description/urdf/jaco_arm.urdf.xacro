@@ -300,7 +300,7 @@
           <gripper name="grasping">
             <grasp_check>
               <attach_steps>5</attach_steps>
-              <detach_steps>20</detach_steps>
+              <detach_steps>5</detach_steps>
               <min_contact_count>1</min_contact_count>
             </grasp_check>
             <gripper_link>${link_finger}_1</gripper_link>
