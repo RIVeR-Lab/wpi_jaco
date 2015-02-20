@@ -4,8 +4,10 @@
   <version>0.0.0</version>
   <description>The jaco_gazebo package</description>
 
-  <author email="alex@todo.todo">Alex Henning</author>
-  <maintainer email="alex@todo.todo">Alex Henning</maintainer>
+  <author email="alex@thoriumrobotics.com">Alex Henning</author>
+  <maintainer email="alex@thoriumrobotics.com">Alex Henning</maintainer>
+  <maintainer email="davidkent@wpi.edu">David Kent</maintainer>
+  <maintainer email="rctoris@wpi.edu">Russell Toris</maintainer>
 
   <license>BSD</license>
 
