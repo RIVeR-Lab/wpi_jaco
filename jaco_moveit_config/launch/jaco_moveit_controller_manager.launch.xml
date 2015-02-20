@@ -14,4 +14,7 @@
   
   <!-- Load controllers -->
   <rosparam file="$(find jaco_moveit_config)/config/controllers.yaml"/>
+
+  <!-- disable timeout for trajectory execution -->
+  <param name="/move_group/trajectory_execution/execution_duration_monitoring" value="false" />
 </launch>
