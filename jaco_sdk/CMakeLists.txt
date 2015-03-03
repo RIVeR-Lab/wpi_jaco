@@ -29,11 +29,11 @@ catkin_package(
   DEPENDS libusb-1.0
 )
 
-add_library(Kinova.API.CommLayerUbuntu EXCLUDE_FROM_ALL ${JACO_COMM_LIB})
+add_library(Kinova.API.CommLayerUbuntu ${JACO_COMM_LIB})
 add_custom_command(TARGET Kinova.API.CommLayerUbuntu POST_BUILD COMMAND cp ${JACO_COMM_LIB} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/)
 set_target_properties(Kinova.API.CommLayerUbuntu PROPERTIES LINKER_LANGUAGE CXX )
 
-add_library(Kinova.API.USBCommandLayerUbuntu EXCLUDE_FROM_ALL ${JACO_USB_LIB})
+add_library(Kinova.API.USBCommandLayerUbuntu ${JACO_USB_LIB})
 add_custom_command(TARGET Kinova.API.USBCommandLayerUbuntu POST_BUILD COMMAND cp ${JACO_USB_LIB} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/)
 set_target_properties(Kinova.API.USBCommandLayerUbuntu PROPERTIES LINKER_LANGUAGE CXX )
 
