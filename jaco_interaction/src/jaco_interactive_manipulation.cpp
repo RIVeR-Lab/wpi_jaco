@@ -3,7 +3,7 @@
 using namespace std;
 
 JacoInteractiveManipulation::JacoInteractiveManipulation() :
-    acGrasp("jaco_arm/manipulation/gripper", true), acPickup("jaco_arm/manipulation/lift", true), acHome(
+    acGripper("jaco_arm/manipulation/gripper", true), acLift("jaco_arm/manipulation/lift", true), acHome(
         "jaco_arm/home_arm", true)
 {
   joints.resize(6);
@@ -19,8 +19,8 @@ JacoInteractiveManipulation::JacoInteractiveManipulation() :
 
   //actionlib
   ROS_INFO("Waiting for grasp, pickup, and home arm action servers...");
-  acGrasp.waitForServer();
-  acPickup.waitForServer();
+  acGripper.waitForServer();
+  acLift.waitForServer();
   acHome.waitForServer();
   ROS_INFO("Finished waiting for action servers");
 
@@ -127,10 +127,10 @@ void JacoInteractiveManipulation::makeHandMarker()
   iMarker.controls.push_back(control);
 
   //menu
-  interactive_markers::MenuHandler::EntryHandle fingersSubMenuHandle = menuHandler.insert("Fingers");
-  menuHandler.insert(fingersSubMenuHandle, "Grasp",
+  interactive_markers::MenuHandler::EntryHandle fingersSubMenuHandle = menuHandler.insert("Gripper");
+  menuHandler.insert(fingersSubMenuHandle, "Close",
                      boost::bind(&JacoInteractiveManipulation::processHandMarkerFeedback, this, _1));
-  menuHandler.insert(fingersSubMenuHandle, "Release",
+  menuHandler.insert(fingersSubMenuHandle, "Open",
                      boost::bind(&JacoInteractiveManipulation::processHandMarkerFeedback, this, _1));
   menuHandler.insert("Pickup", boost::bind(&JacoInteractiveManipulation::processHandMarkerFeedback, this, _1));
   menuHandler.insert("Home", boost::bind(&JacoInteractiveManipulation::processHandMarkerFeedback, this, _1));
@@ -169,23 +169,23 @@ void JacoInteractiveManipulation::processHandMarkerFeedback(
         {
           rail_manipulation_msgs::GripperGoal gripperGoal;
           gripperGoal.close = true;
-          acGrasp.sendGoal(gripperGoal);
+          acGripper.sendGoal(gripperGoal);
         }
         else if (feedback->menu_entry_id == 3)	//release requested
         {
           rail_manipulation_msgs::GripperGoal gripperGoal;
           gripperGoal.close = false;
-          acGrasp.sendGoal(gripperGoal);
+          acGripper.sendGoal(gripperGoal);
         }
         else if (feedback->menu_entry_id == 4)	//pickup requested
         {
           rail_manipulation_msgs::LiftGoal liftGoal;
-          acPickup.sendGoal(liftGoal);
+          acLift.sendGoal(liftGoal);
         }
         else if (feedback->menu_entry_id == 5)  //home requested
         {
-          acGrasp.cancelAllGoals();
-          acPickup.cancelAllGoals();
+          acGripper.cancelAllGoals();
+          acLift.cancelAllGoals();
           wpi_jaco_msgs::HomeArmGoal homeGoal;
           homeGoal.retract = false;
           acHome.sendGoal(homeGoal);
@@ -193,8 +193,8 @@ void JacoInteractiveManipulation::processHandMarkerFeedback(
         }
         else if (feedback->menu_entry_id == 6)
         {
-          acGrasp.cancelAllGoals();
-          acPickup.cancelAllGoals();
+          acGripper.cancelAllGoals();
+          acLift.cancelAllGoals();
           wpi_jaco_msgs::HomeArmGoal homeGoal;
           homeGoal.retract = true;
           homeGoal.retractPosition.position = true;
@@ -221,8 +221,8 @@ void JacoInteractiveManipulation::processHandMarkerFeedback(
       {
         if (!lockPose)
         {
-          acGrasp.cancelAllGoals();
-          acPickup.cancelAllGoals();
+          acGripper.cancelAllGoals();
+          acLift.cancelAllGoals();
 
           //convert pose for compatibility with JACO API
           wpi_jaco_msgs::QuaternionToEuler qeSrv;

@@ -87,8 +87,8 @@ private:
   ros::ServiceClient qeClient;	//!< rotation representation conversion client
 
   //actionlib
-  actionlib::SimpleActionClient<rail_manipulation_msgs::GripperAction> acGrasp;
-  actionlib::SimpleActionClient<rail_manipulation_msgs::LiftAction> acPickup;
+  actionlib::SimpleActionClient<rail_manipulation_msgs::GripperAction> acGripper;
+  actionlib::SimpleActionClient<rail_manipulation_msgs::LiftAction> acLift;
   actionlib::SimpleActionClient<wpi_jaco_msgs::HomeArmAction> acHome;
 
   boost::shared_ptr<interactive_markers::InteractiveMarkerServer> imServer;	//!< interactive marker server
