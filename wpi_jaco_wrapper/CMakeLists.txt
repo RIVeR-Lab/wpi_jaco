@@ -41,7 +41,7 @@ target_link_libraries(jaco_manipulation
   ${catkin_LIBRARIES}
 )
 ## Add cmake target dependencies of the executable/library
-add_dependencies(jaco_manipulation wpi_jaco_msgs_gencpp)
+add_dependencies(jaco_manipulation wpi_jaco_msgs_gencpp rail_manipulation_msgs_gencpp)
 
 ## Declare a cpp executable
 add_executable(jaco_kinematics src/jaco_kinematics.cpp)

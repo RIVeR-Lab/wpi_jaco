@@ -3,7 +3,7 @@
 using namespace std;
 
 JacoInteractiveManipulation::JacoInteractiveManipulation() :
-    acGrasp("jaco_arm/manipulation/grasp", true), acPickup("jaco_arm/manipulation/pickup", true), acHome(
+    acGrasp("jaco_arm/manipulation/gripper", true), acPickup("jaco_arm/manipulation/lift", true), acHome(
         "jaco_arm/home_arm", true)
 {
   joints.resize(6);
@@ -167,24 +167,20 @@ void JacoInteractiveManipulation::processHandMarkerFeedback(
       {
         if (feedback->menu_entry_id == 2)	//grasp requested
         {
-          wpi_jaco_msgs::ExecuteGraspGoal graspGoal;
-          graspGoal.closeGripper = true;
-          graspGoal.limitFingerVelocity = false;
-          acGrasp.sendGoal(graspGoal);
+          rail_manipulation_msgs::GripperGoal gripperGoal;
+          gripperGoal.close = true;
+          acGrasp.sendGoal(gripperGoal);
         }
         else if (feedback->menu_entry_id == 3)	//release requested
         {
-          wpi_jaco_msgs::ExecuteGraspGoal graspGoal;
-          graspGoal.closeGripper = false;
-          graspGoal.limitFingerVelocity = false;
-          acGrasp.sendGoal(graspGoal);
+          rail_manipulation_msgs::GripperGoal gripperGoal;
+          gripperGoal.close = false;
+          acGrasp.sendGoal(gripperGoal);
         }
         else if (feedback->menu_entry_id == 4)	//pickup requested
         {
-          wpi_jaco_msgs::ExecutePickupGoal pickupGoal;
-          pickupGoal.limitFingerVelocity = false;
-          pickupGoal.setLiftVelocity = false;
-          acPickup.sendGoal(pickupGoal);
+          rail_manipulation_msgs::LiftGoal liftGoal;
+          acPickup.sendGoal(liftGoal);
         }
         else if (feedback->menu_entry_id == 5)  //home requested
         {

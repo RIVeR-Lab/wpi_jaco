@@ -17,9 +17,9 @@
 #include <actionlib/client/simple_action_client.h>
 #include <interactive_markers/interactive_marker_server.h>
 #include <interactive_markers/menu_handler.h>
+#include <rail_manipulation_msgs/GripperAction.h>
+#include <rail_manipulation_msgs/LiftAction.h>
 #include <wpi_jaco_msgs/CartesianCommand.h>
-#include <wpi_jaco_msgs/ExecuteGraspAction.h>
-#include <wpi_jaco_msgs/ExecutePickupAction.h>
 #include <wpi_jaco_msgs/HomeArmAction.h>
 #include <wpi_jaco_msgs/JacoFK.h>
 #include <wpi_jaco_msgs/QuaternionToEuler.h>
@@ -87,8 +87,8 @@ private:
   ros::ServiceClient qeClient;	//!< rotation representation conversion client
 
   //actionlib
-  actionlib::SimpleActionClient<wpi_jaco_msgs::ExecuteGraspAction> acGrasp;
-  actionlib::SimpleActionClient<wpi_jaco_msgs::ExecutePickupAction> acPickup;
+  actionlib::SimpleActionClient<rail_manipulation_msgs::GripperAction> acGrasp;
+  actionlib::SimpleActionClient<rail_manipulation_msgs::LiftAction> acPickup;
   actionlib::SimpleActionClient<wpi_jaco_msgs::HomeArmAction> acHome;
 
   boost::shared_ptr<interactive_markers::InteractiveMarkerServer> imServer;	//!< interactive marker server

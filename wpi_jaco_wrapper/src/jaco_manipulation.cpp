@@ -5,7 +5,7 @@ using namespace std;
 JacoManipulation::JacoManipulation() :
     acGripper("jaco_arm/fingers_controller/gripper", true),
     asGripper(n, "jaco_arm/manipulation/gripper", boost::bind(&JacoManipulation::execute_gripper, this, _1), false),
-    asLift(n, "jaco_arm/manipulation/pickup", boost::bind(&JacoManipulation::execute_lift, this, _1), false)
+    asLift(n, "jaco_arm/manipulation/lift", boost::bind(&JacoManipulation::execute_lift, this, _1), false)
 {
   // Messages
   cartesianCmdPublisher = n.advertise<wpi_jaco_msgs::CartesianCommand>("jaco_arm/cartesian_cmd", 1);
