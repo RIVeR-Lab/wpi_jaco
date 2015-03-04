@@ -21,7 +21,6 @@
 #include <std_srvs/Empty.h>
 #include <wpi_jaco_msgs/AngularCommand.h>
 #include <wpi_jaco_msgs/CartesianCommand.h>
-#include <wpi_jaco_msgs/ExecutePickupAction.h>
 #include <wpi_jaco_msgs/GetCartesianPosition.h>
 #include <sensor_msgs/JointState.h>
 
