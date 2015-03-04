@@ -24,6 +24,7 @@
   <build_depend>jaco_sdk</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>actionlib</build_depend>
+  <build_depend>rail_manipulation_msgs</build_depend>
   <build_depend>sensor_msgs</build_depend>
   <build_depend>std_srvs</build_depend>
   <build_depend>tf</build_depend>
@@ -34,6 +35,7 @@
   <run_depend>hardware_interface</run_depend>
   <run_depend>wpi_jaco_msgs</run_depend>
   <run_depend>jaco_sdk</run_depend>
+  <run_depend>rail_manipulation_msgs</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>actionlib</run_depend>
   <run_depend>sensor_msgs</run_depend>
