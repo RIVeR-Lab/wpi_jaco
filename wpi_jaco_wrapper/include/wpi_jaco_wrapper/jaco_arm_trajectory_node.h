@@ -61,6 +61,8 @@
 
 #define NO_ERROR 1 //no error from Kinova API
 
+#define MAX_SPEED_FINGER 3000.0
+
 namespace jaco
 {
 
