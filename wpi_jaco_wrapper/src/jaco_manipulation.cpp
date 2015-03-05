@@ -45,15 +45,15 @@ void JacoManipulation::execute_gripper(const rail_manipulation_msgs::GripperGoal
     return;
   }
 
-  float currentFingerPos[3];
-  currentFingerPos[0] = jointPos[6];
-  currentFingerPos[1] = jointPos[7];
-  currentFingerPos[2] = jointPos[8];
+  float startingFingerPos[3];
+  startingFingerPos[0] = jointPos[6];
+  startingFingerPos[1] = jointPos[7];
+  startingFingerPos[2] = jointPos[8];
 
   //check if grasp is already finished (for opening case only)
   if (!goal->close)
   {
-    if (currentFingerPos[0] <= GRIPPER_OPEN_THRESHOLD && currentFingerPos[1] <= GRIPPER_OPEN_THRESHOLD && currentFingerPos[2] <= GRIPPER_OPEN_THRESHOLD)
+    if (startingFingerPos[0] <= GRIPPER_OPEN_THRESHOLD && startingFingerPos[1] <= GRIPPER_OPEN_THRESHOLD && startingFingerPos[2] <= GRIPPER_OPEN_THRESHOLD)
     {
       ROS_INFO("Gripper is open.");
       result.success = true;
@@ -85,7 +85,22 @@ void JacoManipulation::execute_gripper(const rail_manipulation_msgs::GripperGoal
   }
 
   rail_manipulation_msgs::GripperResult serverResult;
-  serverResult.success = acGripper.getResult()->reached_goal;
+  //success occurs if the gripper has moved, as it is unlikely to reach the final "closed" position when grasping an object
+  //serverResult.success = acGripper.getResult()->reached_goal;
+  if (goal->close)
+  {
+    if (jointPos[6] > startingFingerPos[0] || jointPos[7] > startingFingerPos[1] || jointPos[8] > startingFingerPos[2])
+      serverResult.success = true;
+    else
+      serverResult.success = false;
+  }
+  else
+  {
+    if (jointPos[6] < startingFingerPos[0] || jointPos[7] < startingFingerPos[1] || jointPos[8] < startingFingerPos[2])
+      serverResult.success = true;
+    else
+      serverResult.success = false;
+  }
   asGripper.setSucceeded(serverResult);
   ROS_INFO("Gripper action finished.");
 }
