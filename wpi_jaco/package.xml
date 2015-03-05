@@ -16,7 +16,6 @@
   <buildtool_depend>catkin</buildtool_depend>
   
   <run_depend>jaco_description</run_depend>
-  <run_depend>jaco_gazebo</run_depend>
   <run_depend>jaco_interaction</run_depend>
   <run_depend>jaco_moveit_config</run_depend>
   <run_depend>jaco_sdk</run_depend>
