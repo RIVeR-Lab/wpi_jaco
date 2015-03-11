@@ -796,6 +796,7 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
 
   AngularPosition position_data;
   {
+    boost::recursive_mutex::scoped_lock lock(api_mutex);
     GetAngularPosition(position_data);
     GetAngularForce(force_data);
   }
