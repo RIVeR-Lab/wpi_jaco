@@ -1,18 +1,14 @@
 <?xml version="1.0"?>
 <package>
   <name>mico_description</name>
-  <version>0.0.12</version>
-  <description>3D Model and URDF of the Kinova JACO Arm</description>
+  <version>0.0.1</version>
+  <description>3D Model and URDF of the Kinova MICO Arm</description>
   
-  <maintainer email="davidkent@wpi.edu">David Kent</maintainer>
-  <maintainer email="rctoris@wpi.edu">Russell Toris</maintainer>
-  <author email="rctoris@wpi.edu">Russell Toris</author>
-  <author email="davidkent@wpi.edu">David Kent</author>
-  <author email="bpwiselybabu@wpi.edu">Benzun Pious Wisely Babu</author>
+  <author email="langen@robot-rose.nl">Mathijs de Langen</author>
+  <maintainer email="langen@robot-rose.nl">Mathijs de Langen</maintainer>
 
   <license>BSD</license>
   
-  <url type="website">http://ros.org/wiki/mico_description</url>
   <url type="bugtracker">https://github.com/RIVeR-Lab/wpi_jaco/issues</url>
   <url type="repository">https://github.com/RIVeR-Lab/wpi_jaco</url>
 
