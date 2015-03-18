@@ -46,14 +46,14 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
   for (int joint_id = 0; joint_id < NUM_JACO_JOINTS; ++joint_id)
   {
     stringstream joint_name_stream;
-    joint_name_stream << "jaco_joint_" << (joint_id + 1);
+    joint_name_stream << ARM_NAME << "_joint_" << (joint_id + 1);
     string joint_name = joint_name_stream.str();
     joint_names.push_back(joint_name);
   }
   for (int finger_id = 0; finger_id < NUM_JACO_FINGER_JOINTS; ++finger_id)
   {
     stringstream finger_name_stream;
-    finger_name_stream << "jaco_joint_finger_" << (finger_id + 1);
+    finger_name_stream << ARM_NAME << "_joint_finger_" << (finger_id + 1);
     string finger_name = finger_name_stream.str();
     joint_names.push_back(finger_name);
   }
