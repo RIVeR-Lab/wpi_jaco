@@ -61,15 +61,15 @@
 
   <xacro:property name="joint_finger_1" value="mico_joint_finger_1" />
   <xacro:property name="joint_finger_1_axis_xyz" value="0 0 1" />
-  <xacro:property name="joint_finger_1_origin_xyz" value="-0.03978 0 -0.10071" />  
-  <xacro:property name="joint_finger_1_origin_rpy" value="-1.7983 1.117 3.1416" />
+  <xacro:property name="joint_finger_1_origin_xyz" value="-0.031 0 -0.10071" />  
+  <xacro:property name="joint_finger_1_origin_rpy" value="-1.5707 1.5707 3.1416" />
   <xacro:property name="joint_finger_1_lower_limit" value="0" />
   <xacro:property name="joint_finger_1_upper_limit" value="${M_PI/180*40}" />
 
   <xacro:property name="joint_finger_2" value="mico_joint_finger_2" />
   <xacro:property name="joint_finger_2_axis_xyz" value="0 0 1" />
-  <xacro:property name="joint_finger_2_origin_xyz" value="0.03569 0 -0.10071" />
-  <xacro:property name="joint_finger_2_origin_rpy" value="-1.5161 1.1459 0.23978" />
+  <xacro:property name="joint_finger_2_origin_xyz" value="0.031 0 -0.10071" />
+  <xacro:property name="joint_finger_2_origin_rpy" value="-1.5707 1.5707 0.0" />
   <xacro:property name="joint_finger_2_lower_limit" value="0" />
   <xacro:property name="joint_finger_2_upper_limit" value="${M_PI/180*40}" />
   

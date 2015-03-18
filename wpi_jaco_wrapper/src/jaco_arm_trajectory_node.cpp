@@ -139,9 +139,9 @@ void JacoArmTrajectoryController::update_joint_states()
     joint_vel[4] = velocity_data.Actuators.Actuator5 * DEG_TO_RAD;
     joint_vel[5] = velocity_data.Actuators.Actuator6 * DEG_TO_RAD;
     //NOTE: the finger units are arbitrary, but converting them as if they were in degrees provides an approximately correct visualization
-    joint_vel[6] = velocity_data.Fingers.Finger1 * DEG_TO_RAD;
-    joint_vel[7] = velocity_data.Fingers.Finger2 * DEG_TO_RAD;
-    joint_vel[8] = velocity_data.Fingers.Finger3 * DEG_TO_RAD;
+    joint_vel[6] = velocity_data.Fingers.Finger1 * DEG_TO_RAD * FINGER_SCALE;
+    joint_vel[7] = velocity_data.Fingers.Finger2 * DEG_TO_RAD * FINGER_SCALE;
+    joint_vel[8] = velocity_data.Fingers.Finger3 * DEG_TO_RAD * FINGER_SCALE;
 
     AngularPosition position_data;
     GetAngularPosition(position_data);
@@ -151,9 +151,9 @@ void JacoArmTrajectoryController::update_joint_states()
     joint_pos[3] = simplify_angle(position_data.Actuators.Actuator4 * DEG_TO_RAD);
     joint_pos[4] = simplify_angle(position_data.Actuators.Actuator5 * DEG_TO_RAD);
     joint_pos[5] = simplify_angle(position_data.Actuators.Actuator6 * DEG_TO_RAD);
-    joint_pos[6] = position_data.Fingers.Finger1 * DEG_TO_RAD;
-    joint_pos[7] = position_data.Fingers.Finger2 * DEG_TO_RAD;
-    joint_pos[8] = position_data.Fingers.Finger3 * DEG_TO_RAD;
+    joint_pos[6] = position_data.Fingers.Finger1 * DEG_TO_RAD * FINGER_SCALE;
+    joint_pos[7] = position_data.Fingers.Finger2 * DEG_TO_RAD * FINGER_SCALE;
+    joint_pos[8] = position_data.Fingers.Finger3 * DEG_TO_RAD * FINGER_SCALE;
   }
 
   sensor_msgs::JointState state;

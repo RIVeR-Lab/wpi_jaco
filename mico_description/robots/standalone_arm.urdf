@@ -323,7 +323,7 @@
     <parent link="mico_link_hand"/>
     <child link="mico_link_finger_1"/>
     <axis xyz="0 0 1"/>
-    <origin rpy="-1.7983 1.117 3.1416" xyz="-0.03978 0 -0.10071"/>
+    <origin rpy="-1.5707 0.9666 3.1416" xyz="-0.031 0 -0.10071"/>
     <limit effort="30" lower="0" upper="0.698131700798" velocity="5"/>
   </joint>
   <link name="mico_link_finger_2">
@@ -345,7 +345,7 @@
     <parent link="mico_link_hand"/>
     <child link="mico_link_finger_2"/>
     <axis xyz="0 0 1"/>
-    <origin rpy="-1.5161 1.1459 0.23978" xyz="0.03569 0 -0.10071"/>
+    <origin rpy="-1.5707 0.9666 0.0" xyz="0.031 0 -0.10071"/>
     <limit effort="30" lower="0" upper="0.698131700798" velocity="5"/>
   </joint>
   <link name="mico_link_finger_tip_1">

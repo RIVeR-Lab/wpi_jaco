@@ -63,6 +63,7 @@
 
 #define MAX_SPEED_FINGER  3000.0
 #define ARM_NAME          "mico"
+#define FINGER_SCALE      (1.0/120.0)
 
 namespace jaco
 {
