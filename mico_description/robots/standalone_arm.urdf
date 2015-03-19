@@ -304,7 +304,7 @@
     <origin rpy="0 0.959931088597 3.14159265359" xyz="0.0343 0 -0.06588"/>
     <limit effort="30" lower="-6.28318530718" upper="6.28318530718" velocity="5"/>
   </joint>
-  <!-- <link name="mico_link_finger_1">
+  <link name="mico_link_finger_1">
     <visual>
       <geometry>
         <mesh filename="package://mico_description/meshes/mico_link_finger.dae" scale="0.0254 0.0254 0.0254"/>
@@ -323,7 +323,7 @@
     <parent link="mico_link_hand"/>
     <child link="mico_link_finger_1"/>
     <axis xyz="0 0 1"/>
-    <origin rpy="-1.5707 0.9666 3.1416" xyz="-0.031 0 -0.15071"/>
+    <origin rpy="-1.5707 0.9666 3.1416" xyz="-0.03978 0 -0.10071"/>
     <limit effort="30" lower="0" upper="0.698131700798" velocity="5"/>
   </joint>
   <link name="mico_link_finger_2">
@@ -345,10 +345,10 @@
     <parent link="mico_link_hand"/>
     <child link="mico_link_finger_2"/>
     <axis xyz="0 0 1"/>
-    <origin rpy="-1.5707 0.9666 0.0" xyz="0.031 0 -0.15071"/>
+    <origin rpy="-1.5707 0.9666 0.0" xyz="0.03978 0 -0.10071"/>
     <limit effort="30" lower="0" upper="0.698131700798" velocity="5"/>
   </joint>
-  <link name="mico_link_finger_tip_1">
+  <!-- <link name="mico_link_finger_tip_1">
     <visual>
       <geometry>
         <mesh filename="package://mico_description/meshes/mico_link_finger_tip.dae" scale="0.0254 0.0254 0.0254"/>
