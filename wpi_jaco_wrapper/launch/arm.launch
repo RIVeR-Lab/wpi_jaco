@@ -1,7 +1,7 @@
 <launch>
   <arg name="max_curvature" value="20.0" />
 
-  <arg name="arm_name" default="jaco_arm" />
+  <arg name="arm_name" default="mico_arm" />
 
   <node name="jaco_arm_trajectory_node" pkg="wpi_jaco_wrapper" type="jaco_arm_trajectory_node" output="screen">
     <remap from="jaco_arm/fingers_controller" to="$(arg arm_name)/fingers_controller/gripper"/>
