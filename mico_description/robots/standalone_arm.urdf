@@ -323,7 +323,7 @@
     <parent link="mico_link_hand"/>
     <child link="mico_link_finger_1"/>
     <axis xyz="0 0 1"/>
-    <origin rpy="-1.5707 0.9666 3.1416" xyz="-0.03978 0 -0.10071"/>
+    <origin rpy="-1.5707 1.1 3.1416" xyz="-0.03978 0 -0.10071"/>
     <limit effort="30" lower="0" upper="0.698131700798" velocity="5"/>
   </joint>
   <link name="mico_link_finger_2">
@@ -345,10 +345,10 @@
     <parent link="mico_link_hand"/>
     <child link="mico_link_finger_2"/>
     <axis xyz="0 0 1"/>
-    <origin rpy="-1.5707 0.9666 0.0" xyz="0.03978 0 -0.10071"/>
+    <origin rpy="-1.5707 1.1 0.0" xyz="0.03978 0 -0.10071"/>
     <limit effort="30" lower="0" upper="0.698131700798" velocity="5"/>
   </joint>
-  <!-- <link name="mico_link_finger_tip_1">
+  <link name="mico_link_finger_tip_1">
     <visual>
       <geometry>
         <mesh filename="package://mico_description/meshes/mico_link_finger_tip.dae" scale="0.0254 0.0254 0.0254"/>
@@ -363,11 +363,11 @@
       </geometry>
     </collision>
   </link>
-  <joint name="mico_joint_finger_tip_1" type="revolute">
+  <joint name="mico_joint_finger_tip_1" type="fixed">
     <parent link="mico_link_finger_1"/>
     <child link="mico_link_finger_tip_1"/>
     <axis xyz="0 0 1"/>
-    <origin rpy="0 0 0" xyz="0.044094 -0.0029 0.2"/>
+    <origin rpy="0 0 0" xyz="0.044094 -0.0029 0.0"/>
     <limit effort="30" lower="0" upper="0.698131700798" velocity="5"/>
   </joint>
   <link name="mico_link_finger_tip_2">
@@ -385,12 +385,12 @@
       </geometry>
     </collision>
   </link>
-  <joint name="mico_joint_finger_tip_2" type="revolute">
+  <joint name="mico_joint_finger_tip_2" type="fixed">
     <parent link="mico_link_finger_2"/>
     <child link="mico_link_finger_tip_2"/>
     <axis xyz="0 0 1"/>
-    <origin rpy="0 0 0" xyz="0.044094 -0.0029 0.2"/>
+    <origin rpy="0 0 0" xyz="0.044094 -0.0029 0.0"/>
     <limit effort="30" lower="0" upper="0.698131700798" velocity="5"/>
-  </joint> -->
+  </joint>
 </robot>
 
