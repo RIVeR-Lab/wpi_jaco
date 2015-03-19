@@ -11,7 +11,7 @@
 	xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
 	xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
 	xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
-	xmlns:xacro="http://ros.org/wiki/xacro" name="jaco">
+	xmlns:xacro="http://ros.org/wiki/xacro" name="mico">
 
 	<xacro:include filename="$(find mico_description)/urdf/mico_arm.urdf.xacro" />
 
