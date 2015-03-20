@@ -34,7 +34,7 @@
 #include <jaco_sdk/Kinova.API.UsbCommandLayerUbuntu.h>
 
 #define NUM_JACO_JOINTS 6
-#define NUM_JACO_FINGER_JOINTS 3
+#define NUM_JACO_FINGER_JOINTS 2
 #define NUM_JOINTS (NUM_JACO_JOINTS+NUM_JACO_FINGER_JOINTS)
 
 #define LARGE_ACTUATOR_VELOCITY 0.8378*0.8 //maximum velocity of large actuator (joints 1-3) (rad/s)
@@ -61,7 +61,9 @@
 
 #define NO_ERROR 1 //no error from Kinova API
 
-#define MAX_SPEED_FINGER 3000.0
+#define MAX_SPEED_FINGER  3000.0
+#define ARM_NAME          "mico"
+#define FINGER_SCALE      (1.0/120.0)
 
 namespace jaco
 {

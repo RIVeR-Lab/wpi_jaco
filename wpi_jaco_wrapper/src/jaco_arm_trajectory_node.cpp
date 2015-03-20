@@ -46,14 +46,14 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
   for (int joint_id = 0; joint_id < NUM_JACO_JOINTS; ++joint_id)
   {
     stringstream joint_name_stream;
-    joint_name_stream << "jaco_joint_" << (joint_id + 1);
+    joint_name_stream << ARM_NAME << "_joint_" << (joint_id + 1);
     string joint_name = joint_name_stream.str();
     joint_names.push_back(joint_name);
   }
   for (int finger_id = 0; finger_id < NUM_JACO_FINGER_JOINTS; ++finger_id)
   {
     stringstream finger_name_stream;
-    finger_name_stream << "jaco_joint_finger_" << (finger_id + 1);
+    finger_name_stream << ARM_NAME << "_joint_finger_" << (finger_id + 1);
     string finger_name = finger_name_stream.str();
     joint_names.push_back(finger_name);
   }
@@ -139,9 +139,9 @@ void JacoArmTrajectoryController::update_joint_states()
     joint_vel[4] = velocity_data.Actuators.Actuator5 * DEG_TO_RAD;
     joint_vel[5] = velocity_data.Actuators.Actuator6 * DEG_TO_RAD;
     //NOTE: the finger units are arbitrary, but converting them as if they were in degrees provides an approximately correct visualization
-    joint_vel[6] = velocity_data.Fingers.Finger1 * DEG_TO_RAD;
-    joint_vel[7] = velocity_data.Fingers.Finger2 * DEG_TO_RAD;
-    joint_vel[8] = velocity_data.Fingers.Finger3 * DEG_TO_RAD;
+    joint_vel[6] = velocity_data.Fingers.Finger1 * DEG_TO_RAD * FINGER_SCALE;
+    joint_vel[7] = velocity_data.Fingers.Finger2 * DEG_TO_RAD * FINGER_SCALE;
+    joint_vel[8] = velocity_data.Fingers.Finger3 * DEG_TO_RAD * FINGER_SCALE;
 
     AngularPosition position_data;
     GetAngularPosition(position_data);
@@ -151,9 +151,9 @@ void JacoArmTrajectoryController::update_joint_states()
     joint_pos[3] = simplify_angle(position_data.Actuators.Actuator4 * DEG_TO_RAD);
     joint_pos[4] = simplify_angle(position_data.Actuators.Actuator5 * DEG_TO_RAD);
     joint_pos[5] = simplify_angle(position_data.Actuators.Actuator6 * DEG_TO_RAD);
-    joint_pos[6] = position_data.Fingers.Finger1 * DEG_TO_RAD;
-    joint_pos[7] = position_data.Fingers.Finger2 * DEG_TO_RAD;
-    joint_pos[8] = position_data.Fingers.Finger3 * DEG_TO_RAD;
+    joint_pos[6] = position_data.Fingers.Finger1 * DEG_TO_RAD * FINGER_SCALE;
+    joint_pos[7] = position_data.Fingers.Finger2 * DEG_TO_RAD * FINGER_SCALE;
+    joint_pos[8] = position_data.Fingers.Finger3 * DEG_TO_RAD * FINGER_SCALE;
   }
 
   sensor_msgs::JointState state;
