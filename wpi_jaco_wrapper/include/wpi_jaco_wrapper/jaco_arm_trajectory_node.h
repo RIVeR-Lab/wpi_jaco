@@ -34,8 +34,6 @@
 #include <jaco_sdk/Kinova.API.UsbCommandLayerUbuntu.h>
 
 #define NUM_JACO_JOINTS 6
-#define NUM_JACO_FINGER_JOINTS 2
-#define NUM_JOINTS (NUM_JACO_JOINTS+NUM_JACO_FINGER_JOINTS)
 
 #define LARGE_ACTUATOR_VELOCITY 0.8378*0.8 //maximum velocity of large actuator (joints 1-3) (rad/s)
 #define SMALL_ACTUATOR_VELOCITY 1.0472*0.8 //maximum velocity of small actuator (joints 4-6) (rad/s)
@@ -60,10 +58,6 @@
 #define CARTESIAN_CONTROL 2
 
 #define NO_ERROR 1 //no error from Kinova API
-
-#define MAX_SPEED_FINGER  3000.0
-#define ARM_NAME          "mico"
-#define FINGER_SCALE      (1.0/120.0)
 
 namespace jaco
 {
@@ -103,8 +97,6 @@ private:
   actionlib::SimpleActionServer<wpi_jaco_msgs::HomeArmAction> home_arm_server;
 
   boost::recursive_mutex api_mutex;
-  
-  double max_curvature;
 
   bool eStopEnabled;
 
@@ -168,10 +160,21 @@ public:
   void execute_gripper(const control_msgs::GripperCommandGoalConstPtr &goal);
 
 private:
+
+  bool loadParameters(ros::NodeHandle n);
+
+  // Parameters
+  std::string   arm_name_;
+  double        finger_scale_;
+  double        max_curvature_;
+  double        max_speed_finger_;
+  int           num_fingers_;
+  int           num_joints_;
+
   std::vector<std::string> joint_names;
-  double joint_pos[NUM_JOINTS];
-  double joint_vel[NUM_JOINTS];
-  double joint_eff[NUM_JOINTS];
+  std::vector<double> joint_pos_;
+  std::vector<double> joint_vel_;
+  std::vector<double> joint_eff_;
 
   unsigned int controlType; //current state of control
 

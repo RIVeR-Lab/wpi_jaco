@@ -1,0 +1,6 @@
+wpi_jaco:
+  arm_name: "jaco"
+  finger_scale: 1.0
+  max_curvature: 20.0
+  max_speed_figner: 30.0
+  num_fingers: 3

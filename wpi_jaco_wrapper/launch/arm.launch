@@ -1,30 +1,12 @@
 <launch>
-  <arg name="max_curvature" value="20.0" />
-
-  <arg name="arm_name" default="mico_arm" />
+  <arg name="arm_name" default="jaco" />
 
   <node name="jaco_arm_trajectory_node" pkg="wpi_jaco_wrapper" type="jaco_arm_trajectory_node" output="screen">
-    <remap from="jaco_arm/fingers_controller" to="$(arg arm_name)/fingers_controller/gripper"/>
-    <remap from="jaco_arm/arm_controller" to="$(arg arm_name)/arm_controller/trajectory"/>
-    <remap from="jaco_arm/cartesian_cmd" to="$(arg arm_name)/cartesian_cmd"/>
-    <remap from="jaco_arm/angular_cmd" to="$(arg arm_name)/angular_cmd"/>
-    <remap from="jaco_arm/smooth_arm_controller" to="$(arg arm_name)/smooth_arm_controller/trajectory"/>
-    <remap from="jaco_arm/joint_velocity_controller" to="$(arg arm_name)/joint_velocity_controller/trajectory"/>
-    <!-- <remap from="jaco_arm/joint_states" to="$(arg arm_name)/joint_states" /> -->
-     <remap from="jaco_arm/joint_states" to="/joint_states"/>
-    <param name="max_curvature" type="double" value="$(arg max_curvature)" />
+    <rosparam command="load" file="$(find wpi_jaco_wrapper)/config/$(arg arm_name).yaml"/>
+    <remap from="$(arg arm_name)_arm/fingers_controller" to="$(arg arm_name)_arm/fingers_controller/gripper"/>
   </node>
   
-  <node name="jaco_manipulation" pkg="wpi_jaco_wrapper" type="jaco_manipulation" output="screen">
-    <remap from="jaco_arm/manipulation/grasp" to="$(arg arm_name)/manipulation/grasp"/>
-    <remap from="jaco_arm/manipulation/pickup" to="$(arg arm_name)/manipulation/pickup"/>
-    <remap from="jaco_arm/cartesian_cmd" to="$(arg arm_name)/cartesian_cmd"/>
-    <remap from="jaco_arm/angular_cmd" to="$(arg arm_name)/angular_cmd"/>
-    <remap from="jaco_arm/get_cartesian_position" to="$(arg arm_name)/get_cartesian_position" />
-    <!-- <remap from="jaco_arm/joint_states" to="$(arg arm_name)/joint_states"/> -->
-    <remap from="jaco_arm/joint_states" to="/joint_states"/>
-  </node>
-
+  <node name="jaco_manipulation" pkg="wpi_jaco_wrapper" type="jaco_manipulation" output="screen"/>
   <node name="jaco_conversions" pkg="wpi_jaco_wrapper" type="jaco_conversions"/>
   <node name="jaco_kinematics" pkg="wpi_jaco_wrapper" type="jaco_kinematics"/>
 

@@ -15,9 +15,7 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
         nh, "jaco_arm/home_arm", boost::bind(&JacoArmTrajectoryController::home_arm, this, _1), false)
 {
   ros::NodeHandle private_nh("~");
-  private_nh.param<double>("max_curvature", max_curvature, 10.0);
-
-  ROS_INFO("max_curvature: %f", max_curvature);
+  loadParameters(private_nh);
 
   boost::recursive_mutex::scoped_lock lock(api_mutex);
 
@@ -46,14 +44,14 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
   for (int joint_id = 0; joint_id < NUM_JACO_JOINTS; ++joint_id)
   {
     stringstream joint_name_stream;
-    joint_name_stream << ARM_NAME << "_joint_" << (joint_id + 1);
+    joint_name_stream << arm_name_ << "_joint_" << (joint_id + 1);
     string joint_name = joint_name_stream.str();
     joint_names.push_back(joint_name);
   }
-  for (int finger_id = 0; finger_id < NUM_JACO_FINGER_JOINTS; ++finger_id)
+  for (int finger_id = 0; finger_id < num_fingers_; ++finger_id)
   {
     stringstream finger_name_stream;
-    finger_name_stream << ARM_NAME << "_joint_finger_" << (finger_id + 1);
+    finger_name_stream << arm_name_ << "_joint_finger_" << (finger_id + 1);
     string finger_name = finger_name_stream.str();
     joint_names.push_back(finger_name);
   }
@@ -120,48 +118,48 @@ void JacoArmTrajectoryController::update_joint_states()
     boost::recursive_mutex::scoped_lock lock(api_mutex);
     AngularPosition force_data;
     GetAngularForce(force_data);
-    joint_eff[0] = force_data.Actuators.Actuator1;
-    joint_eff[1] = force_data.Actuators.Actuator2;
-    joint_eff[2] = force_data.Actuators.Actuator3;
-    joint_eff[3] = force_data.Actuators.Actuator4;
-    joint_eff[4] = force_data.Actuators.Actuator5;
-    joint_eff[5] = force_data.Actuators.Actuator6;
-    joint_eff[6] = force_data.Fingers.Finger1;
-    joint_eff[7] = force_data.Fingers.Finger2;
-    joint_eff[8] = force_data.Fingers.Finger3;
+    joint_eff_[0] = force_data.Actuators.Actuator1;
+    joint_eff_[1] = force_data.Actuators.Actuator2;
+    joint_eff_[2] = force_data.Actuators.Actuator3;
+    joint_eff_[3] = force_data.Actuators.Actuator4;
+    joint_eff_[4] = force_data.Actuators.Actuator5;
+    joint_eff_[5] = force_data.Actuators.Actuator6;
+    joint_eff_[6] = force_data.Fingers.Finger1;
+    joint_eff_[7] = force_data.Fingers.Finger2;
+    joint_eff_[8] = force_data.Fingers.Finger3;
 
     AngularPosition velocity_data;
     GetAngularVelocity(velocity_data);
-    joint_vel[0] = velocity_data.Actuators.Actuator1 * DEG_TO_RAD;
-    joint_vel[1] = velocity_data.Actuators.Actuator2 * DEG_TO_RAD;
-    joint_vel[2] = velocity_data.Actuators.Actuator3 * DEG_TO_RAD;
-    joint_vel[3] = velocity_data.Actuators.Actuator4 * DEG_TO_RAD;
-    joint_vel[4] = velocity_data.Actuators.Actuator5 * DEG_TO_RAD;
-    joint_vel[5] = velocity_data.Actuators.Actuator6 * DEG_TO_RAD;
+    joint_vel_[0] = velocity_data.Actuators.Actuator1 * DEG_TO_RAD;
+    joint_vel_[1] = velocity_data.Actuators.Actuator2 * DEG_TO_RAD;
+    joint_vel_[2] = velocity_data.Actuators.Actuator3 * DEG_TO_RAD;
+    joint_vel_[3] = velocity_data.Actuators.Actuator4 * DEG_TO_RAD;
+    joint_vel_[4] = velocity_data.Actuators.Actuator5 * DEG_TO_RAD;
+    joint_vel_[5] = velocity_data.Actuators.Actuator6 * DEG_TO_RAD;
     //NOTE: the finger units are arbitrary, but converting them as if they were in degrees provides an approximately correct visualization
-    joint_vel[6] = velocity_data.Fingers.Finger1 * DEG_TO_RAD * FINGER_SCALE;
-    joint_vel[7] = velocity_data.Fingers.Finger2 * DEG_TO_RAD * FINGER_SCALE;
-    joint_vel[8] = velocity_data.Fingers.Finger3 * DEG_TO_RAD * FINGER_SCALE;
+    joint_vel_[6] = velocity_data.Fingers.Finger1 * DEG_TO_RAD * finger_scale_;
+    joint_vel_[7] = velocity_data.Fingers.Finger2 * DEG_TO_RAD * finger_scale_;
+    joint_vel_[8] = velocity_data.Fingers.Finger3 * DEG_TO_RAD * finger_scale_;
 
     AngularPosition position_data;
     GetAngularPosition(position_data);
-    joint_pos[0] = simplify_angle(position_data.Actuators.Actuator1 * DEG_TO_RAD);
-    joint_pos[1] = position_data.Actuators.Actuator2 * DEG_TO_RAD;
-    joint_pos[2] = position_data.Actuators.Actuator3 * DEG_TO_RAD;
-    joint_pos[3] = simplify_angle(position_data.Actuators.Actuator4 * DEG_TO_RAD);
-    joint_pos[4] = simplify_angle(position_data.Actuators.Actuator5 * DEG_TO_RAD);
-    joint_pos[5] = simplify_angle(position_data.Actuators.Actuator6 * DEG_TO_RAD);
-    joint_pos[6] = position_data.Fingers.Finger1 * DEG_TO_RAD * FINGER_SCALE;
-    joint_pos[7] = position_data.Fingers.Finger2 * DEG_TO_RAD * FINGER_SCALE;
-    joint_pos[8] = position_data.Fingers.Finger3 * DEG_TO_RAD * FINGER_SCALE;
+    joint_pos_[0] = simplify_angle(position_data.Actuators.Actuator1 * DEG_TO_RAD);
+    joint_pos_[1] = position_data.Actuators.Actuator2 * DEG_TO_RAD;
+    joint_pos_[2] = position_data.Actuators.Actuator3 * DEG_TO_RAD;
+    joint_pos_[3] = simplify_angle(position_data.Actuators.Actuator4 * DEG_TO_RAD);
+    joint_pos_[4] = simplify_angle(position_data.Actuators.Actuator5 * DEG_TO_RAD);
+    joint_pos_[5] = simplify_angle(position_data.Actuators.Actuator6 * DEG_TO_RAD);
+    joint_pos_[6] = position_data.Fingers.Finger1 * DEG_TO_RAD * finger_scale_;
+    joint_pos_[7] = position_data.Fingers.Finger2 * DEG_TO_RAD * finger_scale_;
+    joint_pos_[8] = position_data.Fingers.Finger3 * DEG_TO_RAD * finger_scale_;
   }
 
   sensor_msgs::JointState state;
   state.header.stamp = ros::Time::now();
   state.name = joint_names;
-  state.position.assign(joint_pos, joint_pos + NUM_JOINTS);
-  state.velocity.assign(joint_vel, joint_vel + NUM_JOINTS);
-  state.effort.assign(joint_eff, joint_eff + NUM_JOINTS);
+  state.position.assign(joint_pos_.begin(), joint_pos_.end());
+  state.velocity.assign(joint_vel_.begin(), joint_vel_.end());
+  state.effort.assign(joint_eff_.begin(), joint_eff_.end());
   joint_state_pub_.publish(state);
 }
 
@@ -503,7 +501,7 @@ void JacoArmTrajectoryController::execute_smooth_trajectory(const control_msgs::
     }
     trajectory_size = Trajectory_Info.TrajectoryCount;
 
-    ROS_INFO("%f, %f, %f, %f, %f, %f", joint_pos[0], joint_pos[1], joint_pos[2], joint_pos[3], joint_pos[4], joint_pos[5]);
+    ROS_INFO("%f, %f, %f, %f, %f, %f", joint_pos_[0], joint_pos_[1], joint_pos_[2], joint_pos_[3], joint_pos_[4], joint_pos_[5]);
     ROS_INFO("Trajectory points complete: %d; remaining: %d", initialTrajectorySize - trajectory_size, trajectory_size);
     rate.sleep();
   }
@@ -576,7 +574,7 @@ void JacoArmTrajectoryController::execute_joint_trajectory(const control_msgs::F
   splines.resize(6);
   for (unsigned int i = 0; i < NUM_JACO_JOINTS; i++)
   {
-    ecl::SmoothLinearSpline tempSpline(timePoints, jointPoints[i], max_curvature);
+    ecl::SmoothLinearSpline tempSpline(timePoints, jointPoints[i], max_curvature_);
     splines.at(i) = tempSpline;
   }
 
@@ -901,6 +899,34 @@ void JacoArmTrajectoryController::home_arm(const wpi_jaco_msgs::HomeArmGoalConst
   home_arm_server.setSucceeded(result);
 }
 
+bool JacoArmTrajectoryController::loadParameters(ros::NodeHandle n)
+{
+    ROS_DEBUG("Loading parameters");
+
+    n.param("wpi_jaco/arm_name",          arm_name_,          std::string("jaco"));
+    n.param("wpi_jaco/finger_scale",      finger_scale_,      1.0);
+    n.param("wpi_jaco/max_curvature",     max_curvature_,     20.0);
+    n.param("wpi_jaco/max_speed_finger",  max_speed_finger_,  30.0);
+    n.param("wpi_jaco/num_fingers",       num_fingers_,       3);
+
+    ROS_INFO("arm_name: %s",          arm_name_.c_str());
+    ROS_INFO("finger_scale: %f",      finger_scale_);
+    ROS_INFO("max_curvature: %f",     max_curvature_);
+    ROS_INFO("max_speed_finger: %f",  max_speed_finger_);
+    ROS_INFO("num_fingers: %d",       num_fingers_);
+
+    // Update total number of joints
+    num_joints_ = num_fingers_ + NUM_JACO_JOINTS;
+
+    joint_pos_.resize(num_joints_);
+    joint_vel_.resize(num_joints_);
+    joint_eff_.resize(num_joints_);
+    ROS_INFO("Parameters loaded.");
+
+    //! @todo MdL [IMPR]: Return is values are all correctly loaded.
+    return true;
+}
+
 /*****************************************/
 /**********  Basic Arm Commands **********/
 /*****************************************/
@@ -1197,9 +1223,9 @@ void JacoArmTrajectoryController::fingerPositionControl(float f1, float f2, floa
           errorSum[1] += errorFinger2[i];
           errorSum[2] += errorFinger3[i];
         }
-        jacoPoint.Position.Fingers.Finger1 = max(min(KP_F*error[0] + KV_F*(error[0] - errorFinger1.front()) + KI_F*errorSum[0], MAX_SPEED_FINGER), -MAX_SPEED_FINGER);
-        jacoPoint.Position.Fingers.Finger2 = max(min(KP_F*error[1] + KV_F*(error[1] - errorFinger2.front()) + KI_F*errorSum[1], MAX_SPEED_FINGER), -MAX_SPEED_FINGER);
-        jacoPoint.Position.Fingers.Finger3 = max(min(KP_F*error[2] + KV_F*(error[2] - errorFinger3.front()) + KI_F*errorSum[2], MAX_SPEED_FINGER), -MAX_SPEED_FINGER);
+        jacoPoint.Position.Fingers.Finger1 = max(min(KP_F*error[0] + KV_F*(error[0] - errorFinger1.front()) + KI_F*errorSum[0], max_speed_finger_), -max_speed_finger_);
+        jacoPoint.Position.Fingers.Finger2 = max(min(KP_F*error[1] + KV_F*(error[1] - errorFinger2.front()) + KI_F*errorSum[1], max_speed_finger_), -max_speed_finger_);
+        jacoPoint.Position.Fingers.Finger3 = max(min(KP_F*error[2] + KV_F*(error[2] - errorFinger3.front()) + KI_F*errorSum[2], max_speed_finger_), -max_speed_finger_);
         errorFinger1.insert(errorFinger1.begin(), error[0]);
         errorFinger2.insert(errorFinger2.begin(), error[1]);
         errorFinger3.insert(errorFinger3.begin(), error[2]);
@@ -1255,10 +1281,10 @@ void JacoArmTrajectoryController::executeCartesianTrajectoryPoint(TrajectoryPoin
 
 bool JacoArmTrajectoryController::getAngularPosition(wpi_jaco_msgs::GetAngularPosition::Request &req, wpi_jaco_msgs::GetAngularPosition::Response &res)
 {
-  res.pos.resize(NUM_JOINTS);
-  for (unsigned int i = 0; i < NUM_JOINTS; i ++)
+  res.pos.resize(num_joints_);
+  for (unsigned int i = 0; i < num_joints_; i ++)
   {
-    res.pos[i] = joint_pos[i];
+    res.pos[i] = joint_pos_[i];
   }
 
   return true;

@@ -1,0 +1,6 @@
+wpi_jaco:
+  arm_name: "mico"
+  finger_scale: 0.00833333333
+  max_curvature: 20.0
+  max_speed_figner: 3000.0
+  num_fingers: 2
