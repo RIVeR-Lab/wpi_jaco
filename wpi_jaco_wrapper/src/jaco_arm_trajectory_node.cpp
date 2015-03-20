@@ -62,24 +62,24 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
   eStopEnabled = false;
 
   // Messages
-  joint_state_pub_ = nh.advertise<sensor_msgs::JointState>("jaco_arm/joint_states", 1);
-  cartesianCmdPublisher = nh.advertise<wpi_jaco_msgs::CartesianCommand>("jaco_arm/cartesian_cmd", 1);
-  angularCmdPublisher = nh.advertise<wpi_jaco_msgs::AngularCommand>("jaco_arm/angular_cmd", 1);
+  joint_state_pub_ = nh.advertise<sensor_msgs::JointState>(arm_name_ + "_arm/joint_states", 1);
+  cartesianCmdPublisher = nh.advertise<wpi_jaco_msgs::CartesianCommand>(arm_name_+"_arm/cartesian_cmd", 1);
+  angularCmdPublisher = nh.advertise<wpi_jaco_msgs::AngularCommand>(arm_name_+"_arm/angular_cmd", 1);
   update_joint_states();
 
-  cartesianCmdSubscriber = nh.subscribe("jaco_arm/cartesian_cmd", 1, &JacoArmTrajectoryController::cartesianCmdCallback,
+  cartesianCmdSubscriber = nh.subscribe(arm_name_+"_arm/cartesian_cmd", 1, &JacoArmTrajectoryController::cartesianCmdCallback,
                                         this);
-  angularCmdSubscriber = nh.subscribe("jaco_arm/angular_cmd", 1, &JacoArmTrajectoryController::angularCmdCallback,
+  angularCmdSubscriber = nh.subscribe(arm_name_+"_arm/angular_cmd", 1, &JacoArmTrajectoryController::angularCmdCallback,
                                       this);
 
   // Services
-  jaco_fk_client = nh.serviceClient<wpi_jaco_msgs::JacoFK>("jaco_arm/kinematics/fk");
+  jaco_fk_client = nh.serviceClient<wpi_jaco_msgs::JacoFK>(arm_name_+"_arm/kinematics/fk");
   qe_client = nh.serviceClient<wpi_jaco_msgs::QuaternionToEuler>("jaco_conversions/quaternion_to_euler");
-  angularPositionServer = nh.advertiseService("jaco_arm/get_angular_position", &JacoArmTrajectoryController::getAngularPosition, this);
-  cartesianPositionServer = nh.advertiseService("jaco_arm/get_cartesian_position",
+  angularPositionServer = nh.advertiseService(arm_name_+"_arm/get_angular_position", &JacoArmTrajectoryController::getAngularPosition, this);
+  cartesianPositionServer = nh.advertiseService(arm_name_+"_arm/get_cartesian_position",
                                                 &JacoArmTrajectoryController::getCartesianPosition, this);
-  eStopServer = nh.advertiseService("jaco_arm/software_estop", &JacoArmTrajectoryController::eStopCallback, this);
-  eraseTrajectoriesServer = nh.advertiseService("jaco_arm/erase_trajectories", &JacoArmTrajectoryController::eraseTrajectoriesCallback, this);
+  eStopServer = nh.advertiseService(arm_name_+"_arm/software_estop", &JacoArmTrajectoryController::eStopCallback, this);
+  eraseTrajectoriesServer = nh.advertiseService(arm_name_+"_arm/erase_trajectories", &JacoArmTrajectoryController::eraseTrajectoriesCallback, this);
 
   // Action servers
   trajectory_server_.start();
