@@ -102,38 +102,23 @@
         </geometry>
     </library_geometries>
     <library_materials>
-        <material id="ID4" name="gray">
+        <material id="ID4" name="material_1">
             <instance_effect url="#ID5" />
         </material>
     </library_materials>
     <library_effects>
         <effect id="ID5">
             <profile_COMMON>
-                <newparam sid="ID18">
-                    <surface type="2D">
-                        <init_from>ID17</init_from>
-                    </surface>
-                </newparam>
-                <newparam sid="ID19">
-                    <sampler2D>
-                        <source>ID18</source>
-                    </sampler2D>
-                </newparam>
                 <technique sid="COMMON">
                     <lambert>
                         <diffuse>
-                            <texture texture="ID19" texcoord="UVSET0" />
+                            <color>0.8666667 0.8666667 0.8901961 1</color>
                         </diffuse>
                     </lambert>
                 </technique>
             </profile_COMMON>
         </effect>
     </library_effects>
-    <library_images>
-        <image id="ID17">
-            <init_from>materials/gray.jpg</init_from>
-        </image>
-    </library_images>
     <scene>
         <instance_visual_scene url="#ID1" />
     </scene>

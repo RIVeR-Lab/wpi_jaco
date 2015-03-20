@@ -288,7 +288,7 @@
                 <instance_geometry url="#ID180">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID3">
+                            <instance_material symbol="Material2" target="#ID181">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -297,7 +297,7 @@
                 <instance_geometry url="#ID186">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID3">
+                            <instance_material symbol="Material2" target="#ID181">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -306,7 +306,7 @@
                 <instance_geometry url="#ID190">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID3">
+                            <instance_material symbol="Material2" target="#ID181">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -315,7 +315,7 @@
                 <instance_geometry url="#ID194">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID3">
+                            <instance_material symbol="Material2" target="#ID181">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -324,7 +324,7 @@
                 <instance_geometry url="#ID198">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID3">
+                            <instance_material symbol="Material2" target="#ID181">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -333,7 +333,7 @@
                 <instance_geometry url="#ID202">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID3">
+                            <instance_material symbol="Material2" target="#ID181">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -342,7 +342,7 @@
                 <instance_geometry url="#ID206">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID3">
+                            <instance_material symbol="Material2" target="#ID181">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -351,7 +351,7 @@
                 <instance_geometry url="#ID210">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID3">
+                            <instance_material symbol="Material2" target="#ID181">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -360,7 +360,7 @@
                 <instance_geometry url="#ID214">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID3">
+                            <instance_material symbol="Material2" target="#ID181">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -369,7 +369,7 @@
                 <instance_geometry url="#ID218">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID3">
+                            <instance_material symbol="Material2" target="#ID181">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -1541,63 +1541,48 @@
         <material id="ID8" name="material_1">
             <instance_effect url="#ID9" />
         </material>
+        <material id="ID181" name="edge_color646464255">
+            <instance_effect url="#ID182" />
+        </material>
     </library_materials>
     <library_effects>
-        
-
-        <effect id="ID9">
+        <effect id="ID4">
             <profile_COMMON>
-                <newparam sid="ID1001">
-                    <surface type="2D">
-                        <init_from>ID1002</init_from>
-                    </surface>
-                </newparam>
-                <newparam sid="ID1000">
-                    <sampler2D>
-                        <source>ID1001</source>
-                    </sampler2D>
-                </newparam>
                 <technique sid="COMMON">
                     <lambert>
                         <diffuse>
-                            <texture texture="ID1000" texcoord="UVSET0" />
+                            <color>0.8666667 0.8666667 0.8901961 1</color>
                         </diffuse>
                     </lambert>
                 </technique>
             </profile_COMMON>
         </effect>
-
-
-        <effect id="ID4">
+        <effect id="ID9">
             <profile_COMMON>
-                <newparam sid="ID1004">
-                    <surface type="2D">
-                        <init_from>ID1005</init_from>
-                    </surface>
-                </newparam>
-                <newparam sid="ID1003">
-                    <sampler2D>
-                        <source>ID1004</source>
-                    </sampler2D>
-                </newparam>
                 <technique sid="COMMON">
                     <lambert>
                         <diffuse>
-                            <texture texture="ID1003" texcoord="UVSET0" />
+                            <color>0.2509804 0.2509804 0.2509804 1</color>
                         </diffuse>
                     </lambert>
+                </technique>
+            </profile_COMMON>
+        </effect>
+        <effect id="ID182">
+            <profile_COMMON>
+                <technique sid="COMMON">
+                    <constant>
+                        <transparent opaque="A_ONE">
+                            <color>0.2509804 0.2509804 0.2509804 1</color>
+                        </transparent>
+                        <transparency>
+                            <float>1</float>
+                        </transparency>
+                    </constant>
                 </technique>
             </profile_COMMON>
         </effect>
     </library_effects>
-    <library_images>
-        <image id="ID1002">
-            <init_from>materials/dark_gray.jpg</init_from>
-        </image>
-        <image id="ID1005">
-            <init_from>materials/gray.jpg</init_from>
-        </image>
-    </library_images>
     <scene>
         <instance_visual_scene url="#ID1" />
     </scene>
