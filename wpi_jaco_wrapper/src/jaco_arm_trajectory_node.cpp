@@ -46,14 +46,14 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
   for (int joint_id = 0; joint_id < NUM_JACO_JOINTS; ++joint_id)
   {
     stringstream joint_name_stream;
-    joint_name_stream << "jaco_joint_" << (joint_id + 1);
+    joint_name_stream << ARM_NAME << "_joint_" << (joint_id + 1);
     string joint_name = joint_name_stream.str();
     joint_names.push_back(joint_name);
   }
   for (int finger_id = 0; finger_id < NUM_JACO_FINGER_JOINTS; ++finger_id)
   {
     stringstream finger_name_stream;
-    finger_name_stream << "jaco_joint_finger_" << (finger_id + 1);
+    finger_name_stream << ARM_NAME << "_joint_finger_" << (finger_id + 1);
     string finger_name = finger_name_stream.str();
     joint_names.push_back(finger_name);
   }
@@ -139,9 +139,9 @@ void JacoArmTrajectoryController::update_joint_states()
     joint_vel[4] = velocity_data.Actuators.Actuator5 * DEG_TO_RAD;
     joint_vel[5] = velocity_data.Actuators.Actuator6 * DEG_TO_RAD;
     //NOTE: the finger units are arbitrary, but converting them as if they were in degrees provides an approximately correct visualization
-    joint_vel[6] = velocity_data.Fingers.Finger1 * DEG_TO_RAD;
-    joint_vel[7] = velocity_data.Fingers.Finger2 * DEG_TO_RAD;
-    joint_vel[8] = velocity_data.Fingers.Finger3 * DEG_TO_RAD;
+    joint_vel[6] = velocity_data.Fingers.Finger1 * DEG_TO_RAD * FINGER_SCALE;
+    joint_vel[7] = velocity_data.Fingers.Finger2 * DEG_TO_RAD * FINGER_SCALE;
+    joint_vel[8] = velocity_data.Fingers.Finger3 * DEG_TO_RAD * FINGER_SCALE;
 
     AngularPosition position_data;
     GetAngularPosition(position_data);
@@ -151,9 +151,9 @@ void JacoArmTrajectoryController::update_joint_states()
     joint_pos[3] = simplify_angle(position_data.Actuators.Actuator4 * DEG_TO_RAD);
     joint_pos[4] = simplify_angle(position_data.Actuators.Actuator5 * DEG_TO_RAD);
     joint_pos[5] = simplify_angle(position_data.Actuators.Actuator6 * DEG_TO_RAD);
-    joint_pos[6] = position_data.Fingers.Finger1 * DEG_TO_RAD;
-    joint_pos[7] = position_data.Fingers.Finger2 * DEG_TO_RAD;
-    joint_pos[8] = position_data.Fingers.Finger3 * DEG_TO_RAD;
+    joint_pos[6] = position_data.Fingers.Finger1 * DEG_TO_RAD * FINGER_SCALE;
+    joint_pos[7] = position_data.Fingers.Finger2 * DEG_TO_RAD * FINGER_SCALE;
+    joint_pos[8] = position_data.Fingers.Finger3 * DEG_TO_RAD * FINGER_SCALE;
   }
 
   sensor_msgs::JointState state;
@@ -409,8 +409,8 @@ void JacoArmTrajectoryController::execute_smooth_trajectory(const control_msgs::
         trajPoint.Position.CartesianPosition.ThetaY = qeSrv.response.pitch;
         trajPoint.Position.CartesianPosition.ThetaZ = qeSrv.response.yaw;
 
-        //for debugging:
-        //ROS_INFO("Trajectory point: (%f, %f, %f); (%f, %f, %f)", trajPoint.Position.CartesianPosition.X, trajPoint.Position.CartesianPosition.Y, trajPoint.Position.CartesianPosition.Z, trajPoint.Position.CartesianPosition.ThetaX, trajPoint.Position.CartesianPosition.ThetaY, trajPoint.Position.CartesianPosition.ThetaZ);
+        // for debugging:
+        ROS_INFO("Trajectory point: (%f, %f, %f); (%f, %f, %f)", trajPoint.Position.CartesianPosition.X, trajPoint.Position.CartesianPosition.Y, trajPoint.Position.CartesianPosition.Z, trajPoint.Position.CartesianPosition.ThetaX, trajPoint.Position.CartesianPosition.ThetaY, trajPoint.Position.CartesianPosition.ThetaZ);
 
         //send point to arm trajectory
         executeCartesianTrajectoryPoint(trajPoint, false);
@@ -503,8 +503,8 @@ void JacoArmTrajectoryController::execute_smooth_trajectory(const control_msgs::
     }
     trajectory_size = Trajectory_Info.TrajectoryCount;
 
-    //ROS_INFO("%f, %f, %f, %f, %f, %f", joint_pos[0], joint_pos[1], joint_pos[2], joint_pos[3], joint_pos[4], joint_pos[5]);
-    //ROS_INFO("Trajectory points complete: %d; remaining: %d", initialTrajectorySize - trajectory_size, trajectory_size);
+    ROS_INFO("%f, %f, %f, %f, %f, %f", joint_pos[0], joint_pos[1], joint_pos[2], joint_pos[3], joint_pos[4], joint_pos[5]);
+    ROS_INFO("Trajectory points complete: %d; remaining: %d", initialTrajectorySize - trajectory_size, trajectory_size);
     rate.sleep();
   }
   ROS_INFO("Trajectory Control Complete.");
@@ -696,7 +696,7 @@ void JacoArmTrajectoryController::execute_joint_trajectory(const control_msgs::F
     trajPoint.Position.Actuators.Actuator6 = (KP * error[5] + KV * (error[5] - prevError[5]) * RAD_TO_DEG);
 
     //for debugging:
-    //cout << "Errors: " << error[0] << ", " << error[1] << ", " << error[2] << ", " << error[3] << ", " << error[4] << ", " << error[5] << endl;
+    // cout << "Errors: " << error[0] << ", " << error[1] << ", " << error[2] << ", " << error[3] << ", " << error[4] << ", " << error[5] << endl;
 
     //send the velocity command
     executeAngularTrajectoryPoint(trajPoint, true);
@@ -1051,6 +1051,7 @@ void JacoArmTrajectoryController::cartesianCmdCallback(const wpi_jaco_msgs::Cart
   //populate arm command
   if (msg.armCommand)
   {
+    ROS_INFO("arm command");
     if (msg.position)
       jacoPoint.Position.Type = CARTESIAN_POSITION;
     else
@@ -1084,6 +1085,7 @@ void JacoArmTrajectoryController::cartesianCmdCallback(const wpi_jaco_msgs::Cart
   //populate finger command
   if (msg.fingerCommand)
   {
+    ROS_INFO("fingers command");
     if (msg.position)
       jacoPoint.Position.HandMode = POSITION_MODE;
     else
@@ -1189,15 +1191,15 @@ void JacoArmTrajectoryController::fingerPositionControl(float f1, float f2, floa
       else
       {
         float errorSum[3] = {0};
-        for (unsigned int i = 0; i < errorFinger1.size(); i++)
+        for (unsigned int i = 0; i < errorFinger1.size(); i ++)
         {
           errorSum[0] += errorFinger1[i];
           errorSum[1] += errorFinger2[i];
           errorSum[2] += errorFinger3[i];
         }
-        jacoPoint.Position.Fingers.Finger1 = max(min(KP_F * error[0] + KV_F * (error[0] - errorFinger1.front()) + KI_F * errorSum[0], 30.0), -30.0);
-        jacoPoint.Position.Fingers.Finger2 = max(min(KP_F * error[1] + KV_F * (error[1] - errorFinger2.front()) + KI_F * errorSum[1], 30.0), -30.0);
-        jacoPoint.Position.Fingers.Finger3 = max(min(KP_F * error[2] + KV_F * (error[2] - errorFinger3.front()) + KI_F * errorSum[2], 30.0), -30.0);
+        jacoPoint.Position.Fingers.Finger1 = max(min(KP_F*error[0] + KV_F*(error[0] - errorFinger1.front()) + KI_F*errorSum[0], MAX_SPEED_FINGER), -MAX_SPEED_FINGER);
+        jacoPoint.Position.Fingers.Finger2 = max(min(KP_F*error[1] + KV_F*(error[1] - errorFinger2.front()) + KI_F*errorSum[1], MAX_SPEED_FINGER), -MAX_SPEED_FINGER);
+        jacoPoint.Position.Fingers.Finger3 = max(min(KP_F*error[2] + KV_F*(error[2] - errorFinger3.front()) + KI_F*errorSum[2], MAX_SPEED_FINGER), -MAX_SPEED_FINGER);
         errorFinger1.insert(errorFinger1.begin(), error[0]);
         errorFinger2.insert(errorFinger2.begin(), error[1]);
         errorFinger3.insert(errorFinger3.begin(), error[2]);
@@ -1205,14 +1207,10 @@ void JacoArmTrajectoryController::fingerPositionControl(float f1, float f2, floa
         errorFinger2.resize(10);
         errorFinger3.resize(10);
       }
-      EraseAllTrajectories();
-      SendBasicTrajectory(jacoPoint);
     }
-
-    //check for cancel requests
-    if (eStopEnabled)
-      return;
-
+    
+    EraseAllTrajectories();
+    SendBasicTrajectory(jacoPoint);
     rate.sleep();
   }
 }
