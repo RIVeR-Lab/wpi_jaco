@@ -1189,32 +1189,26 @@ void JacoArmTrajectoryController::fingerPositionControl(float f1, float f2, floa
         jacoPoint.Position.Fingers.Finger3 = 0.0;
       }
       else
+    {
+      float errorSum[3] = {0};
+      for (unsigned int i = 0; i < errorFinger1.size(); i ++)
       {
-        float errorSum[3] = {0};
-        for (unsigned int i = 0; i < errorFinger1.size(); i++)
-        {
-          errorSum[0] += errorFinger1[i];
-          errorSum[1] += errorFinger2[i];
-          errorSum[2] += errorFinger3[i];
-        }
-        jacoPoint.Position.Fingers.Finger1 = max(min(KP_F * error[0] + KV_F * (error[0] - errorFinger1.front()) + KI_F * errorSum[0], 30.0), -30.0);
-        jacoPoint.Position.Fingers.Finger2 = max(min(KP_F * error[1] + KV_F * (error[1] - errorFinger2.front()) + KI_F * errorSum[1], 30.0), -30.0);
-        jacoPoint.Position.Fingers.Finger3 = max(min(KP_F * error[2] + KV_F * (error[2] - errorFinger3.front()) + KI_F * errorSum[2], 30.0), -30.0);
-        errorFinger1.insert(errorFinger1.begin(), error[0]);
-        errorFinger2.insert(errorFinger2.begin(), error[1]);
-        errorFinger3.insert(errorFinger3.begin(), error[2]);
-        errorFinger1.resize(10);
-        errorFinger2.resize(10);
-        errorFinger3.resize(10);
+        errorSum[0] += errorFinger1[i];
+        errorSum[1] += errorFinger2[i];
+        errorSum[2] += errorFinger3[i];
       }
-      EraseAllTrajectories();
-      SendBasicTrajectory(jacoPoint);
+      jacoPoint.Position.Fingers.Finger1 = max(min(KP_F*error[0] + KV_F*(error[0] - errorFinger1.front()) + KI_F*errorSum[0], MAX_SPEED_FINGER), -MAX_SPEED_FINGER);
+      jacoPoint.Position.Fingers.Finger2 = max(min(KP_F*error[1] + KV_F*(error[1] - errorFinger2.front()) + KI_F*errorSum[1], MAX_SPEED_FINGER), -MAX_SPEED_FINGER);
+      jacoPoint.Position.Fingers.Finger3 = max(min(KP_F*error[2] + KV_F*(error[2] - errorFinger3.front()) + KI_F*errorSum[2], MAX_SPEED_FINGER), -MAX_SPEED_FINGER);
+      errorFinger1.insert(errorFinger1.begin(), error[0]);
+      errorFinger2.insert(errorFinger2.begin(), error[1]);
+      errorFinger3.insert(errorFinger3.begin(), error[2]);
+      errorFinger1.resize(10);
+      errorFinger2.resize(10);
+      errorFinger3.resize(10);
     }
-
-    //check for cancel requests
-    if (eStopEnabled)
-      return;
-
+    EraseAllTrajectories();
+    SendBasicTrajectory(jacoPoint);
     rate.sleep();
   }
 }
