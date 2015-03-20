@@ -71,36 +71,11 @@ namespace jaco
  */
 class JacoArmTrajectoryController
 {
-private:
-  // Messages
-  ros::Publisher joint_state_pub_; //!< publisher for joint states
-  ros::Publisher cartesianCmdPublisher; //!< publisher for Cartesian arm commands
-  ros::Publisher angularCmdPublisher; //!< publisher for angular arm commands
-  ros::Subscriber cartesianCmdSubscriber; //!< subscriber for Cartesian arm commands
-  ros::Subscriber angularCmdSubscriber; //!< subscriber for angular arm commands
-
-  // Services
-  ros::ServiceClient jaco_fk_client; //!< forward kinematics client
-  ros::ServiceClient qe_client; //!< quaternion to euler (XYZ) conversion client
-  ros::ServiceServer angularPositionServer; //!< service server to get the joint positions
-  ros::ServiceServer cartesianPositionServer; //!< service server to get end effector pose
-  ros::ServiceServer eStopServer; //!< service server for software estop and restart
-  ros::ServiceServer eraseTrajectoriesServer;
-
-  ros::Timer joint_state_timer_; //!< timer for joint state publisher
-
-  // Actionlib
-  actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> trajectory_server_; //!< point-to-point trajectory follower
-  actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> smooth_trajectory_server_; //!< smooth point-to-point trajectory follower based on Cartesian end effector positions
-  actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> smooth_joint_trajectory_server; //!< smooth point-to-point trajectory follower based on joint velocity control
-  actionlib::SimpleActionServer<control_msgs::GripperCommandAction> gripper_server_; //!< gripper command action server
-  actionlib::SimpleActionServer<wpi_jaco_msgs::HomeArmAction> home_arm_server;
-
-  boost::recursive_mutex api_mutex;
-
-  bool eStopEnabled;
-
 public:
+  typedef actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> TrajectoryServer;
+  typedef actionlib::SimpleActionServer<control_msgs::GripperCommandAction>        GripperServer;
+  typedef actionlib::SimpleActionServer<wpi_jaco_msgs::HomeArmAction>              HomeArmServer;
+
   /**
    * \brief Constructor
    * @param nh ROS node handle
@@ -160,24 +135,7 @@ public:
   void execute_gripper(const control_msgs::GripperCommandGoalConstPtr &goal);
 
 private:
-
   bool loadParameters(ros::NodeHandle n);
-
-  // Parameters
-  std::string   arm_name_;
-  double        finger_scale_;
-  double        max_curvature_;
-  double        max_speed_finger_;
-  int           num_fingers_;
-  int           num_joints_;
-
-  std::vector<std::string> joint_names;
-  std::vector<double> joint_pos_;
-  std::vector<double> joint_vel_;
-  std::vector<double> joint_eff_;
-
-  unsigned int controlType; //current state of control
-
   /**
    * \brief Callback for sending an angular command to the arm
    * @param msg angular command and info
@@ -256,6 +214,50 @@ private:
   * @param res empty service response
   */
   bool eraseTrajectoriesCallback(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
+
+  // Messages
+  ros::Publisher joint_state_pub_; //!< publisher for joint states
+  ros::Publisher cartesianCmdPublisher; //!< publisher for Cartesian arm commands
+  ros::Publisher angularCmdPublisher; //!< publisher for angular arm commands
+  ros::Subscriber cartesianCmdSubscriber; //!< subscriber for Cartesian arm commands
+  ros::Subscriber angularCmdSubscriber; //!< subscriber for angular arm commands
+
+  // Services
+  ros::ServiceClient jaco_fk_client; //!< forward kinematics client
+  ros::ServiceClient qe_client; //!< quaternion to euler (XYZ) conversion client
+  ros::ServiceServer angularPositionServer; //!< service server to get the joint positions
+  ros::ServiceServer cartesianPositionServer; //!< service server to get end effector pose
+  ros::ServiceServer eStopServer; //!< service server for software estop and restart
+  ros::ServiceServer eraseTrajectoriesServer;
+
+  ros::Timer joint_state_timer_; //!< timer for joint state publisher
+
+  // Actionlib
+  TrajectoryServer*  trajectory_server_; //!< point-to-point trajectory follower
+  TrajectoryServer*  smooth_trajectory_server_; //!< smooth point-to-point trajectory follower based on Cartesian end effector positions
+  TrajectoryServer*  smooth_joint_trajectory_server; //!< smooth point-to-point trajectory follower based on joint velocity control
+  GripperServer*     gripper_server_; //!< gripper command action server
+  HomeArmServer*     home_arm_server;
+
+  boost::recursive_mutex api_mutex;
+
+  bool eStopEnabled;
+
+  // Parameters
+  std::string   arm_name_;
+  double        finger_scale_;
+  double        max_curvature_;
+  double        max_speed_finger_;
+  int           num_fingers_;
+  int           num_joints_;
+
+  std::vector<std::string> joint_names;
+  std::vector<double>      joint_pos_;
+  std::vector<double>      joint_vel_;
+  std::vector<double>      joint_eff_;
+
+  unsigned int controlType; //current state of control
+
 };
 
 }

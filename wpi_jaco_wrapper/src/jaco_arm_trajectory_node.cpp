@@ -4,18 +4,17 @@ using namespace std;
 
 namespace jaco
 {
-JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros::NodeHandle pnh) :
-    trajectory_server_(nh, "jaco_arm/arm_controller",
-                       boost::bind(&JacoArmTrajectoryController::execute_trajectory, this, _1), false), smooth_trajectory_server_(
-        nh, "jaco_arm/smooth_arm_controller",
-        boost::bind(&JacoArmTrajectoryController::execute_smooth_trajectory, this, _1), false), smooth_joint_trajectory_server(
-        nh, "jaco_arm/joint_velocity_controller",
-        boost::bind(&JacoArmTrajectoryController::execute_joint_trajectory, this, _1), false), gripper_server_(
-        nh, "jaco_arm/fingers_controller", boost::bind(&JacoArmTrajectoryController::execute_gripper, this, _1), false), home_arm_server(
-        nh, "jaco_arm/home_arm", boost::bind(&JacoArmTrajectoryController::home_arm, this, _1), false)
+JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros::NodeHandle pnh)
 {
   ros::NodeHandle private_nh("~");
   loadParameters(private_nh);
+
+  // Create servers
+  trajectory_server_              = new TrajectoryServer( nh, arm_name_ + "_arm/arm_controller", boost::bind(&JacoArmTrajectoryController::execute_trajectory, this, _1), false);
+  smooth_trajectory_server_       = new TrajectoryServer( nh, arm_name_ + "_arm/smooth_arm_controller", boost::bind(&JacoArmTrajectoryController::execute_smooth_trajectory, this, _1), false);
+  smooth_joint_trajectory_server  = new TrajectoryServer( nh, arm_name_ + "_arm/joint_velocity_controller", boost::bind(&JacoArmTrajectoryController::execute_joint_trajectory, this, _1), false);
+  gripper_server_                 = new GripperServer( nh, arm_name_ + "_arm/fingers_controller", boost::bind(&JacoArmTrajectoryController::execute_gripper, this, _1), false);
+  home_arm_server                 = new HomeArmServer( nh, arm_name_ + "_arm/home_arm", boost::bind(&JacoArmTrajectoryController::home_arm, this, _1), false);
 
   boost::recursive_mutex::scoped_lock lock(api_mutex);
 
@@ -82,11 +81,11 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
   eraseTrajectoriesServer = nh.advertiseService(arm_name_+"_arm/erase_trajectories", &JacoArmTrajectoryController::eraseTrajectoriesCallback, this);
 
   // Action servers
-  trajectory_server_.start();
-  smooth_trajectory_server_.start();
-  smooth_joint_trajectory_server.start();
-  gripper_server_.start();
-  home_arm_server.start();
+  trajectory_server_->start();
+  smooth_trajectory_server_->start();
+  smooth_joint_trajectory_server->start();
+  gripper_server_->start();
+  home_arm_server->start();
 
   joint_state_timer_ = nh.createTimer(ros::Duration(0.0333),
                                       boost::bind(&JacoArmTrajectoryController::update_joint_states, this));
@@ -201,7 +200,7 @@ void JacoArmTrajectoryController::execute_trajectory(const control_msgs::FollowJ
   {
     control_msgs::FollowJointTrajectoryResult result;
     result.error_code = control_msgs::FollowJointTrajectoryResult::PATH_TOLERANCE_VIOLATED;
-    trajectory_server_.setSucceeded(result);
+    trajectory_server_->setSucceeded(result);
     return;
   }
 
@@ -274,12 +273,12 @@ void JacoArmTrajectoryController::execute_trajectory(const control_msgs::FollowJ
     {
       control_msgs::FollowJointTrajectoryResult result;
       result.error_code = control_msgs::FollowJointTrajectoryResult::PATH_TOLERANCE_VIOLATED;
-      trajectory_server_.setSucceeded(result);
+      trajectory_server_->setSucceeded(result);
       return;
     }
 
     //check for preempt requests from clients
-    if (trajectory_server_.isPreemptRequested() || !ros::ok())
+    if (trajectory_server_->isPreemptRequested() || !ros::ok())
     {
       //stop gripper control
       trajPoint.Position.Type = ANGULAR_VELOCITY;
@@ -292,7 +291,7 @@ void JacoArmTrajectoryController::execute_trajectory(const control_msgs::FollowJ
       executeAngularTrajectoryPoint(trajPoint, true);
 
       //preempt action server
-      trajectory_server_.setPreempted();
+      trajectory_server_->setPreempted();
       ROS_INFO("Joint trajectory server preempted by client");
 
       return;
@@ -323,7 +322,7 @@ void JacoArmTrajectoryController::execute_trajectory(const control_msgs::FollowJ
   ROS_INFO("Trajectory Control Complete.");
   control_msgs::FollowJointTrajectoryResult result;
   result.error_code = control_msgs::FollowJointTrajectoryResult::SUCCESSFUL;
-  trajectory_server_.setSucceeded(result);
+  trajectory_server_->setSucceeded(result);
 }
 
 /*****************************************/
@@ -337,7 +336,7 @@ void JacoArmTrajectoryController::execute_smooth_trajectory(const control_msgs::
   {
     control_msgs::FollowJointTrajectoryResult result;
     result.error_code = control_msgs::FollowJointTrajectoryResult::PATH_TOLERANCE_VIOLATED;
-    smooth_trajectory_server_.setSucceeded(result);
+    smooth_trajectory_server_->setSucceeded(result);
     return;
   }
 
@@ -428,7 +427,7 @@ void JacoArmTrajectoryController::execute_smooth_trajectory(const control_msgs::
 
         control_msgs::FollowJointTrajectoryResult result;
         result.error_code = control_msgs::FollowJointTrajectoryResult::INVALID_JOINTS;
-        smooth_trajectory_server_.setSucceeded(result);
+        smooth_trajectory_server_->setSucceeded(result);
         return;
       }
     }
@@ -447,7 +446,7 @@ void JacoArmTrajectoryController::execute_smooth_trajectory(const control_msgs::
 
       control_msgs::FollowJointTrajectoryResult result;
       result.error_code = control_msgs::FollowJointTrajectoryResult::INVALID_JOINTS;
-      smooth_trajectory_server_.setSucceeded(result);
+      smooth_trajectory_server_->setSucceeded(result);
       return;
     }
   }
@@ -471,12 +470,12 @@ void JacoArmTrajectoryController::execute_smooth_trajectory(const control_msgs::
     {
       control_msgs::FollowJointTrajectoryResult result;
       result.error_code = control_msgs::FollowJointTrajectoryResult::PATH_TOLERANCE_VIOLATED;
-      smooth_trajectory_server_.setSucceeded(result);
+      smooth_trajectory_server_->setSucceeded(result);
       return;
     }
 
     //check for preempt requests from clients
-    if (smooth_trajectory_server_.isPreemptRequested() || !ros::ok())
+    if (smooth_trajectory_server_->isPreemptRequested() || !ros::ok())
     {
       //stop gripper control
       trajPoint.Position.Type = ANGULAR_VELOCITY;
@@ -489,7 +488,7 @@ void JacoArmTrajectoryController::execute_smooth_trajectory(const control_msgs::
       executeAngularTrajectoryPoint(trajPoint, true);
 
       //preempt action server
-      smooth_trajectory_server_.setPreempted();
+      smooth_trajectory_server_->setPreempted();
       ROS_INFO("Smooth trajectory server preempted by client");
 
       return;
@@ -508,7 +507,7 @@ void JacoArmTrajectoryController::execute_smooth_trajectory(const control_msgs::
   ROS_INFO("Trajectory Control Complete.");
   control_msgs::FollowJointTrajectoryResult result;
   result.error_code = control_msgs::FollowJointTrajectoryResult::SUCCESSFUL;
-  smooth_trajectory_server_.setSucceeded(result);
+  smooth_trajectory_server_->setSucceeded(result);
 }
 
 void JacoArmTrajectoryController::execute_joint_trajectory(const control_msgs::FollowJointTrajectoryGoalConstPtr &goal)
@@ -518,7 +517,7 @@ void JacoArmTrajectoryController::execute_joint_trajectory(const control_msgs::F
   {
     control_msgs::FollowJointTrajectoryResult result;
     result.error_code = control_msgs::FollowJointTrajectoryResult::PATH_TOLERANCE_VIOLATED;
-    smooth_joint_trajectory_server.setSucceeded(result);
+    smooth_joint_trajectory_server->setSucceeded(result);
     return;
   }
 
@@ -601,12 +600,12 @@ void JacoArmTrajectoryController::execute_joint_trajectory(const control_msgs::F
     {
       control_msgs::FollowJointTrajectoryResult result;
       result.error_code = control_msgs::FollowJointTrajectoryResult::PATH_TOLERANCE_VIOLATED;
-      smooth_joint_trajectory_server.setSucceeded(result);
+      smooth_joint_trajectory_server->setSucceeded(result);
       return;
     }
 
     //check for preempt requests from clients
-    if (smooth_joint_trajectory_server.isPreemptRequested())
+    if (smooth_joint_trajectory_server->isPreemptRequested())
     {
       //stop gripper control
       trajPoint.Position.Actuators.Actuator1 = 0.0;
@@ -618,7 +617,7 @@ void JacoArmTrajectoryController::execute_joint_trajectory(const control_msgs::F
       executeAngularTrajectoryPoint(trajPoint, true);
 
       //preempt action server
-      smooth_joint_trajectory_server.setPreempted();
+      smooth_joint_trajectory_server->setPreempted();
       ROS_INFO("Joint trajectory server preempted by client");
 
       return;
@@ -709,7 +708,7 @@ void JacoArmTrajectoryController::execute_joint_trajectory(const control_msgs::F
 
   control_msgs::FollowJointTrajectoryResult result;
   result.error_code = control_msgs::FollowJointTrajectoryResult::SUCCESSFUL;
-  smooth_joint_trajectory_server.setSucceeded(result);
+  smooth_joint_trajectory_server->setSucceeded(result);
 }
 
 /*****************************************/
@@ -723,7 +722,7 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
   {
     control_msgs::GripperCommandResult result;
     result.reached_goal = false;
-    gripper_server_.setSucceeded(result);
+    gripper_server_->setSucceeded(result);
     return;
   }
 
@@ -748,13 +747,13 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
     {
       control_msgs::GripperCommandResult result;
       result.reached_goal = false;
-      gripper_server_.setSucceeded(result);
+      gripper_server_->setSucceeded(result);
       return;
     }
 
     rate.sleep();
     //check for preempt requests from clients
-    if (gripper_server_.isPreemptRequested() || !ros::ok())
+    if (gripper_server_->isPreemptRequested() || !ros::ok())
     {
       //stop gripper control
       cmd.position = false;
@@ -765,7 +764,7 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
 
       //preempt action server
       ROS_INFO("Gripper action server preempted by client");
-      gripper_server_.setPreempted();
+      gripper_server_->setPreempted();
 
       return;
     }
@@ -806,7 +805,7 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
   result.position = position_data.Fingers.Finger1;
   result.effort =force_data.Fingers.Finger1;
   result.stalled = false;
-  gripper_server_.setSucceeded(result);
+  gripper_server_->setSucceeded(result);
 }
 
 /*****************************************/
@@ -820,7 +819,7 @@ void JacoArmTrajectoryController::home_arm(const wpi_jaco_msgs::HomeArmGoalConst
   {
     wpi_jaco_msgs::HomeArmResult result;
     result.success = false;
-    home_arm_server.setSucceeded(result);
+    home_arm_server->setSucceeded(result);
     return;
   }
 
@@ -838,7 +837,7 @@ void JacoArmTrajectoryController::home_arm(const wpi_jaco_msgs::HomeArmGoalConst
     {
       wpi_jaco_msgs::HomeArmResult result;
       result.success = false;
-      home_arm_server.setSucceeded(result);
+      home_arm_server->setSucceeded(result);
       return;
     }
 
@@ -860,16 +859,16 @@ void JacoArmTrajectoryController::home_arm(const wpi_jaco_msgs::HomeArmGoalConst
       {
         wpi_jaco_msgs::HomeArmResult result;
         result.success = false;
-        home_arm_server.setSucceeded(result);
+        home_arm_server->setSucceeded(result);
         return;
       }
 
       //check for preempt requests from clients
-      if (home_arm_server.isPreemptRequested() || !ros::ok())
+      if (home_arm_server->isPreemptRequested() || !ros::ok())
       {
         //preempt action server
         ROS_INFO("Gripper action server preempted by client");
-        gripper_server_.setPreempted();
+        gripper_server_->setPreempted();
 
         return;
       }
@@ -896,7 +895,7 @@ void JacoArmTrajectoryController::home_arm(const wpi_jaco_msgs::HomeArmGoalConst
 
   wpi_jaco_msgs::HomeArmResult result;
   result.success = true;
-  home_arm_server.setSucceeded(result);
+  home_arm_server->setSucceeded(result);
 }
 
 bool JacoArmTrajectoryController::loadParameters(ros::NodeHandle n)
