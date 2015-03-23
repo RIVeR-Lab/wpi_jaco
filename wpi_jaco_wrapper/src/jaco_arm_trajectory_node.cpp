@@ -775,8 +775,10 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
     }
 
     float totalSpeed = fabs(velocity_data.Fingers.Finger1) 
-                     + fabs(velocity_data.Fingers.Finger2) 
-                     + fabs(velocity_data.Fingers.Finger3);
+                     + fabs(velocity_data.Fingers.Finger2);
+    if ( num_fingers_ == 3 )
+      totalSpeed += fabs(velocity_data.Fingers.Finger3);
+
     if (totalSpeed <= 0.01)
       gripperMoving = false;
   }
@@ -797,9 +799,12 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
     GetAngularForce(force_data);
   }
   float finalError    = fabs(goal->command.position - position_data.Fingers.Finger1) 
-                      + fabs(goal->command.position - position_data.Fingers.Finger2) 
-                      + fabs(goal->command.position - position_data.Fingers.Finger3);
-  result.reached_goal = (finalError <= FINGER_ERROR_THRESHOLD);
+                      + fabs(goal->command.position - position_data.Fingers.Finger2);
+  if ( num_fingers_ == 3 )
+    finalError += fabs(goal->command.position - position_data.Fingers.Finger3);
+
+  ROS_INFO("Final error: %f", finalError);
+  result.reached_goal = (finalError <= finger_error_threshold_);
   result.position     = position_data.Fingers.Finger1;
   result.effort       = force_data.Fingers.Finger1;
   result.stalled      = false;
@@ -900,17 +905,19 @@ bool JacoArmTrajectoryController::loadParameters(const ros::NodeHandle n)
 {
     ROS_DEBUG("Loading parameters");
 
-    n.param("wpi_jaco/arm_name",          arm_name_,          std::string("jaco"));
-    n.param("wpi_jaco/finger_scale",      finger_scale_,      1.0);
-    n.param("wpi_jaco/max_curvature",     max_curvature_,     20.0);
-    n.param("wpi_jaco/max_speed_finger",  max_speed_finger_,  30.0);
-    n.param("wpi_jaco/num_fingers",       num_fingers_,       3);
+    n.param("wpi_jaco/arm_name",                arm_name_,              std::string("jaco"));
+    n.param("wpi_jaco/finger_scale",            finger_scale_,          1.0);
+    n.param("wpi_jaco/finger_error_threshold",  finger_error_threshold_,1.0);
+    n.param("wpi_jaco/max_curvature",           max_curvature_,         20.0);
+    n.param("wpi_jaco/max_speed_finger",        max_speed_finger_,      30.0);
+    n.param("wpi_jaco/num_fingers",             num_fingers_,           3);
 
-    ROS_INFO("arm_name: %s",          arm_name_.c_str());
-    ROS_INFO("finger_scale: %f",      finger_scale_);
-    ROS_INFO("max_curvature: %f",     max_curvature_);
-    ROS_INFO("max_speed_finger: %f",  max_speed_finger_);
-    ROS_INFO("num_fingers: %d",       num_fingers_);
+    ROS_INFO("arm_name: %s",                arm_name_.c_str());
+    ROS_INFO("finger_scale: %f",            finger_scale_);
+    ROS_INFO("finger_error_threshold_: %f", finger_error_threshold_);
+    ROS_INFO("max_curvature: %f",           max_curvature_);
+    ROS_INFO("max_speed_finger: %f",        max_speed_finger_);
+    ROS_INFO("num_fingers: %d",             num_fingers_);
 
     // Update total number of joints
     num_joints_ = num_fingers_ + NUM_JACO_JOINTS;
@@ -1019,6 +1026,7 @@ void JacoArmTrajectoryController::angularCmdCallback(const wpi_jaco_msgs::Angula
       jacoPoint.Position.HandMode = POSITION_MODE;
     else
       jacoPoint.Position.HandMode = VELOCITY_MODE;
+
     jacoPoint.Position.Fingers.Finger1 = msg.fingers[0];
     jacoPoint.Position.Fingers.Finger2 = msg.fingers[1];
     jacoPoint.Position.Fingers.Finger3 = msg.fingers[2];
@@ -1191,7 +1199,10 @@ void JacoArmTrajectoryController::fingerPositionControl(float f1, float f2, floa
       GetAngularPosition(position_data);
       error[0] = f1 - position_data.Fingers.Finger1;
       error[1] = f2 - position_data.Fingers.Finger2;
-      error[2] = f3 - position_data.Fingers.Finger3;
+      if (num_fingers_ == 3)
+        error[2] = f3 - position_data.Fingers.Finger3;
+      else
+        error[2] = 0.0;
 
       float totalError = fabs(error[0]) + fabs(error[1]) + fabs(error[2]);
       if (totalError == prevTotalError)
@@ -1204,7 +1215,9 @@ void JacoArmTrajectoryController::fingerPositionControl(float f1, float f2, floa
         prevTotalError = totalError;
       }
 
-      if (totalError < FINGER_ERROR_THRESHOLD || counter > 40)
+      // ROS_INFO("Current error: %f, previous error: %f", totalError, prevTotalError);
+
+      if (totalError < finger_error_threshold_ || counter > 40)
       {
         goalReached = true;
         jacoPoint.Position.Fingers.Finger1 = 0.0;
@@ -1223,9 +1236,11 @@ void JacoArmTrajectoryController::fingerPositionControl(float f1, float f2, floa
         jacoPoint.Position.Fingers.Finger1 = max(min(KP_F*error[0] + KV_F*(error[0] - errorFinger1.front()) + KI_F*errorSum[0], max_speed_finger_), -max_speed_finger_);
         jacoPoint.Position.Fingers.Finger2 = max(min(KP_F*error[1] + KV_F*(error[1] - errorFinger2.front()) + KI_F*errorSum[1], max_speed_finger_), -max_speed_finger_);
         jacoPoint.Position.Fingers.Finger3 = max(min(KP_F*error[2] + KV_F*(error[2] - errorFinger3.front()) + KI_F*errorSum[2], max_speed_finger_), -max_speed_finger_);
+
         errorFinger1.insert(errorFinger1.begin(), error[0]);
         errorFinger2.insert(errorFinger2.begin(), error[1]);
         errorFinger3.insert(errorFinger3.begin(), error[2]);
+
         errorFinger1.resize(10);
         errorFinger2.resize(10);
         errorFinger3.resize(10);
@@ -1241,6 +1256,8 @@ void JacoArmTrajectoryController::fingerPositionControl(float f1, float f2, floa
 
     rate.sleep();
   }
+
+  ROS_INFO("Goal reached, counter: %d, total error: %f", counter, prevTotalError);
 }
 
 void JacoArmTrajectoryController::executeAngularTrajectoryPoint(TrajectoryPoint point, bool erase)
