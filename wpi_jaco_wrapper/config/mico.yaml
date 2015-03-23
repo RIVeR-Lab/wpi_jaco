@@ -6,3 +6,4 @@ wpi_jaco:
   max_curvature: 20.0
   max_speed_finger: 3000.0
   num_fingers: 2
+  
