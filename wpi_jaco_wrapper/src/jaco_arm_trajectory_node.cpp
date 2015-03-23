@@ -7,7 +7,7 @@ namespace jaco
 JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros::NodeHandle pnh)
 {
   ros::NodeHandle private_nh("~");
-  loadParameters(private_nh);
+  loadParameters(nh);
 
   // Create servers
   trajectory_server_              = new TrajectoryServer( nh, arm_name_ + "_arm/arm_controller", boost::bind(&JacoArmTrajectoryController::execute_trajectory, this, _1), false);
