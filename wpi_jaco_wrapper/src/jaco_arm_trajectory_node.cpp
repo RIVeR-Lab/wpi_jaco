@@ -18,25 +18,25 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
 
   boost::recursive_mutex::scoped_lock lock(api_mutex);
 
-  ROS_INFO("Trying to initialize JACO API...");
+  // ROS_INFO("Trying to initialize JACO API...");
   InitAPI();
-  ROS_INFO("Api initialized.");
+  // ROS_INFO("Api initialized.");
   ros::Duration(1.0).sleep();
-  ROS_INFO("Starting control API...");
+  // ROS_INFO("Starting control API...");
   StartControlAPI();
-  ROS_INFO("Control API started...");
+  // ROS_INFO("Control API started...");
   ros::Duration(3.0).sleep();
-  ROS_INFO("Stopping control API...");
+  // ROS_INFO("Stopping control API...");
   StopControlAPI();
-  ROS_INFO("Control API stopped.");
+  // ROS_INFO("Control API stopped.");
 
   // Initialize arm
-  ROS_INFO("Homing arm...");
+  // ROS_INFO("Homing arm...");
   MoveHome();
-  ROS_INFO("Done.");
-  ROS_INFO("Initializing fingers...");
+  // ROS_INFO("Done.");
+  // ROS_INFO("Initializing fingers...");
   InitFingers();
-  ROS_INFO("Done.");
+  // ROS_INFO("Done.");
   SetFrameType(0); //set end effector to move with respect to the fixed frame
 
   // Initialize joint names
