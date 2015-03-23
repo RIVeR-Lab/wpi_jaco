@@ -45,30 +45,10 @@
  */
 class JacoManipulation
 {
-private:
-  bool loadParameters(const ros::NodeHandle n);
-  
-  ros::NodeHandle n;
-
-  std::string arm_name_;
-
-  // Messages
-  ros::Publisher cartesianCmdPublisher;
-  ros::Publisher angularCmdPublisher;
-  ros::Subscriber jointStateSubscriber;
-
-  // Services
-  ros::ServiceClient cartesianPositionClient;
-  ros::ServiceClient eraseTrajectoriesClient;
-
-  // Actionlib
-  actionlib::SimpleActionClient<control_msgs::GripperCommandAction> acGripper;
-  actionlib::SimpleActionServer<rail_manipulation_msgs::GripperAction> asGripper;
-  actionlib::SimpleActionServer<rail_manipulation_msgs::LiftAction> asLift;
-
-  double jointPos[NUM_JOINTS];
-
 public:
+  typedef actionlib::SimpleActionClient<control_msgs::GripperCommandAction>     GripperClient;
+  typedef actionlib::SimpleActionServer<rail_manipulation_msgs::GripperAction>  GripperServer;
+  typedef actionlib::SimpleActionServer<rail_manipulation_msgs::LiftAction>     LiftServer;
   /**
    * \brief Constructor
    */
@@ -91,6 +71,30 @@ public:
    * @param msg joint state message
    */
   void jointStateCallback(const sensor_msgs::JointState msg);
+
+private:
+  bool loadParameters(const ros::NodeHandle n);
+
+  ros::NodeHandle n;
+
+  std::string arm_name_;
+
+  // Messages
+  ros::Publisher cartesianCmdPublisher;
+  ros::Publisher angularCmdPublisher;
+  ros::Subscriber jointStateSubscriber;
+
+  // Services
+  ros::ServiceClient cartesianPositionClient;
+  ros::ServiceClient eraseTrajectoriesClient;
+
+  // Actionlib
+  GripperClient*  acGripper;
+  GripperServer*  asGripper;
+  LiftServer*     asLift;
+
+  double jointPos[NUM_JOINTS];
+
 
 };
 

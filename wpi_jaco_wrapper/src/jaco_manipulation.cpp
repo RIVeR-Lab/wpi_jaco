@@ -2,11 +2,14 @@
 
 using namespace std;
 
-JacoManipulation::JacoManipulation() :
-    acGripper(arm_name_ + "_arm/fingers_controller/gripper", true),
-    asGripper(n, arm_name_ + "_arm/manipulation/gripper", boost::bind(&JacoManipulation::execute_gripper, this, _1), false),
-    asLift(n, arm_name_ + "_arm/manipulation/lift", boost::bind(&JacoManipulation::execute_lift, this, _1), false)
+JacoManipulation::JacoManipulation()
 {
+  loadParameters(n);
+
+  acGripper = new GripperClient(n, arm_name_ + "_arm/fingers_controller/gripper", true);
+  asGripper = new GripperServer(n, arm_name_ + "_arm/manipulation/gripper", boost::bind(&JacoManipulation::execute_gripper, this, _1), false);
+  asLift    = new LiftServer(n, arm_name_ + "_arm/manipulation/lift", boost::bind(&JacoManipulation::execute_lift, this, _1), false);
+
   // Messages
   cartesianCmdPublisher = n.advertise<wpi_jaco_msgs::CartesianCommand>(arm_name_ + "_arm/cartesian_cmd", 1);
   angularCmdPublisher = n.advertise<wpi_jaco_msgs::AngularCommand>(arm_name_ + "_arm/angular_cmd", 1);
@@ -18,12 +21,12 @@ JacoManipulation::JacoManipulation() :
   eraseTrajectoriesClient = n.serviceClient<std_srvs::Empty>(arm_name_ + "_arm/erase_trajectories");
 
   ROS_INFO("Waiting for gripper action server...");
-  acGripper.waitForServer();
+  acGripper->waitForServer();
   ROS_INFO("Finished waiting for action server.");
 
   // Action servers
-  asGripper.start();
-  asLift.start();
+  asGripper->start();
+  asLift->start();
 }
 
 bool JacoManipulation::loadParameters(const ros::NodeHandle n)
@@ -52,9 +55,9 @@ void JacoManipulation::execute_gripper(const rail_manipulation_msgs::GripperGoal
 {
   rail_manipulation_msgs::GripperResult result;
 
-  if (asLift.isActive())
+  if (asLift->isActive())
   {
-    asGripper.setPreempted();
+    asGripper->setPreempted();
     ROS_INFO("Lift server already running, grasp action preempted");
     return;
   }
@@ -71,7 +74,7 @@ void JacoManipulation::execute_gripper(const rail_manipulation_msgs::GripperGoal
     {
       ROS_INFO("Gripper is open.");
       result.success = true;
-      asGripper.setSucceeded(result, "Open gripper action succeeded, as the gripper is already open.");
+      asGripper->setSucceeded(result, "Open gripper action succeeded, as the gripper is already open.");
       return;
     }
   }
@@ -81,17 +84,17 @@ void JacoManipulation::execute_gripper(const rail_manipulation_msgs::GripperGoal
     gripperGoal.command.position = GRIPPER_CLOSED;
   else
     gripperGoal.command.position = GRIPPER_OPEN;
-  acGripper.sendGoal(gripperGoal);
+  acGripper->sendGoal(gripperGoal);
 
   ros::Rate loopRate(30);
-  while (!acGripper.getState().isDone())
+  while (!acGripper->getState().isDone())
   {
     //check for preempt requests from clients
-    if (asGripper.isPreemptRequested() || !ros::ok())
+    if (asGripper->isPreemptRequested() || !ros::ok())
     {
-      acGripper.cancelAllGoals();
+      acGripper->cancelAllGoals();
       //preempt action server
-      asGripper.setPreempted();
+      asGripper->setPreempted();
       ROS_INFO("Gripper action server preempted by client");
       return;
     }
@@ -100,7 +103,7 @@ void JacoManipulation::execute_gripper(const rail_manipulation_msgs::GripperGoal
 
   rail_manipulation_msgs::GripperResult serverResult;
   //success occurs if the gripper has moved, as it is unlikely to reach the final "closed" position when grasping an object
-  //serverResult.success = acGripper.getResult()->reached_goal;
+  //serverResult.success = acGripper->getResult()->reached_goal;
   if (goal->close)
   {
     if (jointPos[6] > startingFingerPos[0] || jointPos[7] > startingFingerPos[1] || jointPos[8] > startingFingerPos[2])
@@ -115,15 +118,15 @@ void JacoManipulation::execute_gripper(const rail_manipulation_msgs::GripperGoal
     else
       serverResult.success = false;
   }
-  asGripper.setSucceeded(serverResult);
+  asGripper->setSucceeded(serverResult);
   ROS_INFO("Gripper action finished.");
 }
 
 void JacoManipulation::execute_lift(rail_manipulation_msgs::LiftGoalConstPtr const &goal)
 {
-  if (asGripper.isActive())
+  if (asGripper->isActive())
   {
-    asLift.setPreempted();
+    asLift->setPreempted();
     ROS_INFO("Gripper server already running, lift action preempted");
     return;
   }
@@ -161,7 +164,7 @@ void JacoManipulation::execute_lift(rail_manipulation_msgs::LiftGoalConstPtr con
     while (!finished)
     {
       //check for preempt requests from clients
-      if (asLift.isPreemptRequested() || !ros::ok())
+      if (asLift->isPreemptRequested() || !ros::ok())
       {
         //stop pickup action
         std_srvs::Empty emptySrv;
@@ -171,7 +174,7 @@ void JacoManipulation::execute_lift(rail_manipulation_msgs::LiftGoalConstPtr con
         }
 
         //preempt action server
-        asLift.setPreempted();
+        asLift->setPreempted();
         ROS_INFO("Lift action server preempted by client");
 
         return;
@@ -215,7 +218,7 @@ void JacoManipulation::execute_lift(rail_manipulation_msgs::LiftGoalConstPtr con
     result.success = false;
   }
 
-  asLift.setSucceeded(result);
+  asLift->setSucceeded(result);
   ROS_INFO("Pickup execution complete");
 
 }
