@@ -898,7 +898,7 @@ void JacoArmTrajectoryController::home_arm(const wpi_jaco_msgs::HomeArmGoalConst
   home_arm_server_->setSucceeded(result);
 }
 
-bool JacoArmTrajectoryController::loadParameters(ros::NodeHandle n)
+bool JacoArmTrajectoryController::loadParameters(const ros::NodeHandle n)
 {
     ROS_DEBUG("Loading parameters");
 

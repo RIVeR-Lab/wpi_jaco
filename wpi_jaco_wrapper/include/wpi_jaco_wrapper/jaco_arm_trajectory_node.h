@@ -135,7 +135,7 @@ public:
   void execute_gripper(const control_msgs::GripperCommandGoalConstPtr &goal);
 
 private:
-  bool loadParameters(ros::NodeHandle n);
+  bool loadParameters(const ros::NodeHandle n);
   /**
    * \brief Callback for sending an angular command to the arm
    * @param msg angular command and info
