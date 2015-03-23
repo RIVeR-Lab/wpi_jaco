@@ -40,7 +40,7 @@ bool JacoManipulation::loadParameters(const ros::NodeHandle n)
 
     num_joints_ = num_fingers_ + NUM_JACO_JOINTS;
 
-    joint_pos_.resize(num_joints_+1);
+    joint_pos_.resize(num_joints_);
 
     ROS_INFO("arm_name: %s", arm_name_.c_str());
 
