@@ -46,7 +46,11 @@
 class JacoManipulation
 {
 private:
+  bool loadParameters(const ros::NodeHandle n);
+  
   ros::NodeHandle n;
+
+  std::string arm_name_;
 
   // Messages
   ros::Publisher cartesianCmdPublisher;

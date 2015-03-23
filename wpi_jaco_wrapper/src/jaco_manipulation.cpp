@@ -3,19 +3,19 @@
 using namespace std;
 
 JacoManipulation::JacoManipulation() :
-    acGripper("jaco_arm/fingers_controller/gripper", true),
-    asGripper(n, "jaco_arm/manipulation/gripper", boost::bind(&JacoManipulation::execute_gripper, this, _1), false),
-    asLift(n, "jaco_arm/manipulation/lift", boost::bind(&JacoManipulation::execute_lift, this, _1), false)
+    acGripper(arm_name_ + "_arm/fingers_controller/gripper", true),
+    asGripper(n, arm_name_ + "_arm/manipulation/gripper", boost::bind(&JacoManipulation::execute_gripper, this, _1), false),
+    asLift(n, arm_name_ + "_arm/manipulation/lift", boost::bind(&JacoManipulation::execute_lift, this, _1), false)
 {
   // Messages
-  cartesianCmdPublisher = n.advertise<wpi_jaco_msgs::CartesianCommand>("jaco_arm/cartesian_cmd", 1);
-  angularCmdPublisher = n.advertise<wpi_jaco_msgs::AngularCommand>("jaco_arm/angular_cmd", 1);
+  cartesianCmdPublisher = n.advertise<wpi_jaco_msgs::CartesianCommand>(arm_name_ + "_arm/cartesian_cmd", 1);
+  angularCmdPublisher = n.advertise<wpi_jaco_msgs::AngularCommand>(arm_name_ + "_arm/angular_cmd", 1);
 
-  jointStateSubscriber = n.subscribe("jaco_arm/joint_states", 1, &JacoManipulation::jointStateCallback, this);
+  jointStateSubscriber = n.subscribe(arm_name_ + "_arm/joint_states", 1, &JacoManipulation::jointStateCallback, this);
 
   // Services
-  cartesianPositionClient = n.serviceClient<wpi_jaco_msgs::GetCartesianPosition>("jaco_arm/get_cartesian_position");
-  eraseTrajectoriesClient = n.serviceClient<std_srvs::Empty>("/jaco_arm/erase_trajectories");
+  cartesianPositionClient = n.serviceClient<wpi_jaco_msgs::GetCartesianPosition>(arm_name_ + "_arm/get_cartesian_position");
+  eraseTrajectoriesClient = n.serviceClient<std_srvs::Empty>(arm_name_ + "_arm/erase_trajectories");
 
   ROS_INFO("Waiting for gripper action server...");
   acGripper.waitForServer();
@@ -24,6 +24,20 @@ JacoManipulation::JacoManipulation() :
   // Action servers
   asGripper.start();
   asLift.start();
+}
+
+bool JacoManipulation::loadParameters(const ros::NodeHandle n)
+{
+    ROS_DEBUG("Loading parameters");
+
+    n.param("wpi_jaco/arm_name", arm_name_, std::string("jaco"));
+
+    ROS_INFO("arm_name: %s", arm_name_.c_str());
+
+    ROS_INFO("Parameters loaded.");
+
+    //! @todo MdL [IMPR]: Return is values are all correctly loaded.
+    return true;
 }
 
 void JacoManipulation::jointStateCallback(const sensor_msgs::JointState msg)

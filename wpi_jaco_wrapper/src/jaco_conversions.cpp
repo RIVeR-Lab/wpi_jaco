@@ -54,9 +54,9 @@ bool JacoConversions::loadParameters(const ros::NodeHandle n)
 {
     ROS_DEBUG("Loading parameters");
 
-    n.param("wpi_jaco/arm_name",          arm_name_,          std::string("jaco"));
+    n.param("wpi_jaco/arm_name", arm_name_, std::string("jaco"));
 
-    ROS_INFO("arm_name: %s",          arm_name_.c_str());
+    ROS_INFO("arm_name: %s", arm_name_.c_str());
 
     ROS_INFO("Parameters loaded.");
 
