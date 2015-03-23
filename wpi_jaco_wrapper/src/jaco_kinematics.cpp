@@ -4,6 +4,8 @@ using namespace std;
 
 JacoKinematics::JacoKinematics(void)
 {
+  loadParameters(n);
+
   //calculate additional parameters
   float AA = 11.0 * PI / 72.0;
   float CA = cos(AA);
