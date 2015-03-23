@@ -53,9 +53,7 @@ bool JacoManipulation::loadParameters(const ros::NodeHandle n)
 void JacoManipulation::jointStateCallback(const sensor_msgs::JointState msg)
 {
   for (unsigned int i = 0; i < num_joints_; i++)
-  {
     joint_pos_[i] = msg.position[i];
-  }
 }
 
 void JacoManipulation::execute_gripper(const rail_manipulation_msgs::GripperGoalConstPtr &goal)
@@ -70,14 +68,17 @@ void JacoManipulation::execute_gripper(const rail_manipulation_msgs::GripperGoal
   }
 
   float startingFingerPos[3];
-  startingFingerPos[0] = joint_pos_[6];
-  startingFingerPos[1] = joint_pos_[7];
-  startingFingerPos[2] = joint_pos_[8];
+  for (int i = 0 ; i < num_fingers_ ; i++)
+    startingFingerPos[i] = joint_pos_[NUM_JACO_JOINTS+i];
 
   //check if grasp is already finished (for opening case only)
   if (!goal->close)
   {
-    if (startingFingerPos[0] <= GRIPPER_OPEN_THRESHOLD && startingFingerPos[1] <= GRIPPER_OPEN_THRESHOLD && startingFingerPos[2] <= GRIPPER_OPEN_THRESHOLD)
+    bool gripper_open = true;
+    for (int i = 0 ; i < num_fingers_ ; i++)
+      gripper_open = gripper_open && startingFingerPos[i] <= GRIPPER_OPEN_THRESHOLD;
+
+    if (gripper_open)
     {
       ROS_INFO("Gripper is open.");
       result.success = true;
@@ -113,17 +114,19 @@ void JacoManipulation::execute_gripper(const rail_manipulation_msgs::GripperGoal
   //serverResult.success = acGripper->getResult()->reached_goal;
   if (goal->close)
   {
-    if (joint_pos_[6] > startingFingerPos[0] || joint_pos_[7] > startingFingerPos[1] || joint_pos_[8] > startingFingerPos[2])
-      serverResult.success = true;
-    else
-      serverResult.success = false;
+    bool gripper_closing = true;
+    for (int i = 0 ; i < num_fingers_ ; i++)
+      gripper_closing = gripper_closing && joint_pos_[NUM_JACO_JOINTS+i] > startingFingerPos[i];
+
+    serverResult.success = gripper_closing;
   }
   else
   {
-    if (joint_pos_[6] < startingFingerPos[0] || joint_pos_[7] < startingFingerPos[1] || joint_pos_[8] < startingFingerPos[2])
-      serverResult.success = true;
-    else
-      serverResult.success = false;
+    bool gripper_opening = true;
+    for (int i = 0 ; i < num_fingers_ ; i++)
+      gripper_opening = gripper_opening && joint_pos_[NUM_JACO_JOINTS+i] > startingFingerPos[i];
+
+    serverResult.success = gripper_opening;
   }
   asGripper->setSucceeded(serverResult);
   ROS_INFO("Gripper action finished.");
