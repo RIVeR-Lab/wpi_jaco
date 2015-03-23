@@ -6,7 +6,6 @@ namespace jaco
 {
 JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros::NodeHandle pnh)
 {
-  ros::NodeHandle private_nh("~");
   loadParameters(nh);
 
   // Create servers
@@ -1231,10 +1230,15 @@ void JacoArmTrajectoryController::fingerPositionControl(float f1, float f2, floa
         errorFinger2.resize(10);
         errorFinger3.resize(10);
       }
+      
+      EraseAllTrajectories();
+      SendBasicTrajectory(jacoPoint);
     }
-    
-    EraseAllTrajectories();
-    SendBasicTrajectory(jacoPoint);
+
+    //check for cancel requests
+    if (eStopEnabled)
+      return;
+
     rate.sleep();
   }
 }
