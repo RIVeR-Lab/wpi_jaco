@@ -204,7 +204,7 @@ void JacoInteractiveManipulation::processHandMarkerFeedback(
           homeGoal.retractPosition.joints.resize(6);
           homeGoal.retractPosition.joints[0] = -2.57;
           homeGoal.retractPosition.joints[1] = 1.39;
-          homeGoal.retractPosition.joints[2] = .377;
+          homeGoal.retractPosition.joints[2] = .527;
           homeGoal.retractPosition.joints[3] = -.084;
           homeGoal.retractPosition.joints[4] = .515;
           homeGoal.retractPosition.joints[5] = -1.745;
