@@ -34,6 +34,13 @@ bool JacoManipulation::loadParameters(const ros::NodeHandle n)
     ROS_DEBUG("Loading parameters");
 
     n.param("wpi_jaco/arm_name", arm_name_, std::string("jaco"));
+    n.param("wpi_jaco/gripper_closed", gripper_closed_, 0.0);
+    n.param("wpi_jaco/gripper_open", gripper_open_, 65.0);
+    n.param("wpi_jaco/num_fingers", num_fingers_, 3);
+
+    num_joints_ = num_fingers_ + NUM_JACO_JOINTS;
+
+    joint_pos_.resize(num_joints_+1);
 
     ROS_INFO("arm_name: %s", arm_name_.c_str());
 
@@ -45,9 +52,9 @@ bool JacoManipulation::loadParameters(const ros::NodeHandle n)
 
 void JacoManipulation::jointStateCallback(const sensor_msgs::JointState msg)
 {
-  for (unsigned int i = 0; i < NUM_JOINTS; i++)
+  for (unsigned int i = 0; i < num_joints_; i++)
   {
-    jointPos[i] = msg.position[i];
+    joint_pos_[i] = msg.position[i];
   }
 }
 
@@ -63,9 +70,9 @@ void JacoManipulation::execute_gripper(const rail_manipulation_msgs::GripperGoal
   }
 
   float startingFingerPos[3];
-  startingFingerPos[0] = jointPos[6];
-  startingFingerPos[1] = jointPos[7];
-  startingFingerPos[2] = jointPos[8];
+  startingFingerPos[0] = joint_pos_[6];
+  startingFingerPos[1] = joint_pos_[7];
+  startingFingerPos[2] = joint_pos_[8];
 
   //check if grasp is already finished (for opening case only)
   if (!goal->close)
@@ -81,9 +88,9 @@ void JacoManipulation::execute_gripper(const rail_manipulation_msgs::GripperGoal
 
   control_msgs::GripperCommandGoal gripperGoal;
   if (goal->close)
-    gripperGoal.command.position = GRIPPER_CLOSED;
+    gripperGoal.command.position = gripper_closed_;
   else
-    gripperGoal.command.position = GRIPPER_OPEN;
+    gripperGoal.command.position = gripper_open_;
   acGripper->sendGoal(gripperGoal);
 
   ros::Rate loopRate(30);
@@ -106,14 +113,14 @@ void JacoManipulation::execute_gripper(const rail_manipulation_msgs::GripperGoal
   //serverResult.success = acGripper->getResult()->reached_goal;
   if (goal->close)
   {
-    if (jointPos[6] > startingFingerPos[0] || jointPos[7] > startingFingerPos[1] || jointPos[8] > startingFingerPos[2])
+    if (joint_pos_[6] > startingFingerPos[0] || joint_pos_[7] > startingFingerPos[1] || joint_pos_[8] > startingFingerPos[2])
       serverResult.success = true;
     else
       serverResult.success = false;
   }
   else
   {
-    if (jointPos[6] < startingFingerPos[0] || jointPos[7] < startingFingerPos[1] || jointPos[8] < startingFingerPos[2])
+    if (joint_pos_[6] < startingFingerPos[0] || joint_pos_[7] < startingFingerPos[1] || joint_pos_[8] < startingFingerPos[2])
       serverResult.success = true;
     else
       serverResult.success = false;
