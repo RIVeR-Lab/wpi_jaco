@@ -17,7 +17,7 @@
                             <instance_material symbol="Material2" target="#ID3">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
-                            <instance_material symbol="Material3" target="#ID3">
+                            <instance_material symbol="Material3" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -29,7 +29,7 @@
                             <instance_material symbol="Material2" target="#ID3">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
-                            <instance_material symbol="Material3" target="#ID3">
+                            <instance_material symbol="Material3" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -38,7 +38,7 @@
                 <instance_geometry url="#ID18">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID3">
+                            <instance_material symbol="Material2" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                             <instance_material symbol="Material3" target="#ID19">
@@ -53,7 +53,7 @@
                             <instance_material symbol="Material2" target="#ID3">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
-                            <instance_material symbol="Material3" target="#ID3">
+                            <instance_material symbol="Material3" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -65,7 +65,7 @@
                             <instance_material symbol="Material2" target="#ID3">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
-                            <instance_material symbol="Material3" target="#ID3">
+                            <instance_material symbol="Material3" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -77,7 +77,7 @@
                             <instance_material symbol="Material2" target="#ID3">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
-                            <instance_material symbol="Material3" target="#ID3">
+                            <instance_material symbol="Material3" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -89,7 +89,7 @@
                             <instance_material symbol="Material2" target="#ID3">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
-                            <instance_material symbol="Material3" target="#ID3">
+                            <instance_material symbol="Material3" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -101,7 +101,7 @@
                             <instance_material symbol="Material2" target="#ID3">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
-                            <instance_material symbol="Material3" target="#ID3">
+                            <instance_material symbol="Material3" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -113,7 +113,7 @@
                             <instance_material symbol="Material2" target="#ID3">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
-                            <instance_material symbol="Material3" target="#ID3">
+                            <instance_material symbol="Material3" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -125,7 +125,7 @@
                             <instance_material symbol="Material2" target="#ID3">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
-                            <instance_material symbol="Material3" target="#ID3">
+                            <instance_material symbol="Material3" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -137,7 +137,7 @@
                             <instance_material symbol="Material2" target="#ID3">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
-                            <instance_material symbol="Material3" target="#ID3">
+                            <instance_material symbol="Material3" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -149,7 +149,7 @@
                             <instance_material symbol="Material2" target="#ID3">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
-                            <instance_material symbol="Material3" target="#ID3">
+                            <instance_material symbol="Material3" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -158,7 +158,7 @@
                 <instance_geometry url="#ID80">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID3">
+                            <instance_material symbol="Material2" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                             <instance_material symbol="Material3" target="#ID19">
@@ -170,7 +170,7 @@
                 <instance_geometry url="#ID86">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID3">
+                            <instance_material symbol="Material2" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                             <instance_material symbol="Material3" target="#ID19">
@@ -185,7 +185,7 @@
                             <instance_material symbol="Material2" target="#ID3">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
-                            <instance_material symbol="Material3" target="#ID3">
+                            <instance_material symbol="Material3" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -197,7 +197,7 @@
                             <instance_material symbol="Material2" target="#ID3">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
-                            <instance_material symbol="Material3" target="#ID3">
+                            <instance_material symbol="Material3" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
 
@@ -210,7 +210,7 @@
                             <instance_material symbol="Material2" target="#ID3">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
-                            <instance_material symbol="Material3" target="#ID3">
+                            <instance_material symbol="Material3" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -222,7 +222,7 @@
                             <instance_material symbol="Material2" target="#ID3">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
-                            <instance_material symbol="Material3" target="#ID3">
+                            <instance_material symbol="Material3" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -234,7 +234,7 @@
                             <instance_material symbol="Material2" target="#ID3">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
-                            <instance_material symbol="Material3" target="#ID3">
+                            <instance_material symbol="Material3" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -246,7 +246,7 @@
                             <instance_material symbol="Material2" target="#ID3">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
-                            <instance_material symbol="Material3" target="#ID3">
+                            <instance_material symbol="Material3" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -258,7 +258,7 @@
                             <instance_material symbol="Material2" target="#ID3">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
-                            <instance_material symbol="Material3" target="#ID3">
+                            <instance_material symbol="Material3" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -270,7 +270,7 @@
                             <instance_material symbol="Material2" target="#ID3">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
-                            <instance_material symbol="Material3" target="#ID3">
+                            <instance_material symbol="Material3" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -282,7 +282,7 @@
                             <instance_material symbol="Material2" target="#ID3">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
-                            <instance_material symbol="Material3" target="#ID3">
+                            <instance_material symbol="Material3" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -294,7 +294,7 @@
                             <instance_material symbol="Material2" target="#ID3">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
-                            <instance_material symbol="Material3" target="#ID3">
+                            <instance_material symbol="Material3" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -306,7 +306,7 @@
                             <instance_material symbol="Material2" target="#ID3">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
-                            <instance_material symbol="Material3" target="#ID3">
+                            <instance_material symbol="Material3" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -318,7 +318,7 @@
                             <instance_material symbol="Material2" target="#ID3">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
-                            <instance_material symbol="Material3" target="#ID3">
+                            <instance_material symbol="Material3" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -327,7 +327,7 @@
                 <instance_geometry url="#ID164">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID3">
+                            <instance_material symbol="Material2" target="#ID8">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                             <instance_material symbol="Material3" target="#ID19">
@@ -339,7 +339,7 @@
                 <instance_geometry url="#ID170">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID19">
+                            <instance_material symbol="Material2" target="#ID171">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -348,7 +348,7 @@
                 <instance_geometry url="#ID176">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID19">
+                            <instance_material symbol="Material2" target="#ID171">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -357,7 +357,7 @@
                 <instance_geometry url="#ID180">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID19">
+                            <instance_material symbol="Material2" target="#ID171">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -366,7 +366,7 @@
                 <instance_geometry url="#ID184">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID19">
+                            <instance_material symbol="Material2" target="#ID171">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -375,7 +375,7 @@
                 <instance_geometry url="#ID188">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID19">
+                            <instance_material symbol="Material2" target="#ID171">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -384,7 +384,7 @@
                 <instance_geometry url="#ID192">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID19">
+                            <instance_material symbol="Material2" target="#ID171">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -393,7 +393,7 @@
                 <instance_geometry url="#ID196">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID19">
+                            <instance_material symbol="Material2" target="#ID171">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -402,7 +402,7 @@
                 <instance_geometry url="#ID200">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID19">
+                            <instance_material symbol="Material2" target="#ID171">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -411,7 +411,7 @@
                 <instance_geometry url="#ID204">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID19">
+                            <instance_material symbol="Material2" target="#ID171">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -420,7 +420,7 @@
                 <instance_geometry url="#ID208">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID19">
+                            <instance_material symbol="Material2" target="#ID171">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -429,7 +429,7 @@
                 <instance_geometry url="#ID212">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID19">
+                            <instance_material symbol="Material2" target="#ID171">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -438,7 +438,7 @@
                 <instance_geometry url="#ID216">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID19">
+                            <instance_material symbol="Material2" target="#ID171">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -447,7 +447,7 @@
                 <instance_geometry url="#ID220">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID19">
+                            <instance_material symbol="Material2" target="#ID171">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -456,7 +456,7 @@
                 <instance_geometry url="#ID224">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID19">
+                            <instance_material symbol="Material2" target="#ID171">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -465,7 +465,7 @@
                 <instance_geometry url="#ID228">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID19">
+                            <instance_material symbol="Material2" target="#ID171">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -474,7 +474,7 @@
                 <instance_geometry url="#ID232">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID19">
+                            <instance_material symbol="Material2" target="#ID171">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -483,7 +483,7 @@
                 <instance_geometry url="#ID236">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID19">
+                            <instance_material symbol="Material2" target="#ID171">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -492,7 +492,7 @@
                 <instance_geometry url="#ID240">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID19">
+                            <instance_material symbol="Material2" target="#ID171">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -501,7 +501,7 @@
                 <instance_geometry url="#ID244">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID19">
+                            <instance_material symbol="Material2" target="#ID171">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -510,7 +510,7 @@
                 <instance_geometry url="#ID248">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID19">
+                            <instance_material symbol="Material2" target="#ID171">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -519,7 +519,7 @@
                 <instance_geometry url="#ID252">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID19">
+                            <instance_material symbol="Material2" target="#ID171">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -528,7 +528,7 @@
                 <instance_geometry url="#ID256">
                     <bind_material>
                         <technique_common>
-                            <instance_material symbol="Material2" target="#ID19">
+                            <instance_material symbol="Material2" target="#ID171">
                                 <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
                             </instance_material>
                         </technique_common>
@@ -1977,62 +1977,66 @@
         <material id="ID3" name="material_1">
             <instance_effect url="#ID4" />
         </material>
+        <material id="ID8" name="Sophie_Shirt_Red">
+            <instance_effect url="#ID9" />
+        </material>
         <material id="ID19" name="material_2">
             <instance_effect url="#ID20" />
+        </material>
+        <material id="ID171" name="edge_color646464255">
+            <instance_effect url="#ID172" />
         </material>
     </library_materials>
     <library_effects>
         <effect id="ID4">
             <profile_COMMON>
-                 <newparam sid="ID1001">
-                    <surface type="2D">
-                        <init_from>ID1002</init_from>
-                    </surface>
-                </newparam>
-                <newparam sid="ID1000">
-                    <sampler2D>
-                        <source>ID1001</source>
-                    </sampler2D>
-                </newparam>
                 <technique sid="COMMON">
                     <lambert>
                         <diffuse>
-                            <texture texture="ID1000" texcoord="UVSET0" />
+                            <color>0.2509804 0.2509804 0.2509804 1</color>
                         </diffuse>
+                    </lambert>
+                </technique>
+            </profile_COMMON>
+        </effect>
+        <effect id="ID9">
+            <profile_COMMON>
+                <technique sid="COMMON">
+                    <lambert>
+                        <diffuse>
+                            <color>0.3921569 0.04313725 0.08235294 1</color>
+                        </diffuse>
+
                     </lambert>
                 </technique>
             </profile_COMMON>
         </effect>
         <effect id="ID20">
             <profile_COMMON>
-                <newparam sid="ID1004">
-                    <surface type="2D">
-                        <init_from>ID1005</init_from>
-                    </surface>
-                </newparam>
-                <newparam sid="ID1003">
-                    <sampler2D>
-                        <source>ID1004</source>
-                    </sampler2D>
-                </newparam>
                 <technique sid="COMMON">
                     <lambert>
                         <diffuse>
-                            <texture texture="ID1003" texcoord="UVSET0" />
+                            <color>0.8666667 0.8666667 0.8901961 1</color>
                         </diffuse>
                     </lambert>
                 </technique>
             </profile_COMMON>
         </effect>
+        <effect id="ID172">
+            <profile_COMMON>
+                <technique sid="COMMON">
+                    <constant>
+                        <transparent opaque="A_ONE">
+                            <color>0.2509804 0.2509804 0.2509804 1</color>
+                        </transparent>
+                        <transparency>
+                            <float>1</float>
+                        </transparency>
+                    </constant>
+                </technique>
+            </profile_COMMON>
+        </effect>
     </library_effects>
-    <library_images>
-        <image id="ID1002">
-            <init_from>materials/dark_gray.jpg</init_from>
-        </image>
-        <image id="ID1005">
-            <init_from>materials/gray.jpg</init_from>
-        </image>
-    </library_images>
     <scene>
         <instance_visual_scene url="#ID1" />
     </scene>
