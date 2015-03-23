@@ -4,9 +4,11 @@ using namespace std;
 
 JacoConversions::JacoConversions(void)
 {
+  loadParameters(n);
+
   //advertise service
-  eqServer = n.advertiseService("jaco_conversions/euler_to_quaternion", &JacoConversions::callEQ, this);
-  qeServer = n.advertiseService("jaco_conversions/quaternion_to_euler", &JacoConversions::callQE, this);
+  eqServer = n.advertiseService(arm_name_ + "_conversions/euler_to_quaternion", &JacoConversions::callEQ, this);
+  qeServer = n.advertiseService(arm_name_ + "_conversions/quaternion_to_euler", &JacoConversions::callQE, this);
 }
 
 bool JacoConversions::callEQ(wpi_jaco_msgs::EulerToQuaternion::Request &req,
@@ -46,6 +48,20 @@ bool JacoConversions::callQE(wpi_jaco_msgs::QuaternionToEuler::Request &req,
   res.yaw = atan2(-m12, m11);
 
   return true;
+}
+
+bool JacoConversions::loadParameters(const ros::NodeHandle n)
+{
+    ROS_DEBUG("Loading parameters");
+
+    n.param("wpi_jaco/arm_name",          arm_name_,          std::string("jaco"));
+
+    ROS_INFO("arm_name: %s",          arm_name_.c_str());
+
+    ROS_INFO("Parameters loaded.");
+
+    //! @todo MdL [IMPR]: Return is values are all correctly loaded.
+    return true;
 }
 
 int main(int argc, char **argv)

@@ -48,9 +48,13 @@ public:
   bool callQE(wpi_jaco_msgs::QuaternionToEuler::Request &req, wpi_jaco_msgs::QuaternionToEuler::Response &res);
 
 private:
+  bool loadParameters(const ros::NodeHandle n);
+
   ros::NodeHandle n;
   ros::ServiceServer eqServer;
   ros::ServiceServer qeServer;
+
+  std::string        arm_name_;
 };
 
 #endif
