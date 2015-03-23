@@ -1,8 +1,9 @@
 <launch>
   <arg name="arm_name" default="jaco" />
 
+  <rosparam command="load" file="$(find wpi_jaco_wrapper)/config/$(arg arm_name).yaml"/>
+  
   <node name="jaco_arm_trajectory_node" pkg="wpi_jaco_wrapper" type="jaco_arm_trajectory_node" output="screen">
-    <rosparam command="load" file="$(find wpi_jaco_wrapper)/config/$(arg arm_name).yaml"/>
     <remap from="$(arg arm_name)_arm/fingers_controller" to="$(arg arm_name)_arm/fingers_controller/gripper"/>
   </node>
   
