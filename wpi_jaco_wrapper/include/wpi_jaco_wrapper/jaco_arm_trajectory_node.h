@@ -235,9 +235,9 @@ private:
   // Actionlib
   TrajectoryServer*  trajectory_server_; //!< point-to-point trajectory follower
   TrajectoryServer*  smooth_trajectory_server_; //!< smooth point-to-point trajectory follower based on Cartesian end effector positions
-  TrajectoryServer*  smooth_joint_trajectory_server; //!< smooth point-to-point trajectory follower based on joint velocity control
+  TrajectoryServer*  smooth_joint_trajectory_server_; //!< smooth point-to-point trajectory follower based on joint velocity control
   GripperServer*     gripper_server_; //!< gripper command action server
-  HomeArmServer*     home_arm_server;
+  HomeArmServer*     home_arm_server_;
 
   boost::recursive_mutex api_mutex;
 
