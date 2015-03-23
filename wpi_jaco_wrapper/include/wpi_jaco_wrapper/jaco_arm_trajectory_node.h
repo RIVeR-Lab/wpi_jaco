@@ -51,7 +51,6 @@
 #define KP_F 7.5
 #define KV_F 0.05
 #define KI_F 0.1
-#define FINGER_ERROR_THRESHOLD 1 //threshold in the JACO API's finger position units to consider a finger position reached
 
 //control types
 #define ANGULAR_CONTROL 1
@@ -246,6 +245,7 @@ private:
   // Parameters
   std::string   arm_name_;
   double        finger_scale_;
+  double        finger_error_threshold_; //threshold in the JACO API's finger position units to consider a finger position reached
   double        max_curvature_;
   double        max_speed_finger_;
   int           num_fingers_;
