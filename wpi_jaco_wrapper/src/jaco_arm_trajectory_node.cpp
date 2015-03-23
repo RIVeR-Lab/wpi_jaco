@@ -18,25 +18,25 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
 
   boost::recursive_mutex::scoped_lock lock(api_mutex);
 
-  //ROS_INFO("Trying to initialize JACO API...");
+  ROS_INFO("Trying to initialize JACO API...");
   InitAPI();
-  //ROS_INFO("Api initialized.");
+  ROS_INFO("Api initialized.");
   ros::Duration(1.0).sleep();
-  //ROS_INFO("Starting control API...");
+  ROS_INFO("Starting control API...");
   StartControlAPI();
-  //ROS_INFO("Control API started...");
+  ROS_INFO("Control API started...");
   ros::Duration(3.0).sleep();
-  //ROS_INFO("Stopping control API...");
+  ROS_INFO("Stopping control API...");
   StopControlAPI();
-  //ROS_INFO("Control API stopped.");
+  ROS_INFO("Control API stopped.");
 
   // Initialize arm
-  //ROS_INFO("Homing arm...");
+  ROS_INFO("Homing arm...");
   MoveHome();
-  //ROS_INFO("Done.");
-  //ROS_INFO("Initializing fingers...");
+  ROS_INFO("Done.");
+  ROS_INFO("Initializing fingers...");
   InitFingers();
-  //ROS_INFO("Done.");
+  ROS_INFO("Done.");
   SetFrameType(0); //set end effector to move with respect to the fixed frame
 
   // Initialize joint names
@@ -731,10 +731,9 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
   cmd.armCommand = false;
   cmd.fingerCommand = true;
   cmd.repeat = false;
-  cmd.fingers.resize(3);
-  cmd.fingers[0] = goal->command.position;
-  cmd.fingers[1] = goal->command.position;
-  cmd.fingers[2] = goal->command.position;
+  cmd.fingers.resize(num_fingers_);
+  for ( int i = 0 ; i < num_fingers_ ; i++)
+    cmd.fingers[i] = goal->command.position;
 
   angularCmdPublisher.publish(cmd);
 
@@ -757,9 +756,9 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
     {
       //stop gripper control
       cmd.position = false;
-      cmd.fingers[0] = 0.0;
-      cmd.fingers[1] = 0.0;
-      cmd.fingers[2] = 0.0;
+      for ( int i = 0 ; i < num_fingers_ ; i++)
+        cmd.fingers[i] = 0.0;
+
       angularCmdPublisher.publish(cmd);
 
       //preempt action server
@@ -775,36 +774,37 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
       boost::recursive_mutex::scoped_lock lock(api_mutex);
       GetAngularVelocity(velocity_data);
     }
-    float totalSpeed = fabs(velocity_data.Fingers.Finger1) + fabs(velocity_data.Fingers.Finger2) + fabs(velocity_data.Fingers.Finger3);
+
+    float totalSpeed = fabs(velocity_data.Fingers.Finger1) 
+                     + fabs(velocity_data.Fingers.Finger2) 
+                     + fabs(velocity_data.Fingers.Finger3);
     if (totalSpeed <= 0.01)
-    {
       gripperMoving = false;
-    }
   }
+
   //stop gripper control
   cmd.position = false;
-  cmd.fingers[0] = 0.0;
-  cmd.fingers[1] = 0.0;
-  cmd.fingers[2] = 0.0;
+
+  for ( int i = 0 ; i < num_fingers_ ; i++)
+    cmd.fingers[i] = 0.0;
+
   angularCmdPublisher.publish(cmd);
 
   control_msgs::GripperCommandResult result;
   AngularPosition force_data;
-
   AngularPosition position_data;
   {
     boost::recursive_mutex::scoped_lock lock(api_mutex);
     GetAngularPosition(position_data);
     GetAngularForce(force_data);
   }
-  float finalError = fabs(goal->command.position - position_data.Fingers.Finger1) + fabs(goal->command.position - position_data.Fingers.Finger2) + fabs(goal->command.position - position_data.Fingers.Finger3);
-  if (finalError <= FINGER_ERROR_THRESHOLD)
-    result.reached_goal = true;
-  else
-    result.reached_goal = false;
-  result.position = position_data.Fingers.Finger1;
-  result.effort =force_data.Fingers.Finger1;
-  result.stalled = false;
+  float finalError    = fabs(goal->command.position - position_data.Fingers.Finger1) 
+                      + fabs(goal->command.position - position_data.Fingers.Finger2) 
+                      + fabs(goal->command.position - position_data.Fingers.Finger3);
+  result.reached_goal = (finalError <= FINGER_ERROR_THRESHOLD);
+  result.position     = position_data.Fingers.Finger1;
+  result.effort       = force_data.Fingers.Finger1;
+  result.stalled      = false;
   gripper_server_->setSucceeded(result);
 }
 
@@ -1177,7 +1177,7 @@ void JacoArmTrajectoryController::fingerPositionControl(float f1, float f2, floa
   errorFinger1.resize(10);
   errorFinger2.resize(10);
   errorFinger3.resize(10);
-  for (unsigned int i = 0; i < errorFinger1.size(); i ++)
+  for (unsigned int i = 0; i < errorFinger1.size(); i++)
   {
     errorFinger1[i] = 0.0;
     errorFinger2[i] = 0.0;
