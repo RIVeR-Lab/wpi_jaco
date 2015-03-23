@@ -732,7 +732,7 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
   cmd.fingerCommand = true;
   cmd.repeat = false;
   cmd.fingers.resize(num_fingers_);
-  for ( int i = 0 ; i < num_fingers_ ; i++)
+  for (int i = 0 ; i < num_fingers_ ; i++)
     cmd.fingers[i] = goal->command.position;
 
   angularCmdPublisher.publish(cmd);
@@ -756,7 +756,7 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
     {
       //stop gripper control
       cmd.position = false;
-      for ( int i = 0 ; i < num_fingers_ ; i++)
+      for (int i = 0 ; i < num_fingers_ ; i++)
         cmd.fingers[i] = 0.0;
 
       angularCmdPublisher.publish(cmd);
@@ -784,8 +784,7 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
 
   //stop gripper control
   cmd.position = false;
-
-  for ( int i = 0 ; i < num_fingers_ ; i++)
+  for (int i = 0 ; i < num_fingers_ ; i++)
     cmd.fingers[i] = 0.0;
 
   angularCmdPublisher.publish(cmd);
