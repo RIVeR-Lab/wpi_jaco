@@ -1,6 +1,7 @@
 wpi_jaco:
   arm_name: "jaco"
   finger_scale: 1.0
+  finger_error_threshold: 1.0
   gripper_open: 0.0
   gripper_closed: 65.0
   max_curvature: 20.0

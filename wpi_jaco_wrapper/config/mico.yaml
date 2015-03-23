@@ -1,6 +1,7 @@
 wpi_jaco:
   arm_name: "mico"
   finger_scale: 0.00833333333
+  finger_error_threshold: 14.0
   gripper_open: 0.0
   gripper_closed: 6400.0
   max_curvature: 20.0
