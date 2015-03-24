@@ -1,0 +1,24 @@
+wpi_jaco:
+  # Name of the arm. Will appear in topic names and services.
+  arm_name: "mico"
+
+  # Difference between values of the Mico and Jaco fingers, Jaco normalized to 1
+  finger_scale: 0.00833333333
+
+  # Threshold in the JACO API's finger position units to consider a finger position reached
+  finger_error_threshold: 14.0
+
+  # Value of an open gripper
+  gripper_open: 0.0
+
+  # Value of a closed gripper
+  gripper_closed: 6400.0
+
+  # For calculating splines in the joint trajectory
+  max_curvature: 20.0
+
+  # Maximal speed of the fingers while opening/closing
+  max_speed_finger: 3000.0
+
+  # The number of fingers
+  num_fingers: 2

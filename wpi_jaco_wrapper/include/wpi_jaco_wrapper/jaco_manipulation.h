@@ -25,16 +25,12 @@
 #include <sensor_msgs/JointState.h>
 
 #define NUM_JACO_JOINTS 6
-#define NUM_JACO_FINGER_JOINTS 3
-#define NUM_JOINTS (NUM_JACO_JOINTS+NUM_JACO_FINGER_JOINTS)
 
 #define MAX_FINGER_VEL 30 //maximum finger actuator velocity
 #define DEFAULT_LIFT_VEL .1 //the default velocity for lifting objects during pickup (m/s)
 #define LIFT_HEIGHT .15 //height for object pickup (m)
 #define LIFT_TIMEOUT 5 //timeout for pickup action (s)
 #define GRIPPER_OPEN_THRESHOLD .02 //gripper position where the fingers are considered "open"
-#define GRIPPER_CLOSED 65
-#define GRIPPER_OPEN 0
 
 /*!
  * \class JacoManipulation
@@ -45,26 +41,10 @@
  */
 class JacoManipulation
 {
-private:
-  ros::NodeHandle n;
-
-  // Messages
-  ros::Publisher cartesianCmdPublisher;
-  ros::Publisher angularCmdPublisher;
-  ros::Subscriber jointStateSubscriber;
-
-  // Services
-  ros::ServiceClient cartesianPositionClient;
-  ros::ServiceClient eraseTrajectoriesClient;
-
-  // Actionlib
-  actionlib::SimpleActionClient<control_msgs::GripperCommandAction> acGripper;
-  actionlib::SimpleActionServer<rail_manipulation_msgs::GripperAction> asGripper;
-  actionlib::SimpleActionServer<rail_manipulation_msgs::LiftAction> asLift;
-
-  double jointPos[NUM_JOINTS];
-
 public:
+  typedef actionlib::SimpleActionClient<control_msgs::GripperCommandAction>     GripperClient;
+  typedef actionlib::SimpleActionServer<rail_manipulation_msgs::GripperAction>  GripperServer;
+  typedef actionlib::SimpleActionServer<rail_manipulation_msgs::LiftAction>     LiftServer;
   /**
    * \brief Constructor
    */
@@ -87,6 +67,35 @@ public:
    * @param msg joint state message
    */
   void jointStateCallback(const sensor_msgs::JointState msg);
+
+private:
+  bool loadParameters(const ros::NodeHandle n);
+
+  ros::NodeHandle n;
+
+  // Parameters
+  std::string arm_name_;
+  double  gripper_closed_;
+  double  gripper_open_;
+  int     num_fingers_;
+  int     num_joints_;
+
+  // Messages
+  ros::Publisher cartesianCmdPublisher;
+  ros::Publisher angularCmdPublisher;
+  ros::Subscriber jointStateSubscriber;
+
+  // Services
+  ros::ServiceClient cartesianPositionClient;
+  ros::ServiceClient eraseTrajectoriesClient;
+
+  // Actionlib
+  GripperClient*  acGripper;
+  GripperServer*  asGripper;
+  LiftServer*     asLift;
+
+  std::vector<double> joint_pos_;
+
 
 };
 

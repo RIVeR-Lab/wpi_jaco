@@ -1,16 +1,17 @@
 <launch>
-  <arg name="max_curvature" value="20.0" />
+  <arg name="arm_name" default="jaco" />
 
+  <rosparam command="load" file="$(find wpi_jaco_wrapper)/config/$(arg arm_name).yaml"/>
+  
   <node name="jaco_arm_trajectory_node" pkg="wpi_jaco_wrapper" type="jaco_arm_trajectory_node" output="screen">
-    <remap from="jaco_arm/fingers_controller" to="/jaco_arm/fingers_controller/gripper"/>
-    <remap from="jaco_arm/arm_controller" to="/jaco_arm/arm_controller/trajectory"/>
-    <remap from="jaco_arm/smooth_arm_controller" to="/jaco_arm/smooth_arm_controller/trajectory"/>
-    <remap from="jaco_arm/joint_velocity_controller" to="/jaco_arm/joint_velocity_controller/trajectory"/>
-    <param name="max_curvature" type="double" value="$(arg max_curvature)" />
+    <remap from="$(arg arm_name)_arm/fingers_controller" to="$(arg arm_name)_arm/fingers_controller/gripper"/>
+    <remap from="$(arg arm_name)_arm/arm_controller" to="$(arg arm_name)_arm/arm_controller/trajectory"/>		
+    <remap from="$(arg arm_name)_arm/smooth_arm_controller" to="$(arg arm_name)_arm/smooth_arm_controller/trajectory"/>		
+    <remap from="$(arg arm_name)_arm/joint_velocity_controller" to="$(arg arm_name)_arm/joint_velocity_controller/trajectory"/>
   </node>
   
-  <node name="jaco_manipulation" pkg="wpi_jaco_wrapper" type="jaco_manipulation" output="screen" />
-  
-  <node name="jaco_conversions" pkg="wpi_jaco_wrapper" type="jaco_conversions" />
-  <node name="jaco_kinematics" pkg="wpi_jaco_wrapper" type="jaco_kinematics" />
+  <node name="jaco_manipulation" pkg="wpi_jaco_wrapper" type="jaco_manipulation" output="screen"/>
+  <node name="jaco_conversions" pkg="wpi_jaco_wrapper" type="jaco_conversions"/>
+  <node name="jaco_kinematics" pkg="wpi_jaco_wrapper" type="jaco_kinematics"/>
+
 </launch>
