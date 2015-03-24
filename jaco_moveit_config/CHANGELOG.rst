@@ -2,8 +2,15 @@
 Changelog for package jaco_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.16 (2015-03-24)
+-------------------
+* changelogs updated
+* Moved jaco_gazebo to its own package
+* Updated package documentation
+* Updated jaco controllers list for moveit configuration, added install to CMakeLists, and other general cleanup
+* Added moveit support for the standalone Jaco arm
+* Contributors: Alex Henning, David Kent, Russell Toris
+
 * Moved jaco_gazebo to its own package
 * Updated package documentation
 * Updated jaco controllers list for moveit configuration, added install to CMakeLists, and other general cleanup

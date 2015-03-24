@@ -2,6 +2,12 @@
 Changelog for package wpi_jaco
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.16 (2015-03-24)
+-------------------
+* Moved jaco_gazebo to its own package
+* Updated jaco controllers list for moveit configuration, added install to CMakeLists, and other general cleanup
+* Contributors: David Kent
+
 0.0.15 (2015-02-17)
 -------------------
 

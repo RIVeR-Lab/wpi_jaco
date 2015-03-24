@@ -2,8 +2,12 @@
 Changelog for package mico_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.16 (2015-03-24)
+-------------------
+* changelogs updated
+* Added mico_description
+* Contributors: Mathijs de Langen, Russell Toris
+
 * Added mico_description
 * Contributors: Mathijs de Langen
 

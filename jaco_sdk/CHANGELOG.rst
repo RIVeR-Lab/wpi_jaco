@@ -2,6 +2,12 @@
 Changelog for package jaco_sdk
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.16 (2015-03-24)
+-------------------
+* Updated Kinova libraries
+* Fix for compatibilty with catkin_tools build system
+* Contributors: Dave Coleman, David Kent
+
 0.0.15 (2015-02-17)
 -------------------
 

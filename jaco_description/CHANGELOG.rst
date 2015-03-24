@@ -2,6 +2,23 @@
 Changelog for package jaco_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.16 (2015-03-24)
+-------------------
+* copied old meshes. manual texturing failed on web.
+* Minor fixes for better placement of items.
+  Also:
+  - Actually launches joint controllers in the Gazebo launch
+  - Allows the robot to be specified, this allows mounting the Jaco arm on
+  a variety of bases using the same gazebo launch.
+* Added Gazebo support.
+  Added necessary elements for Gazebo simulation:
+  - Mass (currently made up)
+  - Inertia (currently made up)
+  - Joint controllers for the Gazebo robot using ROS Control
+  - Transmissions on necessary joints
+  - Gripper tag to support grasping (may need tuning)
+* Contributors: Alex Henning, Peter
+
 0.0.15 (2015-02-17)
 -------------------
 

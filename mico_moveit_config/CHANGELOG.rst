@@ -2,8 +2,13 @@
 Changelog for package mico_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.16 (2015-03-24)
+-------------------
+* changelogs updated
+* Added newline
+* Added Mico MoveIt! configuration
+* Contributors: Mathijs de Langen, Russell Toris
+
 * Added newline
 * Added Mico MoveIt! configuration
 * Contributors: Mathijs de Langen
