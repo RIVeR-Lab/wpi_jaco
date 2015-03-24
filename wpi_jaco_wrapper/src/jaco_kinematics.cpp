@@ -4,6 +4,8 @@ using namespace std;
 
 JacoKinematics::JacoKinematics(void)
 {
+  loadParameters(n);
+
   //calculate additional parameters
   float AA = 11.0 * PI / 72.0;
   float CA = cos(AA);
@@ -39,7 +41,7 @@ JacoKinematics::JacoKinematics(void)
   alphas[5] = PI;
 
   //advertise service
-  fkServer = n.advertiseService("jaco_arm/kinematics/fk", &JacoKinematics::callFK, this);
+  fkServer = n.advertiseService(arm_name_ + "_arm/kinematics/fk", &JacoKinematics::callFK, this);
 }
 
 bool JacoKinematics::callFK(wpi_jaco_msgs::JacoFK::Request &req, wpi_jaco_msgs::JacoFK::Response &res)
@@ -104,7 +106,7 @@ geometry_msgs::PoseStamped JacoKinematics::calculateFK(vector<float> joints)
 
   //Calculate Hand Pose
   geometry_msgs::PoseStamped handPose;
-  handPose.header.frame_id = "jaco_link_base";
+  handPose.header.frame_id = arm_name_ + "_link_base";
   handPose.pose.position.x = transform.getOrigin().x();
   handPose.pose.position.y = transform.getOrigin().y();
   handPose.pose.position.z = transform.getOrigin().z();
@@ -138,6 +140,20 @@ tf::Transform JacoKinematics::generateTransform(float theta, float d, float a, f
   transform.setOrigin(trans);
 
   return transform;
+}
+
+bool JacoKinematics::loadParameters(const ros::NodeHandle n)
+{
+    ROS_DEBUG("Loading parameters");
+
+    n.param("wpi_jaco/arm_name", arm_name_, std::string("jaco"));
+
+    ROS_INFO("arm_name: %s", arm_name_.c_str());
+
+    ROS_INFO("Parameters loaded.");
+
+    //! @todo MdL [IMPR]: Return is values are all correctly loaded.
+    return true;
 }
 
 int main(int argc, char **argv)

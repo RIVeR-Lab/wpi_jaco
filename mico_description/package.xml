@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package>
+  <name>mico_description</name>
+  <version>0.0.1</version>
+  <description>3D Model and URDF of the Kinova MICO Arm</description>
+  
+  <author email="langen@robot-rose.nl">Mathijs de Langen</author>
+  <maintainer email="langen@robot-rose.nl">Mathijs de Langen</maintainer>
+
+  <license>BSD</license>
+  
+  <url type="bugtracker">https://github.com/RIVeR-Lab/wpi_jaco/issues</url>
+  <url type="repository">https://github.com/RIVeR-Lab/wpi_jaco</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>xacro</run_depend>
+  <run_depend>joint_state_publisher</run_depend>
+  <run_depend>robot_state_publisher</run_depend>
+</package>
