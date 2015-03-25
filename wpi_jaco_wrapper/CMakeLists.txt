@@ -83,5 +83,5 @@ install(DIRECTORY launch/
 
 ## Copy config files
 install(DIRECTORY config/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
 )
