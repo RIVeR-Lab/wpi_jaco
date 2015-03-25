@@ -2,6 +2,13 @@
 Changelog for package jaco_interaction
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.16 (2015-03-24)
+-------------------
+* Fixed retract position from interactive marker call so that the arm doesn't bump itself
+* travis edit and some naming cleanup
+* Updated jaco interaction to use the new rail_manipulation_msgs
+* Contributors: David Kent
+
 0.0.15 (2015-02-17)
 -------------------
 * Updated interactive marker to use erase_trajectories service when the marker is released, giving the arm a more consistent stop

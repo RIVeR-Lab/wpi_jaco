@@ -2,6 +2,11 @@
 Changelog for package wpi_jaco_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.16 (2015-03-24)
+-------------------
+* Removed redundant messages
+* Contributors: David Kent
+
 0.0.15 (2015-02-17)
 -------------------
 

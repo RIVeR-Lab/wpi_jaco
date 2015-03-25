@@ -1,12 +1,21 @@
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Changelog for package wpi_jaco
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Changelog for package jaco_moveit_config
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 0.0.16 (2015-03-24)
 -------------------
+* changelogs updated
 * Moved jaco_gazebo to its own package
+* Updated package documentation
 * Updated jaco controllers list for moveit configuration, added install to CMakeLists, and other general cleanup
-* Contributors: David Kent
+* Added moveit support for the standalone Jaco arm
+* Contributors: Alex Henning, David Kent, Russell Toris
+
+* Moved jaco_gazebo to its own package
+* Updated package documentation
+* Updated jaco controllers list for moveit configuration, added install to CMakeLists, and other general cleanup
+* Added moveit support for the standalone Jaco arm
+* Contributors: Alex Henning, David Kent
 
 0.0.15 (2015-02-17)
 -------------------
@@ -25,8 +34,6 @@ Changelog for package wpi_jaco
 
 0.0.10 (2014-12-12)
 -------------------
-* added dependency on jaco_teleop for the metapackage
-* Contributors: David Kent
 
 0.0.9 (2014-12-02)
 ------------------
@@ -54,5 +61,3 @@ Changelog for package wpi_jaco
 
 0.0.1 (2014-07-31)
 ------------------
-* renamed JACO to WPI packages
-* Contributors: Russell Toris

@@ -1,17 +1,21 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Changelog for package jaco_interaction
+Changelog for package mico_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 0.0.16 (2015-03-24)
 -------------------
+* changelogs updated
+* Added mico_description
+* Contributors: Mathijs de Langen, Russell Toris
+
+* Added mico_description
+* Contributors: Mathijs de Langen
 
 0.0.15 (2015-02-17)
 -------------------
 
 0.0.14 (2015-02-06)
 -------------------
-* Added software estop for the arm
-* Contributors: David Kent
 
 0.0.13 (2015-02-03)
 -------------------
@@ -21,8 +25,6 @@ Changelog for package jaco_interaction
 
 0.0.11 (2014-12-18)
 -------------------
-* Changed teleop to use angular commands for finger movement; this will allow finger control even near/in arm singularities
-* Contributors: David Kent
 
 0.0.10 (2014-12-12)
 -------------------
@@ -41,16 +43,9 @@ Changelog for package jaco_interaction
 
 0.0.5 (2014-08-25)
 ------------------
-* release prep
-* adjusted teleop due to a mode switching bug in the arm; moved teleop to jaco_teleop and included support for segmentation in jaco_interaction
-* Contributors: Russell Toris, dekent
 
 0.0.4 (2014-08-05)
 ------------------
-* documentation
-* installs rviz config now
-* updated package names in launch files
-* Contributors: Russell Toris, dekent
 
 0.0.3 (2014-08-01)
 ------------------
@@ -60,5 +55,3 @@ Changelog for package jaco_interaction
 
 0.0.1 (2014-07-31)
 ------------------
-* renamed JACO to WPI packages
-* Contributors: Russell Toris

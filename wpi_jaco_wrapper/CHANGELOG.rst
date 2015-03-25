@@ -2,6 +2,44 @@
 Changelog for package wpi_jaco_wrapper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.16 (2015-03-24)
+-------------------
+* Removed some debugging output
+* Put back the remapping
+* Removed the *0.8 for testing
+* Added some comments for the parameters
+* finger_threshold, made error counting for mico depend on two/three fingers
+* added finger_error_threshold as configurable parameter
+* added finger_error_threshold as configurable parameter
+* Moved the } two lines to below (WRONG MERGE:/)
+* removed space
+* recommented stuff
+* for loops for the fingers
+* newline
+* Newlines at end of file
+* Load params for each node
+* Deal with different number of fingers
+* Removed test code
+* private nodehandle not needed
+* Made num finger joints configurable
+* added parameters, fixed typo
+* forgotten nodehandle
+* actionlib typedefs, made actionlib constructs pointer so parameters can be loaded first
+* Synced all topics names with arm_name_
+* conversions topic uses arm name parameter
+* made loadParameters a const function
+* Renamed variables to follow ROS naming conventions
+* Topic renaming
+* Renamed topics
+* Made jaco_arm_trajectory_node configurable
+* Configurable parameters via #defines added
+* Missing a lock in the gripper action server, should fix a potential crash with the jaco
+* Changed gripper action success conditions to better reflect reality
+* Removed redundant messages
+* Updated jaco interaction to use the new rail_manipulation_msgs
+* Switched jaco_manipulation to use rail_manipulation_msgs
+* Contributors: David Kent, Mathijs de Langen
+
 0.0.15 (2015-02-17)
 -------------------
 * Documentation

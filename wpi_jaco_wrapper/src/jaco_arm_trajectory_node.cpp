@@ -1082,7 +1082,6 @@ void JacoArmTrajectoryController::cartesianCmdCallback(const wpi_jaco_msgs::Cart
   //populate arm command
   if (msg.armCommand)
   {
-    ROS_INFO("arm command");
     if (msg.position)
       jacoPoint.Position.Type = CARTESIAN_POSITION;
     else
@@ -1116,7 +1115,6 @@ void JacoArmTrajectoryController::cartesianCmdCallback(const wpi_jaco_msgs::Cart
   //populate finger command
   if (msg.fingerCommand)
   {
-    ROS_INFO("fingers command");
     if (msg.position)
       jacoPoint.Position.HandMode = POSITION_MODE;
     else
@@ -1176,7 +1174,7 @@ void JacoArmTrajectoryController::fingerPositionControl(float f1, float f2, floa
   AngularPosition position_data;
   float error[3];
   float prevTotalError;
-  float counter = 0; //check if error is unchanging, this likely means a finger is blocked by something so the controller should terminate
+  int counter = 0; //check if error is unchanging, this likely means a finger is blocked by something so the controller should terminate
   vector<float> errorFinger1;
   vector<float> errorFinger2;
   vector<float> errorFinger3;
@@ -1257,7 +1255,7 @@ void JacoArmTrajectoryController::fingerPositionControl(float f1, float f2, floa
     rate.sleep();
   }
 
-  ROS_INFO("Goal reached, counter: %d, total error: %f", counter, prevTotalError);
+  //ROS_INFO("Goal reached, counter: %d, total error: %f", counter, prevTotalError);
 }
 
 void JacoArmTrajectoryController::executeAngularTrajectoryPoint(TrajectoryPoint point, bool erase)
