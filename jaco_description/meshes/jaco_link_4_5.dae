@@ -844,60 +844,30 @@
             <instance_effect url="#ID18" />
         </material>
     </library_materials>
-<library_effects>
+    <library_effects>
         <effect id="ID4">
             <profile_COMMON>
-                <newparam sid="ID1001">
-                    <surface type="2D">
-                        <init_from>ID1002</init_from>
-                    </surface>
-                </newparam>
-                <newparam sid="ID1000">
-                    <sampler2D>
-                        <source>ID1001</source>
-                    </sampler2D>
-                </newparam>
                 <technique sid="COMMON">
                     <lambert>
                         <diffuse>
-                            <texture texture="ID1000" texcoord="UVSET0" />
+                            <color>0.2509804 0.2509804 0.2509804 1</color>
                         </diffuse>
                     </lambert>
                 </technique>
             </profile_COMMON>
         </effect>
-
-
         <effect id="ID18">
             <profile_COMMON>
-                <newparam sid="ID1004">
-                    <surface type="2D">
-                        <init_from>ID1005</init_from>
-                    </surface>
-                </newparam>
-                <newparam sid="ID1003">
-                    <sampler2D>
-                        <source>ID1004</source>
-                    </sampler2D>
-                </newparam>
                 <technique sid="COMMON">
                     <lambert>
                         <diffuse>
-                            <texture texture="ID1003" texcoord="UVSET0" />
+                            <color>0.8666667 0.8666667 0.8901961 1</color>
                         </diffuse>
                     </lambert>
                 </technique>
             </profile_COMMON>
         </effect>
     </library_effects>
-    <library_images>
-        <image id="ID1002">
-            <init_from>materials/dark_gray.jpg</init_from>
-        </image>
-        <image id="ID1005">
-            <init_from>materials/gray.jpg</init_from>
-        </image>
-    </library_images>
     <scene>
         <instance_visual_scene url="#ID1" />
     </scene>

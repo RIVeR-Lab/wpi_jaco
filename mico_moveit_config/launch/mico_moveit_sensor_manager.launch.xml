@@ -1,0 +1,5 @@
+<launch>
+	<param name="octomap_frame" type="string" value="table" />
+	<param name="octomap_resolution" type="double" value="0.04" /> <!-- In meters -->
+	<rosparam command="load" file="$(find mico_moveit_config)/config/sensors_rgbd.yaml"/>
+</launch>

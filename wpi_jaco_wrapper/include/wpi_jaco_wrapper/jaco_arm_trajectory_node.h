@@ -34,11 +34,9 @@
 #include <jaco_sdk/Kinova.API.UsbCommandLayerUbuntu.h>
 
 #define NUM_JACO_JOINTS 6
-#define NUM_JACO_FINGER_JOINTS 2
-#define NUM_JOINTS (NUM_JACO_JOINTS+NUM_JACO_FINGER_JOINTS)
 
-#define LARGE_ACTUATOR_VELOCITY 0.8378*0.8 //maximum velocity of large actuator (joints 1-3) (rad/s)
-#define SMALL_ACTUATOR_VELOCITY 1.0472*0.8 //maximum velocity of small actuator (joints 4-6) (rad/s)
+#define LARGE_ACTUATOR_VELOCITY 0.8378 //maximum velocity of large actuator (joints 1-3) (rad/s)
+#define SMALL_ACTUATOR_VELOCITY 1.0472 //maximum velocity of small actuator (joints 4-6) (rad/s)
 #define TIME_SCALING_FACTOR 1.5 //keep the trajectory at a followable speed
 
 #define DEG_TO_RAD (M_PI/180)
@@ -53,17 +51,12 @@
 #define KP_F 7.5
 #define KV_F 0.05
 #define KI_F 0.1
-#define FINGER_ERROR_THRESHOLD 1 //threshold in the JACO API's finger position units to consider a finger position reached
 
 //control types
 #define ANGULAR_CONTROL 1
 #define CARTESIAN_CONTROL 2
 
 #define NO_ERROR 1 //no error from Kinova API
-
-#define MAX_SPEED_FINGER  3000.0
-#define ARM_NAME          "mico"
-#define FINGER_SCALE      (1.0/120.0)
 
 namespace jaco
 {
@@ -77,38 +70,11 @@ namespace jaco
  */
 class JacoArmTrajectoryController
 {
-private:
-  // Messages
-  ros::Publisher joint_state_pub_; //!< publisher for joint states
-  ros::Publisher cartesianCmdPublisher; //!< publisher for Cartesian arm commands
-  ros::Publisher angularCmdPublisher; //!< publisher for angular arm commands
-  ros::Subscriber cartesianCmdSubscriber; //!< subscriber for Cartesian arm commands
-  ros::Subscriber angularCmdSubscriber; //!< subscriber for angular arm commands
-
-  // Services
-  ros::ServiceClient jaco_fk_client; //!< forward kinematics client
-  ros::ServiceClient qe_client; //!< quaternion to euler (XYZ) conversion client
-  ros::ServiceServer angularPositionServer; //!< service server to get the joint positions
-  ros::ServiceServer cartesianPositionServer; //!< service server to get end effector pose
-  ros::ServiceServer eStopServer; //!< service server for software estop and restart
-  ros::ServiceServer eraseTrajectoriesServer;
-
-  ros::Timer joint_state_timer_; //!< timer for joint state publisher
-
-  // Actionlib
-  actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> trajectory_server_; //!< point-to-point trajectory follower
-  actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> smooth_trajectory_server_; //!< smooth point-to-point trajectory follower based on Cartesian end effector positions
-  actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> smooth_joint_trajectory_server; //!< smooth point-to-point trajectory follower based on joint velocity control
-  actionlib::SimpleActionServer<control_msgs::GripperCommandAction> gripper_server_; //!< gripper command action server
-  actionlib::SimpleActionServer<wpi_jaco_msgs::HomeArmAction> home_arm_server;
-
-  boost::recursive_mutex api_mutex;
-  
-  double max_curvature;
-
-  bool eStopEnabled;
-
 public:
+  typedef actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> TrajectoryServer;
+  typedef actionlib::SimpleActionServer<control_msgs::GripperCommandAction>        GripperServer;
+  typedef actionlib::SimpleActionServer<wpi_jaco_msgs::HomeArmAction>              HomeArmServer;
+
   /**
    * \brief Constructor
    * @param nh ROS node handle
@@ -168,13 +134,7 @@ public:
   void execute_gripper(const control_msgs::GripperCommandGoalConstPtr &goal);
 
 private:
-  std::vector<std::string> joint_names;
-  double joint_pos[NUM_JOINTS];
-  double joint_vel[NUM_JOINTS];
-  double joint_eff[NUM_JOINTS];
-
-  unsigned int controlType; //current state of control
-
+  bool loadParameters(const ros::NodeHandle n);
   /**
    * \brief Callback for sending an angular command to the arm
    * @param msg angular command and info
@@ -253,6 +213,51 @@ private:
   * @param res empty service response
   */
   bool eraseTrajectoriesCallback(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
+
+  // Messages
+  ros::Publisher joint_state_pub_; //!< publisher for joint states
+  ros::Publisher cartesianCmdPublisher; //!< publisher for Cartesian arm commands
+  ros::Publisher angularCmdPublisher; //!< publisher for angular arm commands
+  ros::Subscriber cartesianCmdSubscriber; //!< subscriber for Cartesian arm commands
+  ros::Subscriber angularCmdSubscriber; //!< subscriber for angular arm commands
+
+  // Services
+  ros::ServiceClient jaco_fk_client; //!< forward kinematics client
+  ros::ServiceClient qe_client; //!< quaternion to euler (XYZ) conversion client
+  ros::ServiceServer angularPositionServer; //!< service server to get the joint positions
+  ros::ServiceServer cartesianPositionServer; //!< service server to get end effector pose
+  ros::ServiceServer eStopServer; //!< service server for software estop and restart
+  ros::ServiceServer eraseTrajectoriesServer;
+
+  ros::Timer joint_state_timer_; //!< timer for joint state publisher
+
+  // Actionlib
+  TrajectoryServer*  trajectory_server_; //!< point-to-point trajectory follower
+  TrajectoryServer*  smooth_trajectory_server_; //!< smooth point-to-point trajectory follower based on Cartesian end effector positions
+  TrajectoryServer*  smooth_joint_trajectory_server_; //!< smooth point-to-point trajectory follower based on joint velocity control
+  GripperServer*     gripper_server_; //!< gripper command action server
+  HomeArmServer*     home_arm_server_;
+
+  boost::recursive_mutex api_mutex;
+
+  bool eStopEnabled;
+
+  // Parameters
+  std::string   arm_name_;
+  double        finger_scale_;
+  double        finger_error_threshold_; //threshold in the JACO API's finger position units to consider a finger position reached
+  double        max_curvature_;
+  double        max_speed_finger_;
+  int           num_fingers_;
+  int           num_joints_;
+
+  std::vector<std::string> joint_names;
+  std::vector<double>      joint_pos_;
+  std::vector<double>      joint_vel_;
+  std::vector<double>      joint_eff_;
+
+  unsigned int controlType; //current state of control
+
 };
 
 }

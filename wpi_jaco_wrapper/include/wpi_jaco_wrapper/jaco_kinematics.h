@@ -66,8 +66,12 @@ public:
   tf::Transform generateTransform(float theta, float d, float a, float alpha);
 
 private:
+  bool loadParameters(const ros::NodeHandle n);
+
   ros::NodeHandle n;
   ros::ServiceServer fkServer;
+
+  std::string arm_name_;
 
   //robot parameters
   std::vector<float> ds; //!< d parameters in the D-H convention
