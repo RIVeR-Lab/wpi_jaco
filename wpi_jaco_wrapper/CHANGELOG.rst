@@ -8,13 +8,6 @@ Changelog for package wpi_jaco_wrapper
 * install files missing
 * Contributors: Russell Toris
 
-Forthcoming
------------
-* changelog updated
-* CMake typo fix
-* install files missing
-* Contributors: Russell Toris
-
 0.0.16 (2015-03-24)
 -------------------
 * Removed some debugging output
