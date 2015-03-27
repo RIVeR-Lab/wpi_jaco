@@ -5,6 +5,11 @@ Changelog for package jaco_interaction
 0.0.17 (2015-03-27)
 -------------------
 
+Forthcoming
+-----------
+* changelog updated
+* Contributors: Russell Toris
+
 0.0.16 (2015-03-24)
 -------------------
 
