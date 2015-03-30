@@ -2,6 +2,9 @@
 Changelog for package wpi_jaco
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.17 (2015-03-27)
+-------------------
+
 0.0.16 (2015-03-24)
 -------------------
 * Moved jaco_gazebo to its own package
