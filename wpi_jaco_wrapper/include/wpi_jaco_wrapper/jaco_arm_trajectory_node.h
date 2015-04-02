@@ -29,6 +29,7 @@
 #include <wpi_jaco_msgs/JacoFK.h>
 #include <wpi_jaco_msgs/QuaternionToEuler.h>
 #include <sensor_msgs/JointState.h>
+#include <std_msgs/Bool.h>
 #include <std_srvs/Empty.h>
 
 #include <jaco_sdk/Kinova.API.UsbCommandLayerUbuntu.h>
@@ -218,6 +219,7 @@ private:
   ros::Publisher joint_state_pub_; //!< publisher for joint states
   ros::Publisher cartesianCmdPublisher; //!< publisher for Cartesian arm commands
   ros::Publisher angularCmdPublisher; //!< publisher for angular arm commands
+  ros::Publisher armHomedPublisher; //!< publisher for when the arm completes a kinova api home arm action
   ros::Subscriber cartesianCmdSubscriber; //!< subscriber for Cartesian arm commands
   ros::Subscriber angularCmdSubscriber; //!< subscriber for angular arm commands
 
