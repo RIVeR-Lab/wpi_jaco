@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>mico_description</name>
-  <version>0.0.16</version>
+  <version>0.0.18</version>
   <description>3D Model and URDF of the Kinova MICO Arm</description>
   
   <author email="langen@robot-rose.nl">Mathijs de Langen</author>

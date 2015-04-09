@@ -2,6 +2,12 @@
 Changelog for package jaco_interaction
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.18 (2015-04-03)
+-------------------
+
+0.0.17 (2015-03-27)
+-------------------
+
 0.0.16 (2015-03-24)
 -------------------
 * Fixed retract position from interactive marker call so that the arm doesn't bump itself

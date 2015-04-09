@@ -64,6 +64,7 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
   cartesianCmdPublisher = nh.advertise<wpi_jaco_msgs::CartesianCommand>(arm_name_+"_arm/cartesian_cmd", 1);
   angularCmdPublisher = nh.advertise<wpi_jaco_msgs::AngularCommand>(arm_name_+"_arm/angular_cmd", 1);
   update_joint_states();
+  armHomedPublisher = nh.advertise<std_msgs::Bool>(arm_name_ + "_arm/arm_homed", 1);
 
   cartesianCmdSubscriber = nh.subscribe(arm_name_+"_arm/cartesian_cmd", 1, &JacoArmTrajectoryController::cartesianCmdCallback,
                                         this);
@@ -88,6 +89,11 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
 
   joint_state_timer_ = nh.createTimer(ros::Duration(0.0333),
                                       boost::bind(&JacoArmTrajectoryController::update_joint_states, this));
+
+  //publish to arm_homed because the arm is initialized
+  std_msgs::Bool msg;
+  msg.data = true;
+  armHomedPublisher.publish(msg);
 }
 
 JacoArmTrajectoryController::~JacoArmTrajectoryController()
@@ -831,6 +837,9 @@ void JacoArmTrajectoryController::home_arm(const wpi_jaco_msgs::HomeArmGoalConst
     StopControlAPI();
     MoveHome();
     StartControlAPI();
+    std_msgs::Bool msg;
+    msg.data = true;
+    armHomedPublisher.publish(msg);
   }
 
   if (goal->retract)

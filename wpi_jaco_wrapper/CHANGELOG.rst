@@ -2,6 +2,17 @@
 Changelog for package wpi_jaco_wrapper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.18 (2015-04-03)
+-------------------
+* Publish a message after the arm homes using the kinova api
+* Contributors: David Kent
+
+0.0.17 (2015-03-27)
+-------------------
+* CMake typo fix
+* install files missing
+* Contributors: Russell Toris
+
 0.0.16 (2015-03-24)
 -------------------
 * Removed some debugging output
