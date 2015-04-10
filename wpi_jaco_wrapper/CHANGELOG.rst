@@ -2,6 +2,9 @@
 Changelog for package wpi_jaco_wrapper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.19 (2015-04-10)
+-------------------
+
 0.0.18 (2015-04-03)
 -------------------
 * Publish a message after the arm homes using the kinova api

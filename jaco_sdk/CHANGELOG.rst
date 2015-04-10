@@ -2,6 +2,11 @@
 Changelog for package jaco_sdk
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.19 (2015-04-10)
+-------------------
+* reverted to old libs to prevent segfault
+* Contributors: Russell Toris
+
 0.0.18 (2015-04-03)
 -------------------
 
