@@ -5,13 +5,15 @@ using namespace std;
 namespace jaco
 {
 JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros::NodeHandle pnh)
+  : arm_intialized_ (false)
 {
   loadParameters(nh);
 
   // Create servers
-  trajectory_server_              = new TrajectoryServer( nh, arm_name_ + "_arm/arm_controller", boost::bind(&JacoArmTrajectoryController::execute_trajectory, this, _1), false);
+  trajectory_server_              = new TrajectoryServer( nh, arm_name_ + "_arm/arm_controller", boost::bind(&JacoArmTrajectoryController::execute_trajectory, this, _1), true);
+  smooth_joint_trajectory_server_ = new TrajectoryServer( nh, arm_name_ + "_arm/joint_velocity_controller", boost::bind(&JacoArmTrajectoryController::execute_joint_trajectory, this, _1), true);
+
   smooth_trajectory_server_       = new TrajectoryServer( nh, arm_name_ + "_arm/smooth_arm_controller", boost::bind(&JacoArmTrajectoryController::execute_smooth_trajectory, this, _1), false);
-  smooth_joint_trajectory_server_ = new TrajectoryServer( nh, arm_name_ + "_arm/joint_velocity_controller", boost::bind(&JacoArmTrajectoryController::execute_joint_trajectory, this, _1), false);
   gripper_server_                 = new GripperServer( nh, arm_name_ + "_arm/fingers_controller", boost::bind(&JacoArmTrajectoryController::execute_gripper, this, _1), false);
   home_arm_server_                = new HomeArmServer( nh, arm_name_ + "_arm/home_arm", boost::bind(&JacoArmTrajectoryController::home_arm, this, _1), false);
 
@@ -94,6 +96,8 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
   std_msgs::Bool msg;
   msg.data = true;
   armHomedPublisher.publish(msg);
+
+  arm_intialized_ = true;
 }
 
 JacoArmTrajectoryController::~JacoArmTrajectoryController()
@@ -200,6 +204,10 @@ static inline double nearest_equivalent(double desired, double current)
 
 void JacoArmTrajectoryController::execute_trajectory(const control_msgs::FollowJointTrajectoryGoalConstPtr &goal)
 {
+  if ( not arm_intialized_ )
+  {
+    return; // The arm is not fully initialized yet
+  }
   //cancel check
   if (eStopEnabled)
   {
