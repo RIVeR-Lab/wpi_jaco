@@ -315,20 +315,118 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /mico_arm/goal_pose
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
     - Class: rviz/TF
-      Enabled: false
+      Enabled: true
       Frame Timeout: 15
       Frames:
-        All Enabled: true
+        All Enabled: false
+        camera_depth_frame:
+          Value: false
+        camera_depth_optical_frame:
+          Value: false
+        camera_link:
+          Value: false
+        camera_mount:
+          Value: false
+        camera_rgb_frame:
+          Value: false
+        camera_rgb_optical_frame:
+          Value: false
+        mico:
+          Value: false
+        mico_large_ring_cover_1:
+          Value: false
+        mico_large_ring_cover_2:
+          Value: false
+        mico_large_ring_cover_3:
+          Value: false
+        mico_link_1:
+          Value: false
+        mico_link_2:
+          Value: false
+        mico_link_3:
+          Value: false
+        mico_link_4:
+          Value: false
+        mico_link_5:
+          Value: false
+        mico_link_base:
+          Value: false
+        mico_link_finger_1:
+          Value: false
+        mico_link_finger_2:
+          Value: false
+        mico_link_finger_tip_1:
+          Value: false
+        mico_link_finger_tip_2:
+          Value: false
+        mico_link_hand:
+          Value: true
+        mico_mount:
+          Value: false
+        mico_small_ring_cover_1:
+          Value: false
+        mico_small_ring_cover_2:
+          Value: false
+        mico_small_ring_cover_3:
+          Value: false
+        root:
+          Value: false
+        table:
+          Value: false
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
-        {}
+        table:
+          mico_mount:
+            camera_mount:
+              camera_link:
+                camera_depth_frame:
+                  camera_depth_optical_frame:
+                    {}
+                camera_rgb_frame:
+                  camera_rgb_optical_frame:
+                    {}
+            mico:
+              root:
+                mico_link_base:
+                  mico_large_ring_cover_1:
+                    {}
+                  mico_link_1:
+                    mico_large_ring_cover_2:
+                      {}
+                    mico_link_2:
+                      mico_large_ring_cover_3:
+                        {}
+                      mico_link_3:
+                        mico_link_4:
+                          mico_link_5:
+                            mico_link_hand:
+                              mico_link_finger_1:
+                                mico_link_finger_tip_1:
+                                  {}
+                              mico_link_finger_2:
+                                mico_link_finger_tip_2:
+                                  {}
+                            mico_small_ring_cover_3:
+                              {}
+                          mico_small_ring_cover_2:
+                            {}
+                        mico_small_ring_cover_1:
+                          {}
       Update Interval: 0
-      Value: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -344,22 +442,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 1.05957
+      Distance: 1.22171
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.285705
-        Y: -0.622991
-        Z: -8.86887e-08
+        X: -0.149078
+        Y: -0.355713
+        Z: -2.90841e-08
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.684795
+      Pitch: 0.194795
       Target Frame: root
       Value: XYOrbit (rviz)
-      Yaw: 4.52724
+      Yaw: 4.66725
     Saved: ~
 Window Geometry:
   Displays:
