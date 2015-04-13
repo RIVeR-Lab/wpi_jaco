@@ -1,5 +1,5 @@
 <launch>
-  <arg name="arm_name" default="jaco" />
+  <arg name="arm_name" default="mico" />
 
   <rosparam command="load" file="$(find wpi_jaco_wrapper)/config/$(arg arm_name).yaml"/>
   
@@ -8,6 +8,7 @@
     <remap from="$(arg arm_name)_arm/arm_controller" to="$(arg arm_name)_arm/arm_controller/trajectory"/>		
     <remap from="$(arg arm_name)_arm/smooth_arm_controller" to="$(arg arm_name)_arm/smooth_arm_controller/trajectory"/>		
     <remap from="$(arg arm_name)_arm/joint_velocity_controller" to="$(arg arm_name)_arm/joint_velocity_controller/trajectory"/>
+    <remap from="$(arg arm_name)_arm/joint_states" to="/joint_states"/>
   </node>
   
   <node name="jaco_manipulation" pkg="wpi_jaco_wrapper" type="jaco_manipulation" output="screen"/>
