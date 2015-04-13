@@ -5,7 +5,7 @@ using namespace std;
 namespace jaco
 {
 JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros::NodeHandle pnh)
-  : arm_intialized_ (false)
+  : arm_initialized (false)
 {
   loadParameters(nh);
 
@@ -97,7 +97,7 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
   msg.data = true;
   armHomedPublisher.publish(msg);
 
-  arm_intialized_ = true;
+  arm_initialized = true;
 }
 
 JacoArmTrajectoryController::~JacoArmTrajectoryController()
@@ -204,7 +204,7 @@ static inline double nearest_equivalent(double desired, double current)
 
 void JacoArmTrajectoryController::execute_trajectory(const control_msgs::FollowJointTrajectoryGoalConstPtr &goal)
 {
-  if ( not arm_intialized_ )
+  if ( not arm_initialized )
   {
     return; // The arm is not fully initialized yet
   }

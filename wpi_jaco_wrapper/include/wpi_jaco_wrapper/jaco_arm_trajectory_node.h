@@ -244,7 +244,7 @@ private:
 
   bool eStopEnabled;
 
-  bool arm_intialized_;
+  bool arm_initialized;
 
   // Parameters
   std::string   arm_name_;
