@@ -2,6 +2,12 @@
 Changelog for package mico_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.20 (2015-04-14)
+-------------------
+* rviz configuration
+* just look at all points
+* Contributors: Mathijs de Langen
+
 0.0.19 (2015-04-10)
 -------------------
 

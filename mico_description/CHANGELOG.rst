@@ -2,6 +2,23 @@
 Changelog for package mico_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.20 (2015-04-14)
+-------------------
+* URDF is not needed on GIT (xacro is used)
+* jaco = mico
+* xacro updated to be in line with the urdf
+* mico model xacro model update
+* Mico description update
+* Added first part of the fingers
+* commented out the fingers
+* moveitmodel
+* Second positions fix
+* Fixed the positions of the joints
+* Mico descriptions
+* mico description adaptions
+* Stuff with models for the Mico
+* Contributors: Mathijs de Langen
+
 0.0.19 (2015-04-10)
 -------------------
 

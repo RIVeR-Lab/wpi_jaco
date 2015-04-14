@@ -2,6 +2,19 @@
 Changelog for package jaco_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.20 (2015-04-14)
+-------------------
+* file not used
+* Revert "file not used"
+  This reverts commit 51053ff0f7325aef8ee1345cefbe790f48ba003b.
+* file not used
+* Revert "removed jaco_description just for testing"
+  This reverts commit 92dd7c0762ee89bbd69c68fec269f4711db5e58a.
+  Conflicts:
+  jaco_moveit_config/package.xml
+* removed jaco_description just for testing
+* Contributors: Mathijs de Langen
+
 0.0.19 (2015-04-10)
 -------------------
 
