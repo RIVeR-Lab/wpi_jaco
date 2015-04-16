@@ -20,7 +20,12 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
   boost::recursive_mutex::scoped_lock lock(api_mutex);
 
   // ROS_INFO("Trying to initialize JACO API...");
-  InitAPI();
+  while ( InitAPI() != NO_ERROR )
+  {
+    ROS_ERROR("Could not initialize Kinova API. Is the arm connected?");
+    ROS_INFO("Retrying in 5 seconds..");
+    ros::Duration(5.0).sleep();
+  }
   // ROS_INFO("Api initialized.");
   ros::Duration(1.0).sleep();
   // ROS_INFO("Starting control API...");
