@@ -2,6 +2,11 @@
 Changelog for package mico_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.21 (2015-04-17)
+-------------------
+* Joint 1,3,4 and 5 are continuous
+* Contributors: Mathijs de Langen
+
 0.0.20 (2015-04-14)
 -------------------
 * URDF is not needed on GIT (xacro is used)

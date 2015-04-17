@@ -2,6 +2,11 @@
 Changelog for package wpi_jaco_wrapper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.21 (2015-04-17)
+-------------------
+* Check if InitApi is succesful.
+* Contributors: Mathijs de Langen
+
 0.0.20 (2015-04-14)
 -------------------
 * typo

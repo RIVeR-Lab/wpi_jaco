@@ -2,6 +2,9 @@
 Changelog for package jaco_sdk
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.21 (2015-04-17)
+-------------------
+
 0.0.20 (2015-04-14)
 -------------------
 * Revert "Updated Kinova libraries"
