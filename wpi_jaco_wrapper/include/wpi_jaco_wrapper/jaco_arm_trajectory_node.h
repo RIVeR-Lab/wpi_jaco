@@ -244,6 +244,8 @@ private:
 
   bool eStopEnabled;
 
+  bool arm_initialized;
+
   // Parameters
   std::string   arm_name_;
   double        finger_scale_;

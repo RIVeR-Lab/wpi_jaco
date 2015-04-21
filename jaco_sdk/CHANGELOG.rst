@@ -2,6 +2,20 @@
 Changelog for package jaco_sdk
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.21 (2015-04-17)
+-------------------
+
+0.0.20 (2015-04-14)
+-------------------
+* Revert "Updated Kinova libraries"
+  This reverts commit 34891e5e0ea0b547004840b03da2fdac95f2a16a.
+* Contributors: Mathijs de Langen
+
+0.0.19 (2015-04-10)
+-------------------
+* reverted to old libs to prevent segfault
+* Contributors: Russell Toris
+
 0.0.18 (2015-04-03)
 -------------------
 

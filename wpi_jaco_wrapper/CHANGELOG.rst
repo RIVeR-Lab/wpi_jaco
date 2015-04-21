@@ -2,6 +2,42 @@
 Changelog for package wpi_jaco_wrapper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.21 (2015-04-17)
+-------------------
+* Check if InitApi is succesful.
+* Contributors: Mathijs de Langen
+
+0.0.20 (2015-04-14)
+-------------------
+* typo
+* Server starts immediately and we check if the arm is initialized in the callback function
+* Revert "file not used"
+  This reverts commit 51053ff0f7325aef8ee1345cefbe790f48ba003b.
+* file not used
+* Forgotten { during merge
+* Merge branch 'develop' of https://github.com/RobotRose/wpi_jaco into develop
+  Conflicts:
+  wpi_jaco_wrapper/include/wpi_jaco_wrapper/jaco_arm_trajectory_node.h
+  wpi_jaco_wrapper/launch/arm.launch
+  wpi_jaco_wrapper/src/jaco_arm_trajectory_node.cpp
+* default to mico_arm for us :P
+* moveitmodel
+* Making the jaco_arm_trajectory node work for MoveIt! with the Mico
+* Made some remapping for the arm.launch (so the topics are in order)
+* Finger speed added as constant (3000 is ~half of the Mico speeds)
+* debug ON
+* Changed joint_state publisher to what MoveIt! understands (change back in future)
+* movements somewhat slower
+* Finger speed added as constant (3000 is ~half of the Mico speeds)
+* Merge remote-tracking branch 'upstream/master' into develop
+* debug ON
+* Changed joint_state publisher to what MoveIt! understands (change back in future)
+* movements somewhat slower
+* Contributors: Mathijs de Langen
+
+0.0.19 (2015-04-10)
+-------------------
+
 0.0.18 (2015-04-03)
 -------------------
 * Publish a message after the arm homes using the kinova api
