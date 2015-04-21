@@ -54,24 +54,6 @@ bool JacoKinematics::callFK(wpi_jaco_msgs::JacoFK::Request &req, wpi_jaco_msgs::
 
   res.handPose = calculateFK(req.joints);
 
-  double roll, pitch, yaw;
-
-  //Manual conversion:
-  float q1 = res.handPose.pose.orientation.w;
-  float q2 = res.handPose.pose.orientation.x;
-  float q3 = res.handPose.pose.orientation.y;
-  float q4 = res.handPose.pose.orientation.z;
-  float m11 = pow(q1, 2) + pow(q2, 2) - pow(q3, 2) - pow(q4, 2);
-  float m12 = 2 * (q2 * q3 - q1 * q4);
-  float m13 = 2 * (q2 * q4 + q1 * q3);
-  float m23 = 2 * (q3 * q4 - q1 * q2);
-  float m33 = pow(q1, 2) - pow(q2, 2) - pow(q3, 2) + pow(q4, 2);
-  roll = atan2(-m23, m33);
-  pitch = atan2(m13, sqrt(1 - pow(m13, 2)));
-  yaw = atan2(-m12, m11);
-
-  ROS_INFO("rpy: %f, %f, %f", roll, pitch, yaw);
-
   return true;
 }
 
