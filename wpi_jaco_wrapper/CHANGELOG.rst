@@ -2,6 +2,11 @@
 Changelog for package wpi_jaco_wrapper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.22 (2015-04-22)
+-------------------
+* Removed an out of date debug statement that was filling up the logs
+* Contributors: David Kent
+
 0.0.21 (2015-04-17)
 -------------------
 * Check if InitApi is succesful.
