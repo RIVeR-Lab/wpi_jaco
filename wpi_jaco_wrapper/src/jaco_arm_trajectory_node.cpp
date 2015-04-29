@@ -743,7 +743,6 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
     gripper_server_->setSucceeded(result);
     return;
   }
-
   wpi_jaco_msgs::AngularCommand cmd;
   cmd.position = true;
   cmd.armCommand = false;
@@ -756,7 +755,7 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
   angularCmdPublisher.publish(cmd);
 
   //give the fingers sufficient time to start moving, this prevents early termination if a command is slow to reach arm
-  ros::Rate startupRate(2);
+  ros::Rate startupRate(1);
   startupRate.sleep();
 
   ros::Rate rate(10);
@@ -807,6 +806,11 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
   }
 
   //stop gripper control
+  {
+    boost::recursive_mutex::scoped_lock lock(api_mutex);
+    EraseAllTrajectories();
+  }
+
   cmd.position = false;
   for (int i = 0 ; i < num_fingers_ ; i++)
     cmd.fingers[i] = 0.0;
