@@ -114,17 +114,17 @@ void JacoManipulation::execute_gripper(const rail_manipulation_msgs::GripperGoal
   //serverResult.success = acGripper->getResult()->reached_goal;
   if (goal->close)
   {
-    bool gripper_closing = true;
+    bool gripper_closing = false;
     for (int i = 0 ; i < num_fingers_ ; i++)
-      gripper_closing = gripper_closing && joint_pos_[NUM_JACO_JOINTS+i] > startingFingerPos[i];
+      gripper_closing = gripper_closing || joint_pos_[NUM_JACO_JOINTS+i] > startingFingerPos[i];
 
     serverResult.success = gripper_closing;
   }
   else
   {
-    bool gripper_opening = true;
+    bool gripper_opening = false;
     for (int i = 0 ; i < num_fingers_ ; i++)
-      gripper_opening = gripper_opening && joint_pos_[NUM_JACO_JOINTS+i] > startingFingerPos[i];
+      gripper_opening = gripper_opening || joint_pos_[NUM_JACO_JOINTS+i] < startingFingerPos[i];
 
     serverResult.success = gripper_opening;
   }

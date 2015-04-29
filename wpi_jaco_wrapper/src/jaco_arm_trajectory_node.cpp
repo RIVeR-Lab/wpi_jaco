@@ -755,6 +755,10 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
 
   angularCmdPublisher.publish(cmd);
 
+  //give the fingers sufficient time to start moving, this prevents early termination if a command is slow to reach arm
+  ros::Rate startupRate(2);
+  startupRate.sleep();
+
   ros::Rate rate(10);
   bool gripperMoving = true;
   while (gripperMoving)
