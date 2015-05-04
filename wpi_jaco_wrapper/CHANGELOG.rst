@@ -2,6 +2,12 @@
 Changelog for package wpi_jaco_wrapper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.23 (2015-05-04)
+-------------------
+* Adjusted startup delay on gripper action finished check
+* Fixes to sometimes incorrect reporting of gripper action result in the jaco_manipulation action server
+* Contributors: David Kent
+
 0.0.22 (2015-04-22)
 -------------------
 * Removed an out of date debug statement that was filling up the logs
