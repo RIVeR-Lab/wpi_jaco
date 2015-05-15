@@ -14,6 +14,7 @@
 
 #include <ros/ros.h>
 
+#include <actionlib/client/simple_action_client.h>
 #include <actionlib/server/simple_action_server.h>
 #include <boost/foreach.hpp>
 #include <boost/thread/recursive_mutex.hpp>
@@ -76,6 +77,8 @@ public:
   typedef actionlib::SimpleActionServer<control_msgs::GripperCommandAction>        GripperServer;
   typedef actionlib::SimpleActionServer<wpi_jaco_msgs::HomeArmAction>              HomeArmServer;
 
+  typedef actionlib::SimpleActionClient<control_msgs::GripperCommandAction>        GripperClient;
+
   /**
    * \brief Constructor
    * @param nh ROS node handle
@@ -133,6 +136,12 @@ public:
    * @param goal action goal
    */
   void execute_gripper(const control_msgs::GripperCommandGoalConstPtr &goal);
+
+  /**
+   * \brief Callback for the gripper_server_radian_, executes a gripper command with a goal representing the finger position in radians
+   * @param goal action goal
+   */
+  void execute_gripper_radian(const control_msgs::GripperCommandGoalConstPtr &goal);
 
 private:
   bool loadParameters(const ros::NodeHandle n);
@@ -237,8 +246,11 @@ private:
   TrajectoryServer*  trajectory_server_; //!< point-to-point trajectory follower
   TrajectoryServer*  smooth_trajectory_server_; //!< smooth point-to-point trajectory follower based on Cartesian end effector positions
   TrajectoryServer*  smooth_joint_trajectory_server_; //!< smooth point-to-point trajectory follower based on joint velocity control
-  GripperServer*     gripper_server_; //!< gripper command action server
+  GripperServer*     gripper_server_; //!< gripper command action server (goal in Kinova API units)
+  GripperServer*     gripper_server_radian_; //!< gripper command action server (goal in radians)
   HomeArmServer*     home_arm_server_;
+
+  GripperClient*     gripper_client_; //!< gripper command action client, used for sending a converted goal from gripper_server_radian_ to execute on the gripper_server_
 
   boost::recursive_mutex api_mutex;
 
@@ -252,6 +264,8 @@ private:
   double        finger_error_threshold_; //threshold in the JACO API's finger position units to consider a finger position reached
   double        max_curvature_;
   double        max_speed_finger_;
+  double        gripper_open_;
+  double        gripper_closed_;
   int           num_fingers_;
   int           num_joints_;
 

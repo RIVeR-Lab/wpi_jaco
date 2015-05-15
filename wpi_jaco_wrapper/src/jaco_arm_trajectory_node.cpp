@@ -9,13 +9,15 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
 {
   loadParameters(nh);
 
-  // Create servers
-  trajectory_server_              = new TrajectoryServer( nh, arm_name_ + "_arm/arm_controller", boost::bind(&JacoArmTrajectoryController::execute_trajectory, this, _1), true);
-  smooth_joint_trajectory_server_ = new TrajectoryServer( nh, arm_name_ + "_arm/joint_velocity_controller", boost::bind(&JacoArmTrajectoryController::execute_joint_trajectory, this, _1), true);
-
-  smooth_trajectory_server_       = new TrajectoryServer( nh, arm_name_ + "_arm/smooth_arm_controller", boost::bind(&JacoArmTrajectoryController::execute_smooth_trajectory, this, _1), false);
-  gripper_server_                 = new GripperServer( nh, arm_name_ + "_arm/fingers_controller", boost::bind(&JacoArmTrajectoryController::execute_gripper, this, _1), false);
+  // Create actionlib servers and clients
+  trajectory_server_              = new TrajectoryServer( nh, arm_name_ + "_arm/arm_controller/trajectory", boost::bind(&JacoArmTrajectoryController::execute_trajectory, this, _1), true);
+  smooth_joint_trajectory_server_ = new TrajectoryServer( nh, arm_name_ + "_arm/joint_velocity_controller/trajectory", boost::bind(&JacoArmTrajectoryController::execute_joint_trajectory, this, _1), true);
+  smooth_trajectory_server_       = new TrajectoryServer( nh, arm_name_ + "_arm/smooth_arm_controller/trajectory", boost::bind(&JacoArmTrajectoryController::execute_smooth_trajectory, this, _1), false);
+  gripper_server_                 = new GripperServer( nh, arm_name_ + "_arm/fingers_controller/gripper", boost::bind(&JacoArmTrajectoryController::execute_gripper, this, _1), false);
+  gripper_server_radian_          = new GripperServer( nh, arm_name_ + "_arm/fingers_controller_radian/gripper", boost::bind(&JacoArmTrajectoryController::execute_gripper_radian, this, _1), false);
   home_arm_server_                = new HomeArmServer( nh, arm_name_ + "_arm/home_arm", boost::bind(&JacoArmTrajectoryController::home_arm, this, _1), false);
+
+  gripper_client_                 = new GripperClient( arm_name_ + "_arm/fingers_controller/gripper");
 
   boost::recursive_mutex::scoped_lock lock(api_mutex);
 
@@ -92,6 +94,7 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
   smooth_trajectory_server_->start();
   smooth_joint_trajectory_server_->start();
   gripper_server_->start();
+  gripper_server_radian_->start();
   home_arm_server_->start();
 
   joint_state_timer_ = nh.createTimer(ros::Duration(0.0333),
@@ -838,6 +841,33 @@ void JacoArmTrajectoryController::execute_gripper(const control_msgs::GripperCom
   gripper_server_->setSucceeded(result);
 }
 
+void JacoArmTrajectoryController::execute_gripper_radian(const control_msgs::GripperCommandGoalConstPtr &goal)
+{
+  control_msgs::GripperCommandGoal convertedGoal;
+  convertedGoal.command.max_effort = goal->command.max_effort;
+  convertedGoal.command.position = (gripper_closed_/.93)*goal->command.position;
+
+  gripper_client_->sendGoal(convertedGoal);
+  gripper_client_->waitForResult(ros::Duration(5.0));
+
+  actionlib::SimpleClientGoalState state = gripper_client_->getState();
+  if (state == actionlib::SimpleClientGoalState::SUCCEEDED)
+  {
+    //get result
+    control_msgs::GripperCommandResultConstPtr res = gripper_client_->getResult();
+
+    //convert resulting position to a radian position
+    control_msgs::GripperCommandResult result = *res;
+    result.position = result.position * DEG_TO_RAD * finger_scale_;
+
+    gripper_server_radian_->setSucceeded(result);
+  }
+  else if (state == actionlib::SimpleClientGoalState::PREEMPTED)
+    gripper_server_radian_->setPreempted();
+  else
+    gripper_server_radian_->setAborted();
+}
+
 /*****************************************/
 /**********  Other Arm Actions  **********/
 /*****************************************/
@@ -938,6 +968,8 @@ bool JacoArmTrajectoryController::loadParameters(const ros::NodeHandle n)
     n.param("wpi_jaco/arm_name",                arm_name_,              std::string("jaco"));
     n.param("wpi_jaco/finger_scale",            finger_scale_,          1.0);
     n.param("wpi_jaco/finger_error_threshold",  finger_error_threshold_,1.0);
+    n.param("wpi_jaco/gripper_open",            gripper_open_,          0.0);
+    n.param("wpi_jaco/gripper_closed",          gripper_closed_,        65.0);
     n.param("wpi_jaco/max_curvature",           max_curvature_,         20.0);
     n.param("wpi_jaco/max_speed_finger",        max_speed_finger_,      30.0);
     n.param("wpi_jaco/num_fingers",             num_fingers_,           3);
@@ -945,6 +977,8 @@ bool JacoArmTrajectoryController::loadParameters(const ros::NodeHandle n)
     ROS_INFO("arm_name: %s",                arm_name_.c_str());
     ROS_INFO("finger_scale: %f",            finger_scale_);
     ROS_INFO("finger_error_threshold_: %f", finger_error_threshold_);
+    ROS_INFO("gripper_open_: %f",           gripper_open_);
+    ROS_INFO("gripper_closed_: %f",         gripper_closed_);
     ROS_INFO("max_curvature: %f",           max_curvature_);
     ROS_INFO("max_speed_finger: %f",        max_speed_finger_);
     ROS_INFO("num_fingers: %d",             num_fingers_);
