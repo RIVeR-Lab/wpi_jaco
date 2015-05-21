@@ -20,6 +20,8 @@
   <run_depend>jaco_moveit_config</run_depend>
   <run_depend>jaco_sdk</run_depend>
   <run_depend>jaco_teleop</run_depend>
+  <run_depend>mico_description</run_depend>
+  <run_depend>mico_moveit_config</run_depend>
   <run_depend>wpi_jaco_msgs</run_depend>
   <run_depend>wpi_jaco_wrapper</run_depend>
   
