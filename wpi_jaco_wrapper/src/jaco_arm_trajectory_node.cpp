@@ -28,24 +28,20 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
     ROS_INFO("Retrying in 5 seconds..");
     ros::Duration(5.0).sleep();
   }
-  // ROS_INFO("Api initialized.");
   ros::Duration(1.0).sleep();
-  // ROS_INFO("Starting control API...");
   StartControlAPI();
-  // ROS_INFO("Control API started...");
   ros::Duration(3.0).sleep();
-  // ROS_INFO("Stopping control API...");
   StopControlAPI();
-  // ROS_INFO("Control API stopped.");
 
   // Initialize arm
-  // ROS_INFO("Homing arm...");
-  MoveHome();
-  // ROS_INFO("Done.");
-  // ROS_INFO("Initializing fingers...");
+  bool home_arm = true;
+  pnh.getParam("home_arm_on_init", home_arm);
+  if (home_arm)
+    MoveHome();
   InitFingers();
-  // ROS_INFO("Done.");
   SetFrameType(0); //set end effector to move with respect to the fixed frame
+
+  ROS_INFO("Arm initialized.");
 
   // Initialize joint names
   for (int joint_id = 0; joint_id < NUM_JACO_JOINTS; ++joint_id)
