@@ -2,6 +2,12 @@
 Changelog for package wpi_jaco_wrapper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.24 (2015-08-18)
+-------------------
+* Added parameter to make homing the arm on initialization optional
+* Added a fingers_controller_radian action server to better integrate with MoveIt! using joint_state information for gripper close/open actions
+* Contributors: David Kent
+
 0.0.23 (2015-05-04)
 -------------------
 * Adjusted startup delay on gripper action finished check
