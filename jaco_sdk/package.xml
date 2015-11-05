@@ -4,7 +4,7 @@
   <version>0.0.23</version>
   <description>JACO Software SDK and API</description>
 
-  <maintainer email="davidkent@wpi.edu">David Kent</maintainer>
+  <maintainer email="dekent@gatech.edu">David Kent</maintainer>
   <maintainer email="rctoris@wpi.edu">Russell Toris</maintainer>
 
   <url type="website">http://ros.org/wiki/jaco_sdk</url>

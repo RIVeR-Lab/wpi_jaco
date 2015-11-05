@@ -6,6 +6,8 @@ JacoInteractiveManipulation::JacoInteractiveManipulation() :
     acGripper("jaco_arm/manipulation/gripper", true), acLift("jaco_arm/manipulation/lift", true), acHome(
         "jaco_arm/home_arm", true)
 {
+  loadParameters(n);
+
   joints.resize(6);
 
   //messages
@@ -47,7 +49,10 @@ void JacoInteractiveManipulation::updateJoints(const sensor_msgs::JointState::Co
 void JacoInteractiveManipulation::makeHandMarker()
 {
   visualization_msgs::InteractiveMarker iMarker;
-  iMarker.header.frame_id = "jaco_link_base";
+  if (arm_name_ == "jaco2")
+    iMarker.header.frame_id = "jaco_base_link";
+  else
+    iMarker.header.frame_id = "jaco_link_base";
 
   //initialize position to the jaco arm's current position
   wpi_jaco_msgs::JacoFK fkSrv;
@@ -307,6 +312,14 @@ void JacoInteractiveManipulation::updateMarkerPosition()
   {
     ROS_INFO("Failed to call forward kinematics service");
   }
+}
+
+bool JacoInteractiveManipulation::loadParameters(const ros::NodeHandle n)
+{
+  n.param("wpi_jaco/arm_name",                arm_name_,              std::string("jaco"));
+
+  //! @todo MdL [IMPR]: Return is values are all correctly loaded.
+  return true;
 }
 
 int main(int argc, char **argv)

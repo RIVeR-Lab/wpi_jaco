@@ -5,7 +5,7 @@
  * jaco_joy_teleop creates a ROS node that allows for the control of the
  * JACO arm with a joystick. This node listens to a /joy topic.
  *
- * \author David Kent, WPI - davidkent@wpi.edu
+ * \author David Kent, GT - dekent@gatech.edu
  * \date June 25, 2014
  */
 
@@ -71,6 +71,8 @@ public:
   void publish_velocity();
 
 private:
+  bool loadParameters(const ros::NodeHandle n);
+
   /*!
    * \brief Joy topic callback function.
    *
@@ -101,6 +103,8 @@ private:
   bool calibrated; /*!< flag for whether the controller is calibrated, this only affects controllers with analog triggers */
   bool EStopEnabled; /*!< software emergency stop for the arm*/
   bool helpDisplayed; /*!< flag so help is not repeatedly displayed*/
+  std::string arm_name_;
+  std::string topic_prefix_;
 };
 
 /*!

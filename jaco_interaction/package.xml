@@ -4,8 +4,8 @@
   <version>0.0.23</version>
   <description>Interactive manipulation with the JACO Arm</description>
 
-  <author email="davidkent@wpi.edu">David Kent</author>
-  <maintainer email="davidkent@wpi.edu">David Kent</maintainer>
+  <author email="dekent@gatech.edu">David Kent</author>
+  <maintainer email="dekent@gatech.edu">David Kent</maintainer>
   <maintainer email="rctoris@wpi.edu">Russell Toris</maintainer>
 
 

@@ -6,9 +6,9 @@
      An automatically generated package with all the configuration and launch files for using the jaco with the MoveIt Motion Planning Framework
   </description>
   <author email="alex@thoriumrobotics.com">Alex Henning</author>
-  <author email="davidkent@wpi.edu">David Kent</author>
+  <author email="dekent@gatech.edu">David Kent</author>
   <maintainer email="alex@thoriumrobotics.com">Alex Henning</maintainer>
-  <maintainer email="davidkent@wpi.edu">David Kent</maintainer>
+  <maintainer email="dekent@gatech.edu">David Kent</maintainer>
   <maintainer email="rctoris@wpi.edu">Russell Toris</maintainer>
 
   <license>BSD</license>

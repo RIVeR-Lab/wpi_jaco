@@ -5,7 +5,7 @@
  * jaco_arm_trajectory_node creates a ROS node that provides trajectory execution and gripper 
  * control through the Kinova API, and smooth trajectory following through a velocity controller.
  *
- * \author David Kent, WPI - davidkent@wpi.edu
+ * \author David Kent, GT - dekent@gatech.edu
  * \author Mitchell Wills, WPI - mwills@wpi.edu
  */
 
@@ -260,6 +260,7 @@ private:
 
   // Parameters
   std::string   arm_name_;
+  std::string   topic_prefix_;
   double        finger_scale_;
   double        finger_error_threshold_; //threshold in the JACO API's finger position units to consider a finger position reached
   double        max_curvature_;

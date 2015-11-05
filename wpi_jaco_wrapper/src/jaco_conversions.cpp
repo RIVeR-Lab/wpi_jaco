@@ -7,8 +7,8 @@ JacoConversions::JacoConversions(void)
   loadParameters(n);
 
   //advertise service
-  eqServer = n.advertiseService(arm_name_ + "_conversions/euler_to_quaternion", &JacoConversions::callEQ, this);
-  qeServer = n.advertiseService(arm_name_ + "_conversions/quaternion_to_euler", &JacoConversions::callQE, this);
+  eqServer = n.advertiseService(topic_prefix_ + "_conversions/euler_to_quaternion", &JacoConversions::callEQ, this);
+  qeServer = n.advertiseService(topic_prefix_ + "_conversions/quaternion_to_euler", &JacoConversions::callQE, this);
 }
 
 bool JacoConversions::callEQ(wpi_jaco_msgs::EulerToQuaternion::Request &req,
@@ -52,13 +52,13 @@ bool JacoConversions::callQE(wpi_jaco_msgs::QuaternionToEuler::Request &req,
 
 bool JacoConversions::loadParameters(const ros::NodeHandle n)
 {
-    ROS_DEBUG("Loading parameters");
-
     n.param("wpi_jaco/arm_name", arm_name_, std::string("jaco"));
 
-    ROS_INFO("arm_name: %s", arm_name_.c_str());
-
-    ROS_INFO("Parameters loaded.");
+    // Update topic prefix
+    if (arm_name_ == "jaco2")
+        topic_prefix_ = "jaco";
+    else
+        topic_prefix_ = arm_name_;
 
     //! @todo MdL [IMPR]: Return is values are all correctly loaded.
     return true;

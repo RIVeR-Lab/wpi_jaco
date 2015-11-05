@@ -3,8 +3,9 @@
   <version>0.0.23</version>
   <description>Metapackage for the ROS Packages for the JACO Arm Developed at WPI</description>
 
+  <author email="dekent@gatech.edu">David Kent</author>
   <author email="rctoris@wpi.edu">Russell Toris</author>
-  <maintainer email="davidkent@wpi.edu">David Kent</maintainer>
+  <maintainer email="dekent@gatech.edu">David Kent</maintainer>
   <maintainer email="rctoris@wpi.edu">Russell Toris</maintainer>
   
   <url type="website">http://ros.org/wiki/wpi_jaco</url>

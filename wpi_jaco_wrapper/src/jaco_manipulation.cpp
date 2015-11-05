@@ -6,19 +6,19 @@ JacoManipulation::JacoManipulation()
 {
   loadParameters(n);
 
-  acGripper = new GripperClient(n, arm_name_ + "_arm/fingers_controller/gripper", true);
-  asGripper = new GripperServer(n, arm_name_ + "_arm/manipulation/gripper", boost::bind(&JacoManipulation::execute_gripper, this, _1), false);
-  asLift    = new LiftServer(n, arm_name_ + "_arm/manipulation/lift", boost::bind(&JacoManipulation::execute_lift, this, _1), false);
+  acGripper = new GripperClient(n, topic_prefix_ + "_arm/fingers_controller/gripper", true);
+  asGripper = new GripperServer(n, topic_prefix_ + "_arm/manipulation/gripper", boost::bind(&JacoManipulation::execute_gripper, this, _1), false);
+  asLift    = new LiftServer(n, topic_prefix_ + "_arm/manipulation/lift", boost::bind(&JacoManipulation::execute_lift, this, _1), false);
 
   // Messages
-  cartesianCmdPublisher = n.advertise<wpi_jaco_msgs::CartesianCommand>(arm_name_ + "_arm/cartesian_cmd", 1);
-  angularCmdPublisher = n.advertise<wpi_jaco_msgs::AngularCommand>(arm_name_ + "_arm/angular_cmd", 1);
+  cartesianCmdPublisher = n.advertise<wpi_jaco_msgs::CartesianCommand>(topic_prefix_ + "_arm/cartesian_cmd", 1);
+  angularCmdPublisher = n.advertise<wpi_jaco_msgs::AngularCommand>(topic_prefix_ + "_arm/angular_cmd", 1);
 
-  jointStateSubscriber = n.subscribe(arm_name_ + "_arm/joint_states", 1, &JacoManipulation::jointStateCallback, this);
+  jointStateSubscriber = n.subscribe(topic_prefix_ + "_arm/joint_states", 1, &JacoManipulation::jointStateCallback, this);
 
   // Services
-  cartesianPositionClient = n.serviceClient<wpi_jaco_msgs::GetCartesianPosition>(arm_name_ + "_arm/get_cartesian_position");
-  eraseTrajectoriesClient = n.serviceClient<std_srvs::Empty>(arm_name_ + "_arm/erase_trajectories");
+  cartesianPositionClient = n.serviceClient<wpi_jaco_msgs::GetCartesianPosition>(topic_prefix_ + "_arm/get_cartesian_position");
+  eraseTrajectoriesClient = n.serviceClient<std_srvs::Empty>(topic_prefix_ + "_arm/erase_trajectories");
 
   ROS_INFO("Waiting for gripper action server...");
   acGripper->waitForServer();
@@ -37,6 +37,12 @@ bool JacoManipulation::loadParameters(const ros::NodeHandle n)
     n.param("wpi_jaco/gripper_closed", gripper_closed_, 0.0);
     n.param("wpi_jaco/gripper_open", gripper_open_, 65.0);
     n.param("wpi_jaco/num_fingers", num_fingers_, 3);
+
+    // Update topic prefix
+    if (arm_name_ == "jaco2")
+      topic_prefix_ = "jaco";
+    else
+      topic_prefix_ = arm_name_;
 
     num_joints_ = num_fingers_ + NUM_JACO_JOINTS;
 
