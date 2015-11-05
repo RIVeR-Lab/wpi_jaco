@@ -2,6 +2,13 @@
 Changelog for package wpi_jaco
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.24 (2015-08-18)
+-------------------
+* reverted changelog
+* changelog updated
+* Updated metapackage run dependencies
+* Contributors: David Kent, Russell Toris
+
 0.0.23 (2015-05-04)
 -------------------
 
