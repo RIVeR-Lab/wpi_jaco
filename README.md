@@ -9,7 +9,7 @@ For full documentation, see [the ROS wiki](http://wiki.ros.org/wpi_jaco).
 This package servers as an alternative to [jaco-arm](https://github.com/Kinovarobotics/jaco-ros).
 
 ### Notes about the JACO2
-This package now supports the JACO2 as well as the JACO and the MICO.  Simply change the arm name in the wpi_jaco_wrapper arm.launch file from "jaco" to "jaco2", and the correct parameters will be loaded.  Presently there is no description package for the jaco2 (see [jaco_description](jaco_description) or [mico_description](jaco_description) as examples for Kinova's other arms), and no MoveIt! configuration yet, but the other functionality should work with the new model of the arm.  More details coming soon...
+This package now supports the JACO2 as well as the JACO and the MICO.  Simply change the arm name in the wpi_jaco_wrapper arm.launch file from "jaco" to "jaco2", and the correct parameters will be loaded.  Presently there is no description package for the jaco2 (see [jaco_description](jaco_description) or [mico_description](jaco_description) as examples for Kinova's other arms), and no MoveIt! configuration yet, but the other functionality should work with the new model of the arm.  More details on the [wpi_jaco ROS wiki page](http://wiki.ros.org/wpi_jaco)...
 
 ### Contributing
 
