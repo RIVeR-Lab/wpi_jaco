@@ -8,6 +8,7 @@ Panels:
         - /MotionPlanning1
         - /TF1
         - /TF1/Frames1
+        - /TF1/Tree1
       Splitter Ratio: 0.549043
     Tree Height: 372
   - Class: rviz/Help
@@ -328,109 +329,80 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        camera_depth_frame:
-          Value: false
-        camera_depth_optical_frame:
-          Value: false
-        camera_link:
-          Value: false
-        camera_mount:
-          Value: false
-        camera_rgb_frame:
-          Value: false
-        camera_rgb_optical_frame:
-          Value: false
-        mico:
-          Value: false
         mico_large_ring_cover_1:
-          Value: false
+          Value: true
         mico_large_ring_cover_2:
-          Value: false
+          Value: true
         mico_large_ring_cover_3:
-          Value: false
+          Value: true
         mico_link_1:
-          Value: false
+          Value: true
         mico_link_2:
-          Value: false
+          Value: true
         mico_link_3:
-          Value: false
+          Value: true
         mico_link_4:
-          Value: false
+          Value: true
         mico_link_5:
-          Value: false
+          Value: true
         mico_link_base:
-          Value: false
+          Value: true
         mico_link_finger_1:
-          Value: false
+          Value: true
         mico_link_finger_2:
-          Value: false
+          Value: true
         mico_link_finger_tip_1:
-          Value: false
+          Value: true
         mico_link_finger_tip_2:
-          Value: false
+          Value: true
         mico_link_hand:
           Value: true
-        mico_mount:
-          Value: false
         mico_small_ring_cover_1:
-          Value: false
+          Value: true
         mico_small_ring_cover_2:
-          Value: false
+          Value: true
         mico_small_ring_cover_3:
-          Value: false
+          Value: true
         root:
-          Value: false
-        table:
-          Value: false
+          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
-        table:
-          mico_mount:
-            camera_mount:
-              camera_link:
-                camera_depth_frame:
-                  camera_depth_optical_frame:
-                    {}
-                camera_rgb_frame:
-                  camera_rgb_optical_frame:
-                    {}
-            mico:
-              root:
-                mico_link_base:
-                  mico_large_ring_cover_1:
-                    {}
-                  mico_link_1:
-                    mico_large_ring_cover_2:
-                      {}
-                    mico_link_2:
-                      mico_large_ring_cover_3:
-                        {}
-                      mico_link_3:
-                        mico_link_4:
-                          mico_link_5:
-                            mico_link_hand:
-                              mico_link_finger_1:
-                                mico_link_finger_tip_1:
-                                  {}
-                              mico_link_finger_2:
-                                mico_link_finger_tip_2:
-                                  {}
-                            mico_small_ring_cover_3:
-                              {}
-                          mico_small_ring_cover_2:
+        root:
+          mico_link_base:
+            mico_large_ring_cover_1:
+              {}
+            mico_link_1:
+              mico_large_ring_cover_2:
+                {}
+              mico_link_2:
+                mico_large_ring_cover_3:
+                  {}
+                mico_link_3:
+                  mico_link_4:
+                    mico_link_5:
+                      mico_link_hand:
+                        mico_link_finger_1:
+                          mico_link_finger_tip_1:
                             {}
-                        mico_small_ring_cover_1:
-                          {}
+                        mico_link_finger_2:
+                          mico_link_finger_tip_2:
+                            {}
+                      mico_small_ring_cover_3:
+                        {}
+                    mico_small_ring_cover_2:
+                      {}
+                  mico_small_ring_cover_1:
+                    {}
       Update Interval: 0
       Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: table
+    Fixed Frame: root
     Frame Rate: 30
   Name: root
   Tools:
@@ -442,7 +414,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 1.22171
+      Distance: 1.71641
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
@@ -454,10 +426,10 @@ Visualization Manager:
         Z: -2.90841e-08
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.194795
+      Pitch: 0.129795
       Target Frame: root
       Value: XYOrbit (rviz)
-      Yaw: 4.66725
+      Yaw: 3.36224
     Saved: ~
 Window Geometry:
   Displays:
@@ -469,11 +441,11 @@ Window Geometry:
   Hide Right Dock: false
   Motion Planning:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd00000001000000000000037e000003dafc0200000006fb000000100044006900730070006c006100790073010000002800000209000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a0056006900650077007300000003b0000000b0000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000237000001cb0000017400fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007300000003660000009c0000006400ffffff000003cb000003da00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd00000001000000000000037e000003dafc0200000006fb000000100044006900730070006c006100790073010000002800000209000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a0056006900650077007300000003b0000000b0000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000237000001cb000001ab00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007300000003660000009c0000006400ffffff000003bb000003da00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Tool Properties:
     collapsed: false
   Views:
     collapsed: false
-  Width: 1871
-  X: 42
-  Y: 24
+  Width: 1855
+  X: 55
+  Y: 14
