@@ -7,6 +7,7 @@ namespace jaco
 JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros::NodeHandle pnh)
   : arm_initialized (false)
 {
+  pnh.param("kinova_gripper", kinova_gripper_, true);
   loadParameters(nh);
 
   // Create actionlib servers and clients
@@ -1000,7 +1001,6 @@ bool JacoArmTrajectoryController::loadParameters(const ros::NodeHandle n)
     n.param("wpi_jaco/max_curvature",           max_curvature_,         20.0);
     n.param("wpi_jaco/max_speed_finger",        max_speed_finger_,      30.0);
     n.param("wpi_jaco/num_fingers",             num_fingers_,           3);
-    n.param("wpi_jaco/kinova_gripper",          kinova_gripper_,        true);
 
     ROS_INFO("arm_name: %s",                arm_name_.c_str());
     ROS_INFO("finger_scale: %f",            finger_scale_);

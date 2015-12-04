@@ -2,8 +2,9 @@
 
 using namespace std;
 
-JacoManipulation::JacoManipulation()
+JacoManipulation::JacoManipulation() : pnh("~")
 {
+  pnh.param("kinova_gripper", kinova_gripper_, true);
   loadParameters(n);
 
   if (kinova_gripper_)
@@ -44,7 +45,6 @@ bool JacoManipulation::loadParameters(const ros::NodeHandle n)
     n.param("wpi_jaco/gripper_closed", gripper_closed_, 0.0);
     n.param("wpi_jaco/gripper_open", gripper_open_, 65.0);
     n.param("wpi_jaco/num_fingers", num_fingers_, 3);
-    n.param("wpi_jaco/kinova_gripper", kinova_gripper_, true);
 
     // Update topic prefix
     if (arm_name_ == "jaco2")
@@ -52,7 +52,10 @@ bool JacoManipulation::loadParameters(const ros::NodeHandle n)
     else
       topic_prefix_ = arm_name_;
 
-    num_joints_ = num_fingers_ + NUM_JACO_JOINTS;
+    if (kinova_gripper_)
+      num_joints_ = num_fingers_ + NUM_JACO_JOINTS;
+    else
+      num_joints_ = NUM_JACO_JOINTS;
 
     joint_pos_.resize(num_joints_);
 

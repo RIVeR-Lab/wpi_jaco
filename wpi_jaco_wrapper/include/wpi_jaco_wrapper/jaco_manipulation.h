@@ -71,7 +71,7 @@ public:
 private:
   bool loadParameters(const ros::NodeHandle n);
 
-  ros::NodeHandle n;
+  ros::NodeHandle n, pnh;
 
   // Parameters
   std::string arm_name_;

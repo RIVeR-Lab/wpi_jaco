@@ -7,6 +7,7 @@
   
   <node name="jaco_arm_trajectory_node" pkg="wpi_jaco_wrapper" type="jaco_arm_trajectory_node" output="screen">
     <param name="home_arm_on_init" value="$(arg home_arm_on_init)" />
+    <param name="kinova_gripper" value="$(arg kinova_gripper)" />
   </node>
   <node name="jaco_manipulation" pkg="wpi_jaco_wrapper" type="jaco_manipulation" output="screen">
     <param name="kinova_gripper" value="$(arg kinova_gripper)" />
