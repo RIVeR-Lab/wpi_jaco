@@ -80,6 +80,7 @@ private:
   double  gripper_open_;
   int     num_fingers_;
   int     num_joints_;
+  bool    kinova_gripper_;
 
   // Messages
   ros::Publisher cartesianCmdPublisher;

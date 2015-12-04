@@ -13,11 +13,15 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
   trajectory_server_              = new TrajectoryServer( nh, topic_prefix_ + "_arm/arm_controller/trajectory", boost::bind(&JacoArmTrajectoryController::execute_trajectory, this, _1), true);
   smooth_joint_trajectory_server_ = new TrajectoryServer( nh, topic_prefix_ + "_arm/joint_velocity_controller/trajectory", boost::bind(&JacoArmTrajectoryController::execute_joint_trajectory, this, _1), true);
   smooth_trajectory_server_       = new TrajectoryServer( nh, topic_prefix_ + "_arm/smooth_arm_controller/trajectory", boost::bind(&JacoArmTrajectoryController::execute_smooth_trajectory, this, _1), false);
-  gripper_server_                 = new GripperServer( nh, topic_prefix_ + "_arm/fingers_controller/gripper", boost::bind(&JacoArmTrajectoryController::execute_gripper, this, _1), false);
-  gripper_server_radian_          = new GripperServer( nh, topic_prefix_ + "_arm/fingers_controller_radian/gripper", boost::bind(&JacoArmTrajectoryController::execute_gripper_radian, this, _1), false);
   home_arm_server_                = new HomeArmServer( nh, topic_prefix_ + "_arm/home_arm", boost::bind(&JacoArmTrajectoryController::home_arm, this, _1), false);
 
-  gripper_client_                 = new GripperClient( topic_prefix_ + "_arm/fingers_controller/gripper");
+  if (kinova_gripper_)
+  {
+    gripper_server_                 = new GripperServer( nh, topic_prefix_ + "_arm/fingers_controller/gripper", boost::bind(&JacoArmTrajectoryController::execute_gripper, this, _1), false);
+    gripper_server_radian_          = new GripperServer( nh, topic_prefix_ + "_arm/fingers_controller_radian/gripper", boost::bind(&JacoArmTrajectoryController::execute_gripper_radian, this, _1), false);
+
+    gripper_client_                 = new GripperClient( topic_prefix_ + "_arm/fingers_controller/gripper");
+  }
 
   boost::recursive_mutex::scoped_lock lock(api_mutex);
 
@@ -63,12 +67,15 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
       joint_names.push_back(joint_name);
     }
   }
-  for (int finger_id = 0; finger_id < num_fingers_; ++finger_id)
+  if (kinova_gripper_)
   {
-    stringstream finger_name_stream;
-    finger_name_stream << arm_name_ << "_joint_finger_" << (finger_id + 1);
-    string finger_name = finger_name_stream.str();
-    joint_names.push_back(finger_name);
+    for (int finger_id = 0; finger_id < num_fingers_; ++finger_id)
+    {
+      stringstream finger_name_stream;
+      finger_name_stream << arm_name_ << "_joint_finger_" << (finger_id + 1);
+      string finger_name = finger_name_stream.str();
+      joint_names.push_back(finger_name);
+    }
   }
 
   StartControlAPI();
@@ -101,9 +108,12 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
   trajectory_server_->start();
   smooth_trajectory_server_->start();
   smooth_joint_trajectory_server_->start();
-  gripper_server_->start();
-  gripper_server_radian_->start();
   home_arm_server_->start();
+  if (kinova_gripper_)
+  {
+    gripper_server_->start();
+    gripper_server_radian_->start();
+  }
 
   joint_state_timer_ = nh.createTimer(ros::Duration(0.0333),
                                       boost::bind(&JacoArmTrajectoryController::update_joint_states, this));
@@ -148,9 +158,12 @@ void JacoArmTrajectoryController::update_joint_states()
     joint_eff_[3] = force_data.Actuators.Actuator4;
     joint_eff_[4] = force_data.Actuators.Actuator5;
     joint_eff_[5] = force_data.Actuators.Actuator6;
-    joint_eff_[6] = force_data.Fingers.Finger1;
-    joint_eff_[7] = force_data.Fingers.Finger2;
-    joint_eff_[8] = force_data.Fingers.Finger3;
+    if (kinova_gripper_)
+    {
+      joint_eff_[6] = force_data.Fingers.Finger1;
+      joint_eff_[7] = force_data.Fingers.Finger2;
+      joint_eff_[8] = force_data.Fingers.Finger3;
+    }
 
     AngularPosition velocity_data;
     GetAngularVelocity(velocity_data);
@@ -160,10 +173,13 @@ void JacoArmTrajectoryController::update_joint_states()
     joint_vel_[3] = velocity_data.Actuators.Actuator4 * DEG_TO_RAD;
     joint_vel_[4] = velocity_data.Actuators.Actuator5 * DEG_TO_RAD;
     joint_vel_[5] = velocity_data.Actuators.Actuator6 * DEG_TO_RAD;
-    //NOTE: the finger units are arbitrary, but converting them as if they were in degrees provides an approximately correct visualization
-    joint_vel_[6] = velocity_data.Fingers.Finger1 * DEG_TO_RAD * finger_scale_;
-    joint_vel_[7] = velocity_data.Fingers.Finger2 * DEG_TO_RAD * finger_scale_;
-    joint_vel_[8] = velocity_data.Fingers.Finger3 * DEG_TO_RAD * finger_scale_;
+    if (kinova_gripper_)
+    {
+      //NOTE: the finger units are arbitrary, but converting them as if they were in degrees provides an approximately correct visualization
+      joint_vel_[6] = velocity_data.Fingers.Finger1 * DEG_TO_RAD * finger_scale_;
+      joint_vel_[7] = velocity_data.Fingers.Finger2 * DEG_TO_RAD * finger_scale_;
+      joint_vel_[8] = velocity_data.Fingers.Finger3 * DEG_TO_RAD * finger_scale_;
+    }
 
     AngularPosition position_data;
     GetAngularPosition(position_data);
@@ -173,9 +189,12 @@ void JacoArmTrajectoryController::update_joint_states()
     joint_pos_[3] = simplify_angle(position_data.Actuators.Actuator4 * DEG_TO_RAD);
     joint_pos_[4] = simplify_angle(position_data.Actuators.Actuator5 * DEG_TO_RAD);
     joint_pos_[5] = simplify_angle(position_data.Actuators.Actuator6 * DEG_TO_RAD);
-    joint_pos_[6] = position_data.Fingers.Finger1 * DEG_TO_RAD * finger_scale_;
-    joint_pos_[7] = position_data.Fingers.Finger2 * DEG_TO_RAD * finger_scale_;
-    joint_pos_[8] = position_data.Fingers.Finger3 * DEG_TO_RAD * finger_scale_;
+    if (kinova_gripper_)
+    {
+      joint_pos_[6] = position_data.Fingers.Finger1 * DEG_TO_RAD * finger_scale_;
+      joint_pos_[7] = position_data.Fingers.Finger2 * DEG_TO_RAD * finger_scale_;
+      joint_pos_[8] = position_data.Fingers.Finger3 * DEG_TO_RAD * finger_scale_;
+    }
   }
 
   sensor_msgs::JointState state;
@@ -938,8 +957,8 @@ void JacoArmTrajectoryController::home_arm(const wpi_jaco_msgs::HomeArmGoalConst
       if (home_arm_server_->isPreemptRequested() || !ros::ok())
       {
         //preempt action server
-        ROS_INFO("Gripper action server preempted by client");
-        gripper_server_->setPreempted();
+        ROS_INFO("Home arm server action server preempted by client");
+        home_arm_server_->setPreempted();
 
         return;
       }
@@ -981,6 +1000,7 @@ bool JacoArmTrajectoryController::loadParameters(const ros::NodeHandle n)
     n.param("wpi_jaco/max_curvature",           max_curvature_,         20.0);
     n.param("wpi_jaco/max_speed_finger",        max_speed_finger_,      30.0);
     n.param("wpi_jaco/num_fingers",             num_fingers_,           3);
+    n.param("wpi_jaco/kinova_gripper",          kinova_gripper_,        true);
 
     ROS_INFO("arm_name: %s",                arm_name_.c_str());
     ROS_INFO("finger_scale: %f",            finger_scale_);
@@ -998,7 +1018,10 @@ bool JacoArmTrajectoryController::loadParameters(const ros::NodeHandle n)
       topic_prefix_ = arm_name_;
 
     // Update total number of joints
-    num_joints_ = num_fingers_ + NUM_JACO_JOINTS;
+    if (kinova_gripper_)
+      num_joints_ = num_fingers_ + NUM_JACO_JOINTS;
+    else
+      num_joints_ = NUM_JACO_JOINTS;
 
     joint_pos_.resize(num_joints_);
     joint_vel_.resize(num_joints_);

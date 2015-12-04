@@ -269,6 +269,7 @@ private:
   double        gripper_closed_;
   int           num_fingers_;
   int           num_joints_;
+  bool          kinova_gripper_;
 
   std::vector<std::string> joint_names;
   std::vector<double>      joint_pos_;

@@ -6,8 +6,11 @@ JacoManipulation::JacoManipulation()
 {
   loadParameters(n);
 
-  acGripper = new GripperClient(n, topic_prefix_ + "_arm/fingers_controller/gripper", true);
-  asGripper = new GripperServer(n, topic_prefix_ + "_arm/manipulation/gripper", boost::bind(&JacoManipulation::execute_gripper, this, _1), false);
+  if (kinova_gripper_)
+  {
+    acGripper = new GripperClient(n, topic_prefix_ + "_arm/fingers_controller/gripper", true);
+    asGripper = new GripperServer(n, topic_prefix_ + "_arm/manipulation/gripper", boost::bind(&JacoManipulation::execute_gripper, this, _1), false);
+  }
   asLift    = new LiftServer(n, topic_prefix_ + "_arm/manipulation/lift", boost::bind(&JacoManipulation::execute_lift, this, _1), false);
 
   // Messages
@@ -20,12 +23,16 @@ JacoManipulation::JacoManipulation()
   cartesianPositionClient = n.serviceClient<wpi_jaco_msgs::GetCartesianPosition>(topic_prefix_ + "_arm/get_cartesian_position");
   eraseTrajectoriesClient = n.serviceClient<std_srvs::Empty>(topic_prefix_ + "_arm/erase_trajectories");
 
-  ROS_INFO("Waiting for gripper action server...");
-  acGripper->waitForServer();
-  ROS_INFO("Finished waiting for action server.");
+  if (kinova_gripper_)
+  {
+    ROS_INFO("Waiting for gripper action server...");
+    acGripper->waitForServer();
+    ROS_INFO("Finished waiting for action server.");
+  }
 
   // Action servers
-  asGripper->start();
+  if (kinova_gripper_)
+    asGripper->start();
   asLift->start();
 }
 
@@ -37,6 +44,7 @@ bool JacoManipulation::loadParameters(const ros::NodeHandle n)
     n.param("wpi_jaco/gripper_closed", gripper_closed_, 0.0);
     n.param("wpi_jaco/gripper_open", gripper_open_, 65.0);
     n.param("wpi_jaco/num_fingers", num_fingers_, 3);
+    n.param("wpi_jaco/kinova_gripper", kinova_gripper_, true);
 
     // Update topic prefix
     if (arm_name_ == "jaco2")
@@ -140,11 +148,14 @@ void JacoManipulation::execute_gripper(const rail_manipulation_msgs::GripperGoal
 
 void JacoManipulation::execute_lift(rail_manipulation_msgs::LiftGoalConstPtr const &goal)
 {
-  if (asGripper->isActive())
+  if (kinova_gripper_)
   {
-    asLift->setPreempted();
-    ROS_INFO("Gripper server already running, lift action preempted");
-    return;
+    if (asGripper->isActive())
+    {
+      asLift->setPreempted();
+      ROS_INFO("Gripper server already running, lift action preempted");
+      return;
+    }
   }
 
   //get initial end effector height
