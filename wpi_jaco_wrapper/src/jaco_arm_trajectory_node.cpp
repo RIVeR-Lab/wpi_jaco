@@ -576,10 +576,25 @@ void JacoArmTrajectoryController::execute_joint_trajectory(const control_msgs::F
   //get trajectory data
   for (unsigned int i = 0; i < numPoints; i++)
   {
+
+    //TEST
+    for (int trajectory_index = 0; trajectory_index < goal->trajectory.joint_names.size(); trajectory_index++)
+    {
+      string joint_name = goal->trajectory.joint_names[trajectory_index];
+      int joint_index = distance(joint_names.begin(), find(joint_names.begin(), joint_names.end(), joint_name));
+      if (joint_index >= 0 && joint_index < NUM_JACO_JOINTS)
+      {
+        trajectoryPoints[joint_index][i] = goal->trajectory.points.at(i).positions.at(trajectory_index);
+      }
+    }
+    //END TEST
+
+    /*
     for (unsigned int j = 0; j < NUM_JACO_JOINTS; j++)
     {
       trajectoryPoints[j][i] = goal->trajectory.points.at(i).positions.at(j);
     }
+    */
   }
 
   //initialize arrays needed to fit a smooth trajectory to the given points
