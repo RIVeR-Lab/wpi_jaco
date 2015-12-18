@@ -119,10 +119,13 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
   joint_state_timer_ = nh.createTimer(ros::Duration(0.0333),
                                       boost::bind(&JacoArmTrajectoryController::update_joint_states, this));
 
-  //publish to arm_homed because the arm is initialized
-  std_msgs::Bool msg;
-  msg.data = true;
-  armHomedPublisher.publish(msg);
+  if (home_arm)
+  {
+    //publish to arm_homed because the arm is initialized
+    std_msgs::Bool msg;
+    msg.data = true;
+    armHomedPublisher.publish(msg);
+  }
 
   arm_initialized = true;
 }
@@ -988,6 +991,10 @@ void JacoArmTrajectoryController::home_arm(const wpi_jaco_msgs::HomeArmGoalConst
       trajectory_size = Trajectory_Info.TrajectoryCount;
       rate.sleep();
     }
+
+    std_msgs::Bool msg;
+    msg.data = true;
+    armHomedPublisher.publish(msg);
   }
   else
   {
