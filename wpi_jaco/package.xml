@@ -1,6 +1,6 @@
 <package>
   <name>wpi_jaco</name>
-  <version>0.0.24</version>
+  <version>0.0.25</version>
   <description>Metapackage for the ROS Packages for the JACO Arm Developed at WPI</description>
 
   <author email="dekent@gatech.edu">David Kent</author>

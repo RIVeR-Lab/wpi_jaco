@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>wpi_jaco_wrapper</name>
-  <version>0.0.24</version>
+  <version>0.0.25</version>
   <description>ROS Wrapper for the JACO Arm Developed at WPI</description>
 
   <author email="dekent@gatech.edu">David Kent</author>
