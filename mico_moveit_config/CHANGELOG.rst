@@ -2,6 +2,11 @@
 Changelog for package mico_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.25 (2016-02-23)
+-------------------
+* updated tf error in rviz visualization for mico moveit demo
+* Contributors: David Kent
+
 0.0.24 (2015-08-18)
 -------------------
 * reverted changelog

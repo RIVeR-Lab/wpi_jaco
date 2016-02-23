@@ -2,6 +2,16 @@
 Changelog for package wpi_jaco_wrapper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.25 (2016-02-23)
+-------------------
+* small bugfix on arm initialization status
+* Fixed a trajectory following bug involving trajectories coming in from MoveIt
+* Bugfix for kinova_gripper param
+* Added kinova_gripper parameter, setting it to false will remove the action servers specifically using the two- or three-fingered kinova gripper designed for use with the jaco or mico
+* Added initial support for the Jaco2 arm, see readme for details
+* Added initial support for the Jaco2 arm, see readme for details
+* Contributors: David Kent
+
 0.0.24 (2015-08-18)
 -------------------
 * reverted changelog
