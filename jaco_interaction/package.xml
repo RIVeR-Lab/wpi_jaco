@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <package>
   <name>jaco_interaction</name>
-  <version>0.0.24</version>
+  <version>0.0.25</version>
   <description>Interactive manipulation with the JACO Arm</description>
 
-  <author email="davidkent@wpi.edu">David Kent</author>
-  <maintainer email="davidkent@wpi.edu">David Kent</maintainer>
+  <author email="dekent@gatech.edu">David Kent</author>
+  <maintainer email="dekent@gatech.edu">David Kent</maintainer>
   <maintainer email="rctoris@wpi.edu">Russell Toris</maintainer>
 
 

@@ -18,12 +18,14 @@ jaco_joy_teleop::jaco_joy_teleop()
   // a private handle for this ROS node (allows retrieval of relative parameters)
   ros::NodeHandle private_nh("~");
 
+  loadParameters(node);
+
   // create the ROS topics
-  angular_cmd = node.advertise<wpi_jaco_msgs::AngularCommand>("jaco_arm/angular_cmd", 10);
-  cartesian_cmd = node.advertise<wpi_jaco_msgs::CartesianCommand>("jaco_arm/cartesian_cmd", 10);
+  angular_cmd = node.advertise<wpi_jaco_msgs::AngularCommand>(topic_prefix_ + "_arm/angular_cmd", 10);
+  cartesian_cmd = node.advertise<wpi_jaco_msgs::CartesianCommand>(topic_prefix_ + "_arm/cartesian_cmd", 10);
   joy_sub = node.subscribe<sensor_msgs::Joy>("joy", 10, &jaco_joy_teleop::joy_cback, this);
 
-  eStopClient = node.serviceClient<wpi_jaco_msgs::EStop>("jaco_arm/software_estop");
+  eStopClient = node.serviceClient<wpi_jaco_msgs::EStop>(topic_prefix_ + "_arm/software_estop");
 
   // read in throttle values
   private_nh.param<double>("linear_throttle_factor", linear_throttle_factor, 1.0);
@@ -52,10 +54,10 @@ jaco_joy_teleop::jaco_joy_teleop()
   cartesianCmd.fingerCommand = false;
   cartesianCmd.repeat = true;
 
-  ROS_INFO("JACO joystick teleop started");
+  ROS_INFO("Joystick teleop started for: %s", arm_name_.c_str());
 
   puts(" ----------------------------------------");
-  puts("| Jaco Joystick Teleop Help              |");
+  puts("| Joystick Teleop Help                   |");
   puts("|----------------------------------------|*");
   puts("| Current Mode: Arm Control              |*");
   puts("|----------------------------------------|*");
@@ -149,7 +151,7 @@ void jaco_joy_teleop::joy_cback(const sensor_msgs::Joy::ConstPtr& joy)
     {
       helpDisplayed = true;
       puts(" ----------------------------------------");
-      puts("| Jaco Joystick Teleop Help              |");
+      puts("| Joystick Teleop Help                   |");
       puts("|----------------------------------------|*");
       if (mode == ARM_CONTROL)
         puts("| Current Mode: Arm Control              |*");
@@ -187,7 +189,7 @@ void jaco_joy_teleop::joy_cback(const sensor_msgs::Joy::ConstPtr& joy)
     {
       helpDisplayed = true;
       puts(" ----------------------------------------");
-      puts("| Jaco Joystick Teleop Help              |");
+      puts("| Joystick Teleop Help                   |");
       puts("|----------------------------------------|*");
       if (mode == ARM_CONTROL)
         puts("| Current Mode: Arm Control              |*");
@@ -411,6 +413,20 @@ void jaco_joy_teleop::publish_velocity()
       }
       break;
   }
+}
+
+bool jaco_joy_teleop::loadParameters(const ros::NodeHandle n)
+{
+  n.param("wpi_jaco/arm_name",                arm_name_,              std::string("jaco"));
+
+  // Update topic prefix
+  if (arm_name_ == "jaco2")
+    topic_prefix_ = "jaco";
+  else
+    topic_prefix_ = arm_name_;
+
+  //! @todo MdL [IMPR]: Return is values are all correctly loaded.
+  return true;
 }
 
 int main(int argc, char **argv)

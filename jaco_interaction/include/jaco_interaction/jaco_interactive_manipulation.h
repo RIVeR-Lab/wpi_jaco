@@ -6,7 +6,7 @@
  * for the JACO arm and allows control of the end effector position and gripper through
  * an interactive marker client.
  *
- * \author David Kent, WPI - davidkent@wpi.edu
+ * \author David Kent, GT - dekent@gatech.edu
  * \date June 26, 2014
  */
 
@@ -65,6 +65,8 @@ public:
 
 private:
 
+  bool loadParameters(const ros::NodeHandle n);
+
   /**
    * \brief Create the interactive marker on the JACO's end effector, including pose controls and menus
    */
@@ -95,6 +97,7 @@ private:
   interactive_markers::MenuHandler menuHandler;	//!< interactive marker menu handler
   std::vector<float> joints;	//!< current joint state
   bool lockPose;//!< flag to stop the arm from updating on pose changes, this is used to prevent the slight movement when left clicking on the center of the marker
+  std::string arm_name_;
 };
 
 #endif

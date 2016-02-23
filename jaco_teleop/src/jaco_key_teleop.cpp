@@ -49,9 +49,11 @@ jaco_key_teleop::jaco_key_teleop()
   // a private handle for this ROS node (allows retrieval of relative parameters)
   ros::NodeHandle private_nh("~");
 
+  loadParameters(nh_);
+
   // create the ROS topics
-  angular_cmd = nh_.advertise<wpi_jaco_msgs::AngularCommand>("jaco_arm/angular_cmd", 10);
-  cartesian_cmd = nh_.advertise<wpi_jaco_msgs::CartesianCommand>("jaco_arm/cartesian_cmd", 10);
+  angular_cmd = nh_.advertise<wpi_jaco_msgs::AngularCommand>(topic_prefix_ + "_arm/angular_cmd", 10);
+  cartesian_cmd = nh_.advertise<wpi_jaco_msgs::CartesianCommand>(topic_prefix_ + "_arm/cartesian_cmd", 10);
 
   // read in throttle values
   double temp;
@@ -60,7 +62,7 @@ jaco_key_teleop::jaco_key_teleop()
   private_nh.param<double>("finger_throttle_factor", finger_throttle_factor, 1.0);
   mode = ARM_CONTROL;
 
-  ROS_INFO("JACO Keyboard Teleop Started");
+  ROS_INFO("Keyboard teleop started for %s", arm_name_.c_str());
 }
 
 void jaco_key_teleop::watchdog()
@@ -317,11 +319,25 @@ void jaco_key_teleop::displayHelp()
       puts("| w/s : open/close top finger        |*");
       puts("| e/d : open/close bottom finger     |*");
       puts("| r/f : open/close entire hand       |*");
-      puts("| 1 : switch to Finger Control       |*");
+      puts("| 1 : switch to Arm Control          |*");
       puts(" ------------------------------------**");
       puts("  *************************************");
       break;
   }
+}
+
+bool jaco_key_teleop::loadParameters(const ros::NodeHandle n)
+{
+  n.param("wpi_jaco/arm_name",                arm_name_,              std::string("jaco"));
+
+  // Update topic prefix
+  if (arm_name_ == "jaco2")
+    topic_prefix_ = "jaco";
+  else
+    topic_prefix_ = arm_name_;
+
+  //! @todo MdL [IMPR]: Return is values are all correctly loaded.
+  return true;
 }
 
 void shutdown(int sig)

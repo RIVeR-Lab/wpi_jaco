@@ -6,7 +6,7 @@
  * between the JACO's internal representation of 3D rotations (Euler xyz convention)
  * and commonly used representations in ROS (quaternions)
  *
- * \author David Kent, WPI - davidkent@wpi.edu
+ * \author David Kent, GT - dekent@gatech.edu
  */
 
 #ifndef JACO_CONVERSIONS_H_
@@ -55,6 +55,7 @@ private:
   ros::ServiceServer qeServer;
 
   std::string        arm_name_;
+  std::string        topic_prefix_;
 };
 
 #endif

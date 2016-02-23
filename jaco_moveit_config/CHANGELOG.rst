@@ -2,6 +2,12 @@
 Changelog for package jaco_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.25 (2016-02-23)
+-------------------
+* Merge branch 'develop' of https://github.com/RIVeR-Lab/wpi_jaco into develop
+* Added initial support for the Jaco2 arm, see readme for details
+* Contributors: David Kent
+
 0.0.24 (2015-08-18)
 -------------------
 * reverted changelog

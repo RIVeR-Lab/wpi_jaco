@@ -1,8 +1,8 @@
 <launch>
-  <arg name="linear_throttle_factor" value="1.0" />
-  <arg name="angular_throttle_factor" value="1.0" />
-  <arg name="finger_throttle_factor" value="1.0" />
-  <arg name="controller_type" value="digital" />
+  <arg name="linear_throttle_factor" default="1.0" />
+  <arg name="angular_throttle_factor" default="1.0" />
+  <arg name="finger_throttle_factor" default="1.0" />
+  <arg name="controller_type" default="digital" />
   
   <node pkg="joy" type="joy_node" name="joy_node">
     <param name="deadzone" type="double" value="0.033" />

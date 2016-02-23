@@ -34,7 +34,7 @@
  * jaco_key_teleop creates a ROS node that allows the control of the JACO arm
  * with a keyboard.
  *
- * \author David Kent, WPI - davidkent@wpi.edu
+ * \author David Kent, GT - dekent@gatech.edu
  * \date June 26, 2014
  */
 
@@ -123,6 +123,8 @@ public:
 
 private:
 
+  bool loadParameters(const ros::NodeHandle n);
+
   /*!
    * \brief Displays a help menu appropriate to the current mode
    *
@@ -142,6 +144,8 @@ private:
   double linear_throttle_factor; /*!< factor for reducing the linear speed */
   double angular_throttle_factor; /*!< factor for reducing the angular speed */
   double finger_throttle_factor; /*!< factor for reducing the finger speed */
+  std::string arm_name_;
+  std::string topic_prefix_;
 };
 
 /*!

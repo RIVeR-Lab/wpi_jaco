@@ -5,7 +5,7 @@
  * jaco_manipulation creates a ROS node that provides action servers for executing
  * manipulation actions including grasping, releasing, and object pickup.
  *
- * \author David Kent, WPI - davidkent@wpi.edu
+ * \author David Kent, GT - dekent@gatech.edu
  */
 
 #ifndef JACO_MANIPULATION_H_
@@ -71,14 +71,16 @@ public:
 private:
   bool loadParameters(const ros::NodeHandle n);
 
-  ros::NodeHandle n;
+  ros::NodeHandle n, pnh;
 
   // Parameters
   std::string arm_name_;
+  std::string topic_prefix_;
   double  gripper_closed_;
   double  gripper_open_;
   int     num_fingers_;
   int     num_joints_;
+  bool    kinova_gripper_;
 
   // Messages
   ros::Publisher cartesianCmdPublisher;

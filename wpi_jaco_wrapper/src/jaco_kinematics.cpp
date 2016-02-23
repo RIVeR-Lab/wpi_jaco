@@ -7,20 +7,47 @@ JacoKinematics::JacoKinematics(void)
   loadParameters(n);
 
   //calculate additional parameters
-  float AA = 11.0 * PI / 72.0;
-  float CA = cos(AA);
-  float SA = sin(AA);
-  float C2A = cos(2 * AA);
-  float S2A = sin(2 * AA);
-  float D4B = D3 + SA / S2A * D4;
-  float D5B = SA / S2A * D4 + SA / S2A * D5;
-  float D6B = SA / S2A * D5 + D6;
+  double AA, CA, SA, C2A, S2A, D4B, D5B, D6B;
+
+  if (arm_name_ == "jaco2")
+    AA = 30.0 * PI / 180.0;
+  else
+    AA = 11.0 * PI / 72.0;
+
+  //common parameters
+  CA = cos(AA);
+  SA = sin(AA);
+  C2A = cos(2 * AA);
+  S2A = sin(2 * AA);
+
+  if (arm_name_ == "jaco2")
+  {
+    //JACO2 parameters
+    D4B = J2D3 + SA / S2A * J2D4;
+    D5B = SA / S2A * J2D4 + SA / S2A * J2D5;
+    D6B = SA / S2A * J2D5 + J2D6;
+  }
+  else
+  {
+    //JACO parameters
+    D4B = D3 + SA / S2A * D4;
+    D5B = SA / S2A * D4 + SA / S2A * D5;
+    D6B = SA / S2A * D5 + D6;
+  }
 
   //set up D-H parameters
   ds.resize(6);
-  ds[0] = D1;
+  if (arm_name_ == "jaco2")
+  {
+    ds[0] = J2D1;
+    ds[2] = -J2E2;
+  }
+  else
+  {
+    ds[0] = D1;
+    ds[2] = -E2;
+  }
   ds[1] = 0;
-  ds[2] = -E2;
   ds[3] = -D4B;
   ds[4] = -D5B;
   ds[5] = -D6B;
@@ -30,7 +57,10 @@ JacoKinematics::JacoKinematics(void)
   {
     as[i] = 0;
   }
-  as[1] = D2;
+  if (arm_name_ == "jaco2")
+    as[1] = J2D2;
+  else
+    as[1] = D2;
 
   alphas.resize(6);
   alphas[0] = PI / 2.0;
@@ -41,7 +71,7 @@ JacoKinematics::JacoKinematics(void)
   alphas[5] = PI;
 
   //advertise service
-  fkServer = n.advertiseService(arm_name_ + "_arm/kinematics/fk", &JacoKinematics::callFK, this);
+  fkServer = n.advertiseService(topic_prefix_ + "_arm/kinematics/fk", &JacoKinematics::callFK, this);
 }
 
 bool JacoKinematics::callFK(wpi_jaco_msgs::JacoFK::Request &req, wpi_jaco_msgs::JacoFK::Response &res)
@@ -78,7 +108,10 @@ geometry_msgs::PoseStamped JacoKinematics::calculateFK(vector<float> joints)
   thetas[2] = joints[2] + PI / 2.0;
   thetas[3] = joints[3];
   thetas[4] = joints[4] - PI;
-  thetas[5] = joints[5] + 5.0 * PI / 9.0;
+  if (arm_name_ == "jaco2")
+    thetas[5] = joints[5] + PI / 2.0;
+  else
+    thetas[5] = joints[5] + 5.0 * PI / 9.0;
 
   //Calculate transformation from base to end effector
   for (unsigned int i = 0; i < joints.size(); i++)
@@ -126,13 +159,13 @@ tf::Transform JacoKinematics::generateTransform(float theta, float d, float a, f
 
 bool JacoKinematics::loadParameters(const ros::NodeHandle n)
 {
-    ROS_DEBUG("Loading parameters");
-
     n.param("wpi_jaco/arm_name", arm_name_, std::string("jaco"));
 
-    ROS_INFO("arm_name: %s", arm_name_.c_str());
-
-    ROS_INFO("Parameters loaded.");
+    // Update topic prefix
+    if (arm_name_ == "jaco2")
+      topic_prefix_ = "jaco";
+    else
+      topic_prefix_ = arm_name_;
 
     //! @todo MdL [IMPR]: Return is values are all correctly loaded.
     return true;

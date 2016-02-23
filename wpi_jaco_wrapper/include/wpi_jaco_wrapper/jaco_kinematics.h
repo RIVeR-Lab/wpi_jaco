@@ -5,7 +5,7 @@
  * jaco_kinematics creates a ROS node that provides services for converting calculating
  * kinematics for the JACO arm.
  *
- * \author David Kent, WPI - davidkent@wpi.edu
+ * \author David Kent, GT - dekent@gatech.edu
  */
 
 #ifndef JACO_ARM_KINEMATICS_H_
@@ -15,7 +15,7 @@
 #include <wpi_jaco_msgs/JacoFK.h>
 #include <tf/tf.h>
 
-//Link lengths and offsets
+//Link lengths and offsets (JACO)
 #define D1 .2755
 #define D2 .4100
 #define D3 .2073
@@ -23,6 +23,15 @@
 #define D5 .0743
 #define D6 .1687
 #define E2 .0098
+
+//Link lengths and offsets (JACO2)
+#define J2D1 .2755
+#define J2D2 .4100
+#define J2D3 .2073
+#define J2D4 .0741
+#define J2D5 .0741
+#define J2D6 .1600
+#define J2E2 .0098
 
 #define PI 3.14159
 
@@ -72,11 +81,12 @@ private:
   ros::ServiceServer fkServer;
 
   std::string arm_name_;
+  std::string topic_prefix_;
 
   //robot parameters
-  std::vector<float> ds; //!< d parameters in the D-H convention
-  std::vector<float> as; //!< a parameters in the D-H convention
-  std::vector<float> alphas; //!< alpha parameters in the D-H convention
+  std::vector<double> ds; //!< d parameters in the D-H convention
+  std::vector<double> as; //!< a parameters in the D-H convention
+  std::vector<double> alphas; //!< alpha parameters in the D-H convention
 };
 
 #endif

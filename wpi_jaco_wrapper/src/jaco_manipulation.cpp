@@ -2,30 +2,38 @@
 
 using namespace std;
 
-JacoManipulation::JacoManipulation()
+JacoManipulation::JacoManipulation() : pnh("~")
 {
+  pnh.param("kinova_gripper", kinova_gripper_, true);
   loadParameters(n);
 
-  acGripper = new GripperClient(n, arm_name_ + "_arm/fingers_controller/gripper", true);
-  asGripper = new GripperServer(n, arm_name_ + "_arm/manipulation/gripper", boost::bind(&JacoManipulation::execute_gripper, this, _1), false);
-  asLift    = new LiftServer(n, arm_name_ + "_arm/manipulation/lift", boost::bind(&JacoManipulation::execute_lift, this, _1), false);
+  if (kinova_gripper_)
+  {
+    acGripper = new GripperClient(n, topic_prefix_ + "_arm/fingers_controller/gripper", true);
+    asGripper = new GripperServer(n, topic_prefix_ + "_arm/manipulation/gripper", boost::bind(&JacoManipulation::execute_gripper, this, _1), false);
+  }
+  asLift    = new LiftServer(n, topic_prefix_ + "_arm/manipulation/lift", boost::bind(&JacoManipulation::execute_lift, this, _1), false);
 
   // Messages
-  cartesianCmdPublisher = n.advertise<wpi_jaco_msgs::CartesianCommand>(arm_name_ + "_arm/cartesian_cmd", 1);
-  angularCmdPublisher = n.advertise<wpi_jaco_msgs::AngularCommand>(arm_name_ + "_arm/angular_cmd", 1);
+  cartesianCmdPublisher = n.advertise<wpi_jaco_msgs::CartesianCommand>(topic_prefix_ + "_arm/cartesian_cmd", 1);
+  angularCmdPublisher = n.advertise<wpi_jaco_msgs::AngularCommand>(topic_prefix_ + "_arm/angular_cmd", 1);
 
-  jointStateSubscriber = n.subscribe(arm_name_ + "_arm/joint_states", 1, &JacoManipulation::jointStateCallback, this);
+  jointStateSubscriber = n.subscribe(topic_prefix_ + "_arm/joint_states", 1, &JacoManipulation::jointStateCallback, this);
 
   // Services
-  cartesianPositionClient = n.serviceClient<wpi_jaco_msgs::GetCartesianPosition>(arm_name_ + "_arm/get_cartesian_position");
-  eraseTrajectoriesClient = n.serviceClient<std_srvs::Empty>(arm_name_ + "_arm/erase_trajectories");
+  cartesianPositionClient = n.serviceClient<wpi_jaco_msgs::GetCartesianPosition>(topic_prefix_ + "_arm/get_cartesian_position");
+  eraseTrajectoriesClient = n.serviceClient<std_srvs::Empty>(topic_prefix_ + "_arm/erase_trajectories");
 
-  ROS_INFO("Waiting for gripper action server...");
-  acGripper->waitForServer();
-  ROS_INFO("Finished waiting for action server.");
+  if (kinova_gripper_)
+  {
+    ROS_INFO("Waiting for gripper action server...");
+    acGripper->waitForServer();
+    ROS_INFO("Finished waiting for action server.");
+  }
 
   // Action servers
-  asGripper->start();
+  if (kinova_gripper_)
+    asGripper->start();
   asLift->start();
 }
 
@@ -38,7 +46,16 @@ bool JacoManipulation::loadParameters(const ros::NodeHandle n)
     n.param("wpi_jaco/gripper_open", gripper_open_, 65.0);
     n.param("wpi_jaco/num_fingers", num_fingers_, 3);
 
-    num_joints_ = num_fingers_ + NUM_JACO_JOINTS;
+    // Update topic prefix
+    if (arm_name_ == "jaco2")
+      topic_prefix_ = "jaco";
+    else
+      topic_prefix_ = arm_name_;
+
+    if (kinova_gripper_)
+      num_joints_ = num_fingers_ + NUM_JACO_JOINTS;
+    else
+      num_joints_ = NUM_JACO_JOINTS;
 
     joint_pos_.resize(num_joints_);
 
@@ -134,11 +151,14 @@ void JacoManipulation::execute_gripper(const rail_manipulation_msgs::GripperGoal
 
 void JacoManipulation::execute_lift(rail_manipulation_msgs::LiftGoalConstPtr const &goal)
 {
-  if (asGripper->isActive())
+  if (kinova_gripper_)
   {
-    asLift->setPreempted();
-    ROS_INFO("Gripper server already running, lift action preempted");
-    return;
+    if (asGripper->isActive())
+    {
+      asLift->setPreempted();
+      ROS_INFO("Gripper server already running, lift action preempted");
+      return;
+    }
   }
 
   //get initial end effector height

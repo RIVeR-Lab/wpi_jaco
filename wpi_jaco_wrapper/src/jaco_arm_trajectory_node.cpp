@@ -7,17 +7,22 @@ namespace jaco
 JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros::NodeHandle pnh)
   : arm_initialized (false)
 {
+  pnh.param("kinova_gripper", kinova_gripper_, true);
   loadParameters(nh);
 
   // Create actionlib servers and clients
-  trajectory_server_              = new TrajectoryServer( nh, arm_name_ + "_arm/arm_controller/trajectory", boost::bind(&JacoArmTrajectoryController::execute_trajectory, this, _1), true);
-  smooth_joint_trajectory_server_ = new TrajectoryServer( nh, arm_name_ + "_arm/joint_velocity_controller/trajectory", boost::bind(&JacoArmTrajectoryController::execute_joint_trajectory, this, _1), true);
-  smooth_trajectory_server_       = new TrajectoryServer( nh, arm_name_ + "_arm/smooth_arm_controller/trajectory", boost::bind(&JacoArmTrajectoryController::execute_smooth_trajectory, this, _1), false);
-  gripper_server_                 = new GripperServer( nh, arm_name_ + "_arm/fingers_controller/gripper", boost::bind(&JacoArmTrajectoryController::execute_gripper, this, _1), false);
-  gripper_server_radian_          = new GripperServer( nh, arm_name_ + "_arm/fingers_controller_radian/gripper", boost::bind(&JacoArmTrajectoryController::execute_gripper_radian, this, _1), false);
-  home_arm_server_                = new HomeArmServer( nh, arm_name_ + "_arm/home_arm", boost::bind(&JacoArmTrajectoryController::home_arm, this, _1), false);
+  trajectory_server_              = new TrajectoryServer( nh, topic_prefix_ + "_arm/arm_controller/trajectory", boost::bind(&JacoArmTrajectoryController::execute_trajectory, this, _1), true);
+  smooth_joint_trajectory_server_ = new TrajectoryServer( nh, topic_prefix_ + "_arm/joint_velocity_controller/trajectory", boost::bind(&JacoArmTrajectoryController::execute_joint_trajectory, this, _1), true);
+  smooth_trajectory_server_       = new TrajectoryServer( nh, topic_prefix_ + "_arm/smooth_arm_controller/trajectory", boost::bind(&JacoArmTrajectoryController::execute_smooth_trajectory, this, _1), false);
+  home_arm_server_                = new HomeArmServer( nh, topic_prefix_ + "_arm/home_arm", boost::bind(&JacoArmTrajectoryController::home_arm, this, _1), false);
 
-  gripper_client_                 = new GripperClient( arm_name_ + "_arm/fingers_controller/gripper");
+  if (kinova_gripper_)
+  {
+    gripper_server_                 = new GripperServer( nh, topic_prefix_ + "_arm/fingers_controller/gripper", boost::bind(&JacoArmTrajectoryController::execute_gripper, this, _1), false);
+    gripper_server_radian_          = new GripperServer( nh, topic_prefix_ + "_arm/fingers_controller_radian/gripper", boost::bind(&JacoArmTrajectoryController::execute_gripper_radian, this, _1), false);
+
+    gripper_client_                 = new GripperClient( topic_prefix_ + "_arm/fingers_controller/gripper");
+  }
 
   boost::recursive_mutex::scoped_lock lock(api_mutex);
 
@@ -44,19 +49,34 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
   ROS_INFO("Arm initialized.");
 
   // Initialize joint names
-  for (int joint_id = 0; joint_id < NUM_JACO_JOINTS; ++joint_id)
+  if (arm_name_ == "jaco2")
   {
-    stringstream joint_name_stream;
-    joint_name_stream << arm_name_ << "_joint_" << (joint_id + 1);
-    string joint_name = joint_name_stream.str();
-    joint_names.push_back(joint_name);
+    joint_names.push_back("jaco_shoulder_pan_joint");
+    joint_names.push_back("jaco_shoulder_lift_joint");
+    joint_names.push_back("jaco_elbow_joint");
+    joint_names.push_back("jaco_wrist_1_joint");
+    joint_names.push_back("jaco_wrist_2_joint");
+    joint_names.push_back("jaco_wrist_3_joint");
   }
-  for (int finger_id = 0; finger_id < num_fingers_; ++finger_id)
+  else
   {
-    stringstream finger_name_stream;
-    finger_name_stream << arm_name_ << "_joint_finger_" << (finger_id + 1);
-    string finger_name = finger_name_stream.str();
-    joint_names.push_back(finger_name);
+    for (int joint_id = 0; joint_id < NUM_JACO_JOINTS; ++joint_id)
+    {
+      stringstream joint_name_stream;
+      joint_name_stream << arm_name_ << "_joint_" << (joint_id + 1);
+      string joint_name = joint_name_stream.str();
+      joint_names.push_back(joint_name);
+    }
+  }
+  if (kinova_gripper_)
+  {
+    for (int finger_id = 0; finger_id < num_fingers_; ++finger_id)
+    {
+      stringstream finger_name_stream;
+      finger_name_stream << arm_name_ << "_joint_finger_" << (finger_id + 1);
+      string finger_name = finger_name_stream.str();
+      joint_names.push_back(finger_name);
+    }
   }
 
   StartControlAPI();
@@ -65,41 +85,47 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
   eStopEnabled = false;
 
   // Messages
-  joint_state_pub_ = nh.advertise<sensor_msgs::JointState>(arm_name_ + "_arm/joint_states", 1);
-  cartesianCmdPublisher = nh.advertise<wpi_jaco_msgs::CartesianCommand>(arm_name_+"_arm/cartesian_cmd", 1);
-  angularCmdPublisher = nh.advertise<wpi_jaco_msgs::AngularCommand>(arm_name_+"_arm/angular_cmd", 1);
+  joint_state_pub_ = nh.advertise<sensor_msgs::JointState>(topic_prefix_ + "_arm/joint_states", 1);
+  cartesianCmdPublisher = nh.advertise<wpi_jaco_msgs::CartesianCommand>(topic_prefix_+"_arm/cartesian_cmd", 1);
+  angularCmdPublisher = nh.advertise<wpi_jaco_msgs::AngularCommand>(topic_prefix_+"_arm/angular_cmd", 1);
   update_joint_states();
-  armHomedPublisher = nh.advertise<std_msgs::Bool>(arm_name_ + "_arm/arm_homed", 1);
+  armHomedPublisher = nh.advertise<std_msgs::Bool>(topic_prefix_ + "_arm/arm_homed", 1);
 
-  cartesianCmdSubscriber = nh.subscribe(arm_name_+"_arm/cartesian_cmd", 1, &JacoArmTrajectoryController::cartesianCmdCallback,
+  cartesianCmdSubscriber = nh.subscribe(topic_prefix_+"_arm/cartesian_cmd", 1, &JacoArmTrajectoryController::cartesianCmdCallback,
                                         this);
-  angularCmdSubscriber = nh.subscribe(arm_name_+"_arm/angular_cmd", 1, &JacoArmTrajectoryController::angularCmdCallback,
+  angularCmdSubscriber = nh.subscribe(topic_prefix_+"_arm/angular_cmd", 1, &JacoArmTrajectoryController::angularCmdCallback,
                                       this);
 
   // Services
-  jaco_fk_client = nh.serviceClient<wpi_jaco_msgs::JacoFK>(arm_name_+"_arm/kinematics/fk");
+  jaco_fk_client = nh.serviceClient<wpi_jaco_msgs::JacoFK>(topic_prefix_+"_arm/kinematics/fk");
   qe_client = nh.serviceClient<wpi_jaco_msgs::QuaternionToEuler>("jaco_conversions/quaternion_to_euler");
-  angularPositionServer = nh.advertiseService(arm_name_+"_arm/get_angular_position", &JacoArmTrajectoryController::getAngularPosition, this);
-  cartesianPositionServer = nh.advertiseService(arm_name_+"_arm/get_cartesian_position",
+  angularPositionServer = nh.advertiseService(topic_prefix_+"_arm/get_angular_position", &JacoArmTrajectoryController::getAngularPosition, this);
+  cartesianPositionServer = nh.advertiseService(topic_prefix_+"_arm/get_cartesian_position",
                                                 &JacoArmTrajectoryController::getCartesianPosition, this);
-  eStopServer = nh.advertiseService(arm_name_+"_arm/software_estop", &JacoArmTrajectoryController::eStopCallback, this);
-  eraseTrajectoriesServer = nh.advertiseService(arm_name_+"_arm/erase_trajectories", &JacoArmTrajectoryController::eraseTrajectoriesCallback, this);
+  eStopServer = nh.advertiseService(topic_prefix_+"_arm/software_estop", &JacoArmTrajectoryController::eStopCallback, this);
+  eraseTrajectoriesServer = nh.advertiseService(topic_prefix_+"_arm/erase_trajectories", &JacoArmTrajectoryController::eraseTrajectoriesCallback, this);
 
   // Action servers
   trajectory_server_->start();
   smooth_trajectory_server_->start();
   smooth_joint_trajectory_server_->start();
-  gripper_server_->start();
-  gripper_server_radian_->start();
   home_arm_server_->start();
+  if (kinova_gripper_)
+  {
+    gripper_server_->start();
+    gripper_server_radian_->start();
+  }
 
   joint_state_timer_ = nh.createTimer(ros::Duration(0.0333),
                                       boost::bind(&JacoArmTrajectoryController::update_joint_states, this));
 
-  //publish to arm_homed because the arm is initialized
-  std_msgs::Bool msg;
-  msg.data = true;
-  armHomedPublisher.publish(msg);
+  if (home_arm)
+  {
+    //publish to arm_homed because the arm is initialized
+    std_msgs::Bool msg;
+    msg.data = true;
+    armHomedPublisher.publish(msg);
+  }
 
   arm_initialized = true;
 }
@@ -136,9 +162,12 @@ void JacoArmTrajectoryController::update_joint_states()
     joint_eff_[3] = force_data.Actuators.Actuator4;
     joint_eff_[4] = force_data.Actuators.Actuator5;
     joint_eff_[5] = force_data.Actuators.Actuator6;
-    joint_eff_[6] = force_data.Fingers.Finger1;
-    joint_eff_[7] = force_data.Fingers.Finger2;
-    joint_eff_[8] = force_data.Fingers.Finger3;
+    if (kinova_gripper_)
+    {
+      joint_eff_[6] = force_data.Fingers.Finger1;
+      joint_eff_[7] = force_data.Fingers.Finger2;
+      joint_eff_[8] = force_data.Fingers.Finger3;
+    }
 
     AngularPosition velocity_data;
     GetAngularVelocity(velocity_data);
@@ -148,10 +177,13 @@ void JacoArmTrajectoryController::update_joint_states()
     joint_vel_[3] = velocity_data.Actuators.Actuator4 * DEG_TO_RAD;
     joint_vel_[4] = velocity_data.Actuators.Actuator5 * DEG_TO_RAD;
     joint_vel_[5] = velocity_data.Actuators.Actuator6 * DEG_TO_RAD;
-    //NOTE: the finger units are arbitrary, but converting them as if they were in degrees provides an approximately correct visualization
-    joint_vel_[6] = velocity_data.Fingers.Finger1 * DEG_TO_RAD * finger_scale_;
-    joint_vel_[7] = velocity_data.Fingers.Finger2 * DEG_TO_RAD * finger_scale_;
-    joint_vel_[8] = velocity_data.Fingers.Finger3 * DEG_TO_RAD * finger_scale_;
+    if (kinova_gripper_)
+    {
+      //NOTE: the finger units are arbitrary, but converting them as if they were in degrees provides an approximately correct visualization
+      joint_vel_[6] = velocity_data.Fingers.Finger1 * DEG_TO_RAD * finger_scale_;
+      joint_vel_[7] = velocity_data.Fingers.Finger2 * DEG_TO_RAD * finger_scale_;
+      joint_vel_[8] = velocity_data.Fingers.Finger3 * DEG_TO_RAD * finger_scale_;
+    }
 
     AngularPosition position_data;
     GetAngularPosition(position_data);
@@ -161,9 +193,12 @@ void JacoArmTrajectoryController::update_joint_states()
     joint_pos_[3] = simplify_angle(position_data.Actuators.Actuator4 * DEG_TO_RAD);
     joint_pos_[4] = simplify_angle(position_data.Actuators.Actuator5 * DEG_TO_RAD);
     joint_pos_[5] = simplify_angle(position_data.Actuators.Actuator6 * DEG_TO_RAD);
-    joint_pos_[6] = position_data.Fingers.Finger1 * DEG_TO_RAD * finger_scale_;
-    joint_pos_[7] = position_data.Fingers.Finger2 * DEG_TO_RAD * finger_scale_;
-    joint_pos_[8] = position_data.Fingers.Finger3 * DEG_TO_RAD * finger_scale_;
+    if (kinova_gripper_)
+    {
+      joint_pos_[6] = position_data.Fingers.Finger1 * DEG_TO_RAD * finger_scale_;
+      joint_pos_[7] = position_data.Fingers.Finger2 * DEG_TO_RAD * finger_scale_;
+      joint_pos_[8] = position_data.Fingers.Finger3 * DEG_TO_RAD * finger_scale_;
+    }
   }
 
   sensor_msgs::JointState state;
@@ -544,10 +579,25 @@ void JacoArmTrajectoryController::execute_joint_trajectory(const control_msgs::F
   //get trajectory data
   for (unsigned int i = 0; i < numPoints; i++)
   {
+
+    //TEST
+    for (int trajectory_index = 0; trajectory_index < goal->trajectory.joint_names.size(); trajectory_index++)
+    {
+      string joint_name = goal->trajectory.joint_names[trajectory_index];
+      int joint_index = distance(joint_names.begin(), find(joint_names.begin(), joint_names.end(), joint_name));
+      if (joint_index >= 0 && joint_index < NUM_JACO_JOINTS)
+      {
+        trajectoryPoints[joint_index][i] = goal->trajectory.points.at(i).positions.at(trajectory_index);
+      }
+    }
+    //END TEST
+
+    /*
     for (unsigned int j = 0; j < NUM_JACO_JOINTS; j++)
     {
       trajectoryPoints[j][i] = goal->trajectory.points.at(i).positions.at(j);
     }
+    */
   }
 
   //initialize arrays needed to fit a smooth trajectory to the given points
@@ -926,8 +976,8 @@ void JacoArmTrajectoryController::home_arm(const wpi_jaco_msgs::HomeArmGoalConst
       if (home_arm_server_->isPreemptRequested() || !ros::ok())
       {
         //preempt action server
-        ROS_INFO("Gripper action server preempted by client");
-        gripper_server_->setPreempted();
+        ROS_INFO("Home arm server action server preempted by client");
+        home_arm_server_->setPreempted();
 
         return;
       }
@@ -941,6 +991,10 @@ void JacoArmTrajectoryController::home_arm(const wpi_jaco_msgs::HomeArmGoalConst
       trajectory_size = Trajectory_Info.TrajectoryCount;
       rate.sleep();
     }
+
+    std_msgs::Bool msg;
+    msg.data = true;
+    armHomedPublisher.publish(msg);
   }
   else
   {
@@ -979,8 +1033,17 @@ bool JacoArmTrajectoryController::loadParameters(const ros::NodeHandle n)
     ROS_INFO("max_speed_finger: %f",        max_speed_finger_);
     ROS_INFO("num_fingers: %d",             num_fingers_);
 
+    // Update topic prefix
+    if (arm_name_ == "jaco2")
+      topic_prefix_ = "jaco";
+    else
+      topic_prefix_ = arm_name_;
+
     // Update total number of joints
-    num_joints_ = num_fingers_ + NUM_JACO_JOINTS;
+    if (kinova_gripper_)
+      num_joints_ = num_fingers_ + NUM_JACO_JOINTS;
+    else
+      num_joints_ = NUM_JACO_JOINTS;
 
     joint_pos_.resize(num_joints_);
     joint_vel_.resize(num_joints_);
