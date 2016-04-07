@@ -1,6 +1,0 @@
-<launch>
-  <include file="$(find mico_description)/launch/mico_description.launch">
-     <arg name="gui" value="true" />
-  </include>
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find mico_description)/rviz/view_robot.rviz" required="true" />
-</launch>

@@ -8,6 +8,7 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
   : arm_initialized (false)
 {
   pnh.param("kinova_gripper", kinova_gripper_, true);
+  pnh.param<string>("side", side_, "right");
   loadParameters(nh);
 
   // Create actionlib servers and clients
@@ -51,12 +52,12 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
   // Initialize joint names
   if (arm_name_ == "jaco2")
   {
-    joint_names.push_back("jaco_shoulder_pan_joint");
-    joint_names.push_back("jaco_shoulder_lift_joint");
-    joint_names.push_back("jaco_elbow_joint");
-    joint_names.push_back("jaco_wrist_1_joint");
-    joint_names.push_back("jaco_wrist_2_joint");
-    joint_names.push_back("jaco_wrist_3_joint");
+    joint_names.push_back(side_ + "_shoulder_pan_joint");
+    joint_names.push_back(side_ + "_shoulder_lift_joint");
+    joint_names.push_back(side_ + "_jaco_elbow_joint");
+    joint_names.push_back(side_ + "_jaco_wrist_1_joint");
+    joint_names.push_back(side_ + "_jaco_wrist_2_joint");
+    joint_names.push_back(side_ + "_jaco_wrist_3_joint");
   }
   else
   {
@@ -85,7 +86,7 @@ JacoArmTrajectoryController::JacoArmTrajectoryController(ros::NodeHandle nh, ros
   eStopEnabled = false;
 
   // Messages
-  joint_state_pub_ = nh.advertise<sensor_msgs::JointState>(topic_prefix_ + "_arm/joint_states", 1);
+  joint_state_pub_ = nh.advertise<sensor_msgs::JointState>("vector/" + side_ + "_arm/joint_states", 1);
   cartesianCmdPublisher = nh.advertise<wpi_jaco_msgs::CartesianCommand>(topic_prefix_+"_arm/cartesian_cmd", 1);
   angularCmdPublisher = nh.advertise<wpi_jaco_msgs::AngularCommand>(topic_prefix_+"_arm/angular_cmd", 1);
   update_joint_states();

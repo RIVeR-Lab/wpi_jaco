@@ -261,6 +261,7 @@ private:
   // Parameters
   std::string   arm_name_;
   std::string   topic_prefix_;
+  std::string	side_;
   double        finger_scale_;
   double        finger_error_threshold_; //threshold in the JACO API's finger position units to consider a finger position reached
   double        max_curvature_;
