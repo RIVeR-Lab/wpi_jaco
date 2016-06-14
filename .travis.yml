@@ -118,5 +118,6 @@ script:
   - catkin_make install
   # Run the tests, ensuring the path is set correctly.
   - source devel/setup.bash
-  - cd src
+  - cd $CI_SOURCE_PATH
+  - pwd
   - ./jaco_description/scripts/minify.bash
