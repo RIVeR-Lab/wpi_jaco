@@ -12,8 +12,8 @@ branches:
     - develop
 
 install:
-  - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu precise main" > /etc/apt/sources.list.d/ros-latest.list'
-  - wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
+  - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+  - sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net --recv-key 0xB01FA116
   - sudo apt-get update -qq
   - sudo apt-get install python-catkin-pkg python-rosdep ros-indigo-catkin -qq
   - sudo apt-get remove -y mongodb mongodb-10gen
