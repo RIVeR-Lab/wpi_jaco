@@ -13,6 +13,8 @@
 	xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
 	xmlns:xacro="http://ros.org/wiki/xacro" name="jaco">
 
+	<xacro:arg name="simple_collisions" default="0" />
+	
 	<xacro:include filename="$(find jaco_description)/urdf/jaco_arm.urdf.xacro" />
 
 	<link name="root">
@@ -30,5 +32,5 @@
 		</collision>
 	</link>
 
-	<xacro:jaco_arm parent="root" xyz="0 0 0" rpy="0 0 0" />
+	<xacro:jaco_arm parent="root" xyz="0 0 0" rpy="0 0 0" simple_collisions="$(arg simple_collisions)" />
 </robot>
