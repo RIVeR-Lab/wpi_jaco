@@ -576,6 +576,14 @@ void JacoArmTrajectoryController::execute_joint_trajectory(const control_msgs::F
   float trajectoryPoints[NUM_JACO_JOINTS][goal->trajectory.points.size()];
   int numPoints = goal->trajectory.points.size();
 
+  if (numPoints < 2)
+  {
+    control_msgs::FollowJointTrajectoryResult result;
+    result.error_code = control_msgs::FollowJointTrajectoryResult::INVALID_GOAL;
+    smooth_joint_trajectory_server_->setSucceeded(result);
+    return;
+  }
+
   //get trajectory data
   for (unsigned int i = 0; i < numPoints; i++)
   {
@@ -613,6 +621,7 @@ void JacoArmTrajectoryController::execute_joint_trajectory(const control_msgs::F
     prevPoint[i] = trajectoryPoints[i][0];
   }
 
+  ROS_INFO("Number of trajectory points: %d", numPoints);
   //determine time component of trajectories for each joint
   for (unsigned int i = 1; i < numPoints; i++)
   {
@@ -772,6 +781,7 @@ void JacoArmTrajectoryController::execute_joint_trajectory(const control_msgs::F
 
     rate.sleep();
   }
+
 
   control_msgs::FollowJointTrajectoryResult result;
   result.error_code = control_msgs::FollowJointTrajectoryResult::SUCCESSFUL;
