@@ -145,7 +145,7 @@ void jaco_joy_teleop::joy_cback(const sensor_msgs::Joy::ConstPtr& joy)
   }
 
   //help menu
-  if ((controllerType == DIGITAL && joy->axes.at(5) == -1.0) || (controllerType == ANALOG && joy->axes.at(7) == -1.0))
+  if ((controllerType == DIGITAL && joy->axes.at(5) == -1.0) || (controllerType == ANALOG && joy->axes.size() > 6 && joy->axes.at(7) == -1.0))
   {
     if (!helpDisplayed)
     {
@@ -183,7 +183,7 @@ void jaco_joy_teleop::joy_cback(const sensor_msgs::Joy::ConstPtr& joy)
     }
   }
   else if ((controllerType == DIGITAL && joy->axes.at(4) == 1.0)
-      || (controllerType == ANALOG && joy->axes.at(6) == 1.0))
+      || (controllerType == ANALOG && joy->axes.size() > 6 && joy->axes.at(6) == 1.0))
   {
     if (!helpDisplayed)
     {
